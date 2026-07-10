@@ -1,4 +1,5 @@
 import uuid
+from datetime import datetime
 from typing import Any, Dict, Optional
 
 from fastapi import APIRouter, HTTPException
@@ -32,7 +33,7 @@ class CaseUpdate(BaseModel):
     status: Optional[str] = None
     priority: Optional[str] = None
     description: Optional[str] = None
-    closed_at: Optional[str] = None
+    closed_at: Optional[datetime] = None
 
 
 @router.post("")

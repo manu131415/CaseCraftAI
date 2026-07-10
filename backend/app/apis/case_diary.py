@@ -1,4 +1,5 @@
 import uuid
+from datetime import datetime
 from typing import Any, Dict, Optional
 
 from fastapi import APIRouter, HTTPException
@@ -21,7 +22,7 @@ class CaseDiaryCreate(BaseModel):
     action_type: str
     description: str
     location: Optional[str] = None
-    occurred_at: Optional[str] = None
+    occurred_at: Optional[datetime] = None
     related_evidence_id: Optional[str] = None
     related_document_id: Optional[str] = None
 
@@ -31,7 +32,7 @@ class CaseDiaryUpdate(BaseModel):
     action_type: Optional[str] = None
     description: Optional[str] = None
     location: Optional[str] = None
-    occurred_at: Optional[str] = None
+    occurred_at: Optional[datetime] = None
     related_evidence_id: Optional[str] = None
     related_document_id: Optional[str] = None
 

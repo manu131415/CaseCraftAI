@@ -5,10 +5,13 @@ from typing import Any, Dict, List
 
 import cloudinary
 import cloudinary.uploader
-from fastapi import APIRouter, File, UploadFile
+from fastapi import APIRouter, File, UploadFile, HTTPException
 from pydantic import BaseModel
 from dotenv import load_dotenv
 from urllib.parse import urlparse
+
+from database.db import SessionLocal
+from models.complaint import Complaint
 
 load_dotenv(Path(__file__).resolve().parents[2] / ".env")
 
@@ -48,7 +51,40 @@ class ComplaintSubmission(BaseModel):
 
 @router.post("/submit")
 def submit_complaint(payload: ComplaintSubmission) -> Dict[str, Any]:
-    return {"success": True, "message": "Complaint received", "data": payload.model_dump()}
+    db = SessionLocal()
+    try:
+        # Extract complainant information from the list
+        complainant_data = payload.complainants[0] if payload.complainants else {}
+        
+        complaint = Complaint(
+            complaint_id=str(uuid.uuid4()),
+            complainant_name=complainant_data.get("name"),
+            phone=complainant_data.get("phone"),
+            email=complainant_data.get("email"),
+            crime_type=payload.complaintType,
+            location=payload.location,
+            description=payload.description,
+            status="Pending"
+        )
+        
+        db.add(complaint)
+        db.commit()
+        db.refresh(complaint)
+        
+        return {
+            "success": True,
+            "message": "Complaint submitted successfully",
+            "data": {
+                "complaint_id": complaint.complaint_id,
+                "status": complaint.status,
+                "created_at": complaint.created_at.isoformat() if complaint.created_at else None
+            }
+        }
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Failed to submit complaint: {str(e)}")
+    finally:
+        db.close()
 
 
 @router.post("/upload")

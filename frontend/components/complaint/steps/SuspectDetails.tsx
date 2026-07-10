@@ -1,5 +1,7 @@
 "use client";
 
+import { ChangeEvent, useRef } from "react";
+import { Camera } from "lucide-react";
 import { PersonEntry } from "../types";
 
 interface Props {
@@ -8,11 +10,27 @@ interface Props {
 }
 
 export default function SuspectDetails({ suspects, setSuspects }: Props) {
+  const fileInputRefs = useRef<Array<HTMLInputElement | null>>([]);
+
   function handleFieldChange(index: number, field: keyof PersonEntry, value: string) {
     const updated = suspects.map((entry, i) =>
       i === index ? { ...entry, [field]: value } : entry
     );
     setSuspects(updated);
+  }
+
+  function handlePhotoUpload(index: number, event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const updated = suspects.map((entry, i) =>
+        i === index ? { ...entry, photoUrl: reader.result as string, photoName: file.name } : entry
+      );
+      setSuspects(updated);
+    };
+    reader.readAsDataURL(file);
   }
 
   function removeSuspect(index: number) {
@@ -102,6 +120,38 @@ export default function SuspectDetails({ suspects, setSuspects }: Props) {
                   <option value="Under investigation">Under investigation</option>
                 </select>
               </div>
+            </div>
+
+            <div className="mt-4 rounded-2xl border border-dashed border-slate-300 bg-white p-4">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <p className="text-base font-semibold text-slate-800">Person photo</p>
+                  <p className="text-base text-slate-500">Attach a photo for this suspect when available.</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => fileInputRefs.current[index]?.click()}
+                  className="flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-base font-medium text-slate-700"
+                >
+                  <Camera size={16} />
+                  Upload photo
+                </button>
+              </div>
+              <input
+                ref={(el) => {
+                  fileInputRefs.current[index] = el;
+                }}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => handlePhotoUpload(index, e)}
+              />
+              {suspect.photoUrl ? (
+                <div className="mt-4 flex items-center gap-4">
+                  <img src={suspect.photoUrl} alt={suspect.name || "Suspect photo"} className="h-20 w-20 rounded-2xl object-cover" />
+                  <p className="text-base text-slate-600">{suspect.photoName || "Photo attached"}</p>
+                </div>
+              ) : null}
             </div>
 
             <div className="mt-4">

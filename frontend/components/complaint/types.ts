@@ -4,6 +4,15 @@ export interface UploadedFile {
   type: string;
 }
 
+export interface AttachmentMeta {
+  id: string;
+  fileName: string;
+  fileType: string;
+  documentUrl?: string;
+  extractedText?: string;
+  summary?: string;
+}
+
 export interface PersonEntry {
   name: string;
   contact: string;
@@ -12,6 +21,8 @@ export interface PersonEntry {
   type?: string;
   description?: string;
   status?: string;
+  photoUrl?: string;
+  photoName?: string;
 }
 
 export interface ComplaintData {
@@ -27,4 +38,5 @@ export interface ComplaintData {
   complainants: PersonEntry[];
   victims: PersonEntry[];
   suspects: PersonEntry[];
+  attachments?: AttachmentMeta[];
 }

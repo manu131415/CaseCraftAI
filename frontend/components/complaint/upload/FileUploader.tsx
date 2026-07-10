@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import axios from "axios";
 import { useDropzone } from "react-dropzone";
 
 import {
@@ -14,13 +15,20 @@ import {
   CheckCircle2,
 } from "lucide-react";
 
+import { ComplaintData, AttachmentMeta } from "../types";
+
 interface UploadedFile {
   id: number;
   file: File;
   category: string;
 }
 
-export default function FileUploader() {
+interface Props {
+  form: ComplaintData;
+  setForm: React.Dispatch<React.SetStateAction<ComplaintData>>;
+}
+
+export default function FileUploader({ form, setForm }: Props) {
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -61,12 +69,94 @@ export default function FileUploader() {
 
     setLoading(true);
 
-    // Backend call here
-    await new Promise((resolve) => setTimeout(resolve, 2500));
+    try {
+      const results = await Promise.all(
+        files.map(async (item) => {
+          const formData = new FormData();
+          formData.append("file", item.file);
+          const response = await axios.post("http://localhost:8000/api/complaints/upload", formData, {
+            headers: { "Content-Type": "multipart/form-data" },
+          });
+          const extraction = response.data.extraction || {};
+          const summary = extraction?.text || extraction?.transcript || extraction?.message || "";
+          return {
+            id: item.id.toString(),
+            fileName: item.file.name,
+            fileType: item.file.type || "document",
+            documentUrl: response.data.cloudinaryUrl,
+            extractedText: summary,
+            summary: summary.slice(0, 220),
+          } as AttachmentMeta;
+        })
+      );
 
-    setLoading(false);
+      setForm((prev) => {
+        const mergedAttachments = [...(prev.attachments || []), ...results];
+        const firstExtraction = results[0] as AttachmentMeta | undefined;
+        const extractionDetails = (firstExtraction?.extractedText || "") as string;
+        const parsed = results.reduce<Record<string, unknown>>((acc, result) => {
+          const value = result.extractedText || "";
+          if (typeof value === "string" && value) {
+            acc.summary = [acc.summary, value].filter(Boolean).join("\n\n");
+          }
+          return acc;
+        }, {});
 
-    alert("AI Extraction Completed");
+        const incidentDescription = extractionDetails || parsed.summary || "";
+        const incidentLocation = extractionDetails.match(/location[:\s-]+([^\n]+)/i)?.[1]?.trim() || "";
+        const complainantName = extractionDetails.match(/complainant[:\s-]+([^\n]+)/i)?.[1]?.trim() || "";
+        const phoneMatch = extractionDetails.match(/(?:phone|contact)[:\s-]+([^\n]+)/i)?.[1]?.trim() || "";
+        const accusedName = extractionDetails.match(/accused[:\s-]+([^\n]+)/i)?.[1]?.trim() || "";
+
+        const nextComplainants = prev.complainants?.length ? [...prev.complainants] : [{ name: "", contact: "", relationship: "", statement: "" }];
+        if (nextComplainants[0]) {
+          nextComplainants[0] = {
+            ...nextComplainants[0],
+            name: nextComplainants[0].name || complainantName,
+            contact: nextComplainants[0].contact || phoneMatch,
+            statement: nextComplainants[0].statement || incidentDescription,
+          };
+        }
+
+        const nextVictims = prev.victims?.length ? [...prev.victims] : [{ type: "", name: "", contact: "", statement: "" }];
+        if (nextVictims[0]) {
+          nextVictims[0] = {
+            ...nextVictims[0],
+            name: nextVictims[0].name || accusedName || complainantName,
+            contact: nextVictims[0].contact || phoneMatch,
+            statement: nextVictims[0].statement || incidentDescription,
+          };
+        }
+
+        const nextSuspects = prev.suspects?.length ? [...prev.suspects] : [{ type: "", name: "", contact: "", description: "", status: "" }];
+        if (nextSuspects[0]) {
+          nextSuspects[0] = {
+            ...nextSuspects[0],
+            name: nextSuspects[0].name || accusedName || "",
+            contact: nextSuspects[0].contact || phoneMatch,
+            description: nextSuspects[0].description || incidentDescription,
+          };
+        }
+
+        return {
+          ...prev,
+          attachments: mergedAttachments,
+          description: prev.description || incidentDescription,
+          aiSummary: prev.aiSummary || incidentDescription,
+          location: prev.location || incidentLocation,
+          complainants: nextComplainants,
+          victims: nextVictims,
+          suspects: nextSuspects,
+        };
+      });
+      setFiles([]);
+      alert("AI Extraction Completed");
+    } catch (error) {
+      console.error(error);
+      alert("Extraction failed. Check the backend logs.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   function getIcon(type: string) {

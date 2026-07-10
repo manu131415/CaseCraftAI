@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import axios from "axios";
 import { CheckCircle2 } from "lucide-react";
 import Stepper from "./Stepper";
 import FileUploader from "./upload/FileUploader";
@@ -47,6 +48,7 @@ const initialForm: ComplaintData = {
       status: "",
     },
   ],
+  attachments: [],
 };
 
 export default function ComplaintWizard() {
@@ -64,8 +66,14 @@ export default function ComplaintWizard() {
     if (step > 1) setStep(step - 1);
   }
 
-  function handleSubmit() {
-    setSubmitted(true);
+  async function handleSubmit() {
+    try {
+      await axios.post("http://localhost:8000/api/complaints/submit", form);
+      setSubmitted(true);
+    } catch (error) {
+      console.error(error);
+      alert("Submission failed. Please verify the backend is running.");
+    }
   }
 
   function addVictim() {
@@ -194,7 +202,7 @@ export default function ComplaintWizard() {
       </div>
 
       <div className="mt-10">
-        {step === 1 && <FileUploader />}
+        {step === 1 && <FileUploader form={form} setForm={setForm} />}
         {step === 2 && <ComplaintDetails form={form} setForm={setForm} />}
         {step === 3 && <VictimDetails victims={form.victims} setVictims={setVictims} />}
         {step === 4 && <SuspectDetails suspects={form.suspects} setSuspects={setSuspects} />}

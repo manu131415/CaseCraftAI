@@ -181,6 +181,60 @@ Complaint → Case → Evidence
 
 ---
 
+## Alembic Migration Workflow
+
+### Manual migration setup
+
+The backend now includes a manual Alembic migration workflow for the core case-management tables.
+
+**Initialization:**
+- Run `python -m alembic init alembic` once in the backend directory.
+- Keep the generated Alembic scaffold intact except for the environment file.
+
+**Environment configuration:**
+- Update [backend/alembic/env.py](backend/alembic/env.py) so Alembic:
+  - imports `Base` from `database.db`
+  - imports all SQLAlchemy models via `import models`
+  - sets `target_metadata = Base.metadata`
+  - reads `DATABASE_URL` exactly like [backend/database/db.py](backend/database/db.py)
+  - overrides `config.set_main_option("sqlalchemy.url", DATABASE_URL)`
+
+**Manual migration file:**
+- Create a migration file at [backend/alembic/versions/001_case_management.py](backend/alembic/versions/001_case_management.py).
+- Use `op.create_table()` only for the tables `cases`, `evidences`, and `case_diaries`.
+- Reference existing tables only through foreign keys.
+- Keep the downgrade path limited to dropping `case_diaries`, `evidences`, and `cases` in reverse order.
+
+**Useful commands:**
+- `python -m alembic revision --autogenerate -m "Initial schema"`
+- `python -m alembic upgrade head`
+- `python -m alembic downgrade -1`
+
+---
+
+## OpenAPI and API Documentation Improvements
+
+### ✅ FastAPI documentation enhancement completed
+
+The backend API layer was updated to improve OpenAPI generation without changing runtime behavior.
+
+**What was added:**
+- Explicit Pydantic response schemas for complaint, case, and case-diary endpoints
+- Endpoint-level `summary` and `description` metadata for clearer API docs
+- `tags` metadata to group endpoints logically in Swagger/ReDoc
+- FastAPI app metadata such as the API title and description
+- Documentation for the health endpoint
+
+**Scope of change:**
+- Only documentation and schema metadata were added
+- Existing request payloads, database queries, transaction handling, and business logic were preserved
+- No SQLAlchemy models were modified
+
+**Result:**
+- Swagger/OpenAPI output is now more complete and descriptive for frontend and API consumers
+
+---
+
 ## Implemented APIs
 
 ### ✔ Complaint Submission API

@@ -59,7 +59,64 @@ class ComplaintUpdate(BaseModel):
     status: Optional[str] = None
 
 
-@router.post("/submit")
+class ComplaintSummary(BaseModel):
+    complaint_id: str
+    complainant_name: Optional[str] = None
+    phone: Optional[str] = None
+    email: Optional[str] = None
+    crime_type: Optional[str] = None
+    location: Optional[str] = None
+    description: Optional[str] = None
+    status: Optional[str] = None
+    created_at: Optional[str] = None
+
+
+class ComplaintSubmissionData(BaseModel):
+    complaint_id: str
+    status: str
+    created_at: Optional[str] = None
+
+
+class ComplaintSubmissionResponse(BaseModel):
+    success: bool
+    message: str
+    data: ComplaintSubmissionData
+
+
+class ComplaintListResponse(BaseModel):
+    complaints: List[ComplaintSummary]
+
+
+class ComplaintDetailResponse(ComplaintSummary):
+    pass
+
+
+class ComplaintUpdateResponse(BaseModel):
+    success: bool
+    message: str
+    data: ComplaintSubmissionData
+
+
+class ComplaintDeleteResponse(BaseModel):
+    success: bool
+    message: str
+
+
+class UploadDocumentResponse(BaseModel):
+    fileName: Optional[str] = None
+    fileType: str
+    storedPath: str
+    cloudinaryUrl: Optional[str] = None
+    extraction: Dict[str, Any]
+
+
+@router.post(
+    "/submit",
+    response_model=ComplaintSubmissionResponse,
+    summary="Submit a complaint",
+    description="Create a new complaint record from a submitted complaint payload.",
+    tags=["complaints"],
+)
 def submit_complaint(payload: ComplaintSubmission) -> Dict[str, Any]:
     db = SessionLocal()
     try:
@@ -97,7 +154,13 @@ def submit_complaint(payload: ComplaintSubmission) -> Dict[str, Any]:
         db.close()
 
 
-@router.get("")
+@router.get(
+    "",
+    response_model=ComplaintListResponse,
+    summary="List complaints",
+    description="Retrieve all complaints available in the system.",
+    tags=["complaints"],
+)
 def get_all_complaints() -> Dict[str, Any]:
     db = SessionLocal()
     try:
@@ -124,7 +187,13 @@ def get_all_complaints() -> Dict[str, Any]:
         db.close()
 
 
-@router.get("/{complaint_id}")
+@router.get(
+    "/{complaint_id}",
+    response_model=ComplaintDetailResponse,
+    summary="Get complaint details",
+    description="Retrieve a single complaint by its identifier.",
+    tags=["complaints"],
+)
 def get_complaint(complaint_id: str) -> Dict[str, Any]:
     db = SessionLocal()
     try:
@@ -151,7 +220,13 @@ def get_complaint(complaint_id: str) -> Dict[str, Any]:
         db.close()
 
 
-@router.put("/{complaint_id}")
+@router.put(
+    "/{complaint_id}",
+    response_model=ComplaintUpdateResponse,
+    summary="Update a complaint",
+    description="Partially update an existing complaint record.",
+    tags=["complaints"],
+)
 def update_complaint(complaint_id: str, payload: ComplaintUpdate) -> Dict[str, Any]:
     db = SessionLocal()
     try:
@@ -196,7 +271,13 @@ def update_complaint(complaint_id: str, payload: ComplaintUpdate) -> Dict[str, A
         db.close()
 
 
-@router.delete("/{complaint_id}")
+@router.delete(
+    "/{complaint_id}",
+    response_model=ComplaintDeleteResponse,
+    summary="Delete a complaint",
+    description="Remove an existing complaint record from the system.",
+    tags=["complaints"],
+)
 def delete_complaint(complaint_id: str) -> Dict[str, Any]:
     db = SessionLocal()
     try:
@@ -220,7 +301,13 @@ def delete_complaint(complaint_id: str) -> Dict[str, Any]:
         db.close()
 
 
-@router.post("/upload")
+@router.post(
+    "/upload",
+    response_model=UploadDocumentResponse,
+    summary="Upload a document",
+    description="Upload a complaint-related file and process it through the configured ingestion pipeline.",
+    tags=["complaints"],
+)
 async def upload_document(file: UploadFile = File(...)) -> Dict[str, Any]:
     file_bytes = await file.read()
     file_path = UPLOAD_DIR / f"{uuid.uuid4()}_{file.filename or 'upload'}"

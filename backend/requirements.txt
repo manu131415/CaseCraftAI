@@ -10,4 +10,6 @@ pytesseract
 pdf2image
 langdetect
 google-genai
-
+sqlalchemy
+alembic
+psycopg2-binary

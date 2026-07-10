@@ -1,5 +1,6 @@
 import uuid
-from typing import Any, Dict, Optional
+from datetime import datetime
+from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
@@ -32,10 +33,67 @@ class CaseUpdate(BaseModel):
     status: Optional[str] = None
     priority: Optional[str] = None
     description: Optional[str] = None
+    closed_at: Optional[datetime] = None
+
+
+class CaseSummary(BaseModel):
+    case_id: str
+    complaint_id: Optional[str] = None
+    assigned_officer_id: Optional[str] = None
+    case_number: Optional[str] = None
+    title: Optional[str] = None
+    status: Optional[str] = None
+    priority: Optional[str] = None
+    description: Optional[str] = None
+    created_at: Optional[str] = None
+    updated_at: Optional[str] = None
     closed_at: Optional[str] = None
 
 
-@router.post("")
+class CaseCreationData(BaseModel):
+    case_id: str
+    status: str
+    created_at: Optional[str] = None
+
+
+class CaseUpdateData(BaseModel):
+    case_id: str
+    status: str
+    updated_at: Optional[str] = None
+
+
+class CaseCreateResponse(BaseModel):
+    success: bool
+    message: str
+    data: CaseCreationData
+
+
+class CaseListResponse(BaseModel):
+    cases: List[CaseSummary]
+
+
+class CaseDetailResponse(CaseSummary):
+    pass
+
+
+class CaseUpdateResponse(BaseModel):
+    success: bool
+    message: str
+    data: CaseUpdateData
+
+
+class CaseDeleteResponse(BaseModel):
+    success: bool
+    message: str
+
+
+@router.post(
+    "",
+    response_model=CaseCreateResponse,
+    summary="Create a case",
+    description="Create a case associated with an existing complaint and optional officer.",
+    tags=["cases"],
+)
 def create_case(payload: CaseCreate) -> Dict[str, Any]:
     db = SessionLocal()
     try:
@@ -83,7 +141,13 @@ def create_case(payload: CaseCreate) -> Dict[str, Any]:
         db.close()
 
 
-@router.get("")
+@router.get(
+    "",
+    response_model=CaseListResponse,
+    summary="List cases",
+    description="Retrieve all cases stored in the system.",
+    tags=["cases"],
+)
 def get_all_cases() -> Dict[str, Any]:
     db = SessionLocal()
     try:
@@ -112,7 +176,13 @@ def get_all_cases() -> Dict[str, Any]:
         db.close()
 
 
-@router.get("/{case_id}")
+@router.get(
+    "/{case_id}",
+    response_model=CaseDetailResponse,
+    summary="Get case details",
+    description="Retrieve a single case by its identifier.",
+    tags=["cases"],
+)
 def get_case(case_id: str) -> Dict[str, Any]:
     db = SessionLocal()
     try:
@@ -141,7 +211,13 @@ def get_case(case_id: str) -> Dict[str, Any]:
         db.close()
 
 
-@router.put("/{case_id}")
+@router.put(
+    "/{case_id}",
+    response_model=CaseUpdateResponse,
+    summary="Update a case",
+    description="Partially update an existing case record.",
+    tags=["cases"],
+)
 def update_case(case_id: str, payload: CaseUpdate) -> Dict[str, Any]:
     db = SessionLocal()
     try:
@@ -192,7 +268,13 @@ def update_case(case_id: str, payload: CaseUpdate) -> Dict[str, Any]:
         db.close()
 
 
-@router.delete("/{case_id}")
+@router.delete(
+    "/{case_id}",
+    response_model=CaseDeleteResponse,
+    summary="Delete a case",
+    description="Delete a case when no dependent records are linked to it.",
+    tags=["cases"],
+)
 def delete_case(case_id: str) -> Dict[str, Any]:
     db = SessionLocal()
     try:

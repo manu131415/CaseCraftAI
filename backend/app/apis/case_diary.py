@@ -1,5 +1,6 @@
 import uuid
-from typing import Any, Dict, Optional
+from datetime import datetime
+from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
@@ -21,7 +22,7 @@ class CaseDiaryCreate(BaseModel):
     action_type: str
     description: str
     location: Optional[str] = None
-    occurred_at: Optional[str] = None
+    occurred_at: Optional[datetime] = None
     related_evidence_id: Optional[str] = None
     related_document_id: Optional[str] = None
 
@@ -31,12 +32,56 @@ class CaseDiaryUpdate(BaseModel):
     action_type: Optional[str] = None
     description: Optional[str] = None
     location: Optional[str] = None
-    occurred_at: Optional[str] = None
+    occurred_at: Optional[datetime] = None
     related_evidence_id: Optional[str] = None
     related_document_id: Optional[str] = None
 
 
-@router.post("")
+class CaseDiaryEntry(BaseModel):
+    diary_id: str
+    case_id: str
+    officer_id: str
+    action_type: Optional[str] = None
+    description: Optional[str] = None
+    location: Optional[str] = None
+    occurred_at: Optional[str] = None
+    created_at: Optional[str] = None
+    related_evidence_id: Optional[str] = None
+    related_document_id: Optional[str] = None
+
+
+class DiaryCreateData(BaseModel):
+    diary_id: str
+    created_at: Optional[str] = None
+
+
+class DiaryCreateResponse(BaseModel):
+    success: bool
+    message: str
+    data: DiaryCreateData
+
+
+class DiaryListResponse(BaseModel):
+    diary_entries: List[CaseDiaryEntry]
+
+
+class DiaryDetailResponse(CaseDiaryEntry):
+    pass
+
+
+class DiaryUpdateResponse(BaseModel):
+    success: bool
+    message: str
+    data: DiaryCreateData
+
+
+@router.post(
+    "",
+    response_model=DiaryCreateResponse,
+    summary="Create a diary entry",
+    description="Record a new investigation diary entry for a case.",
+    tags=["case-diary"],
+)
 def create_diary_entry(payload: CaseDiaryCreate) -> Dict[str, Any]:
     db = SessionLocal()
     try:
@@ -95,7 +140,13 @@ def create_diary_entry(payload: CaseDiaryCreate) -> Dict[str, Any]:
         db.close()
 
 
-@router.get("")
+@router.get(
+    "",
+    response_model=DiaryListResponse,
+    summary="List diary entries",
+    description="Retrieve all diary entries recorded for investigations.",
+    tags=["case-diary"],
+)
 def get_all_diary_entries() -> Dict[str, Any]:
     db = SessionLocal()
     try:
@@ -123,7 +174,13 @@ def get_all_diary_entries() -> Dict[str, Any]:
         db.close()
 
 
-@router.get("/{diary_id}")
+@router.get(
+    "/{diary_id}",
+    response_model=DiaryDetailResponse,
+    summary="Get diary entry details",
+    description="Retrieve a single diary entry by its identifier.",
+    tags=["case-diary"],
+)
 def get_diary_entry(diary_id: str) -> Dict[str, Any]:
     db = SessionLocal()
     try:
@@ -151,7 +208,13 @@ def get_diary_entry(diary_id: str) -> Dict[str, Any]:
         db.close()
 
 
-@router.put("/{diary_id}")
+@router.put(
+    "/{diary_id}",
+    response_model=DiaryUpdateResponse,
+    summary="Update a diary entry",
+    description="Partially update an existing diary entry.",
+    tags=["case-diary"],
+)
 def update_diary_entry(diary_id: str, payload: CaseDiaryUpdate) -> Dict[str, Any]:
     db = SessionLocal()
     try:

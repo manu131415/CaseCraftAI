@@ -1,7 +1,7 @@
 import os
 import uuid
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 import cloudinary
 import cloudinary.uploader
@@ -49,6 +49,16 @@ class ComplaintSubmission(BaseModel):
     attachments: List[Dict[str, Any]] = []
 
 
+class ComplaintUpdate(BaseModel):
+    complainant_name: Optional[str] = None
+    phone: Optional[str] = None
+    email: Optional[str] = None
+    crime_type: Optional[str] = None
+    location: Optional[str] = None
+    description: Optional[str] = None
+    status: Optional[str] = None
+
+
 @router.post("/submit")
 def submit_complaint(payload: ComplaintSubmission) -> Dict[str, Any]:
     db = SessionLocal()
@@ -83,6 +93,129 @@ def submit_complaint(payload: ComplaintSubmission) -> Dict[str, Any]:
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=500, detail=f"Failed to submit complaint: {str(e)}")
+    finally:
+        db.close()
+
+
+@router.get("")
+def get_all_complaints() -> Dict[str, Any]:
+    db = SessionLocal()
+    try:
+        complaints = db.query(Complaint).all()
+        return {
+            "complaints": [
+                {
+                    "complaint_id": c.complaint_id,
+                    "complainant_name": c.complainant_name,
+                    "phone": c.phone,
+                    "email": c.email,
+                    "crime_type": c.crime_type,
+                    "location": c.location,
+                    "description": c.description,
+                    "status": c.status,
+                    "created_at": c.created_at.isoformat() if c.created_at else None
+                }
+                for c in complaints
+            ]
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to retrieve complaints: {str(e)}")
+    finally:
+        db.close()
+
+
+@router.get("/{complaint_id}")
+def get_complaint(complaint_id: str) -> Dict[str, Any]:
+    db = SessionLocal()
+    try:
+        complaint = db.query(Complaint).filter(Complaint.complaint_id == complaint_id).first()
+        if not complaint:
+            raise HTTPException(status_code=404, detail="Complaint not found")
+        
+        return {
+            "complaint_id": complaint.complaint_id,
+            "complainant_name": complaint.complainant_name,
+            "phone": complaint.phone,
+            "email": complaint.email,
+            "crime_type": complaint.crime_type,
+            "location": complaint.location,
+            "description": complaint.description,
+            "status": complaint.status,
+            "created_at": complaint.created_at.isoformat() if complaint.created_at else None
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to retrieve complaint: {str(e)}")
+    finally:
+        db.close()
+
+
+@router.put("/{complaint_id}")
+def update_complaint(complaint_id: str, payload: ComplaintUpdate) -> Dict[str, Any]:
+    db = SessionLocal()
+    try:
+        complaint = db.query(Complaint).filter(Complaint.complaint_id == complaint_id).first()
+        if not complaint:
+            raise HTTPException(status_code=404, detail="Complaint not found")
+        
+        # Update only provided fields
+        if payload.complainant_name is not None:
+            complaint.complainant_name = payload.complainant_name
+        if payload.phone is not None:
+            complaint.phone = payload.phone
+        if payload.email is not None:
+            complaint.email = payload.email
+        if payload.crime_type is not None:
+            complaint.crime_type = payload.crime_type
+        if payload.location is not None:
+            complaint.location = payload.location
+        if payload.description is not None:
+            complaint.description = payload.description
+        if payload.status is not None:
+            complaint.status = payload.status
+        
+        db.commit()
+        db.refresh(complaint)
+        
+        return {
+            "success": True,
+            "message": "Complaint updated successfully",
+            "data": {
+                "complaint_id": complaint.complaint_id,
+                "status": complaint.status,
+                "created_at": complaint.created_at.isoformat() if complaint.created_at else None
+            }
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Failed to update complaint: {str(e)}")
+    finally:
+        db.close()
+
+
+@router.delete("/{complaint_id}")
+def delete_complaint(complaint_id: str) -> Dict[str, Any]:
+    db = SessionLocal()
+    try:
+        complaint = db.query(Complaint).filter(Complaint.complaint_id == complaint_id).first()
+        if not complaint:
+            raise HTTPException(status_code=404, detail="Complaint not found")
+        
+        db.delete(complaint)
+        db.commit()
+        
+        return {
+            "success": True,
+            "message": "Complaint deleted successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Failed to delete complaint: {str(e)}")
     finally:
         db.close()
 

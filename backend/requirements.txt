@@ -1,1 +1,13 @@
 cloudinary
+fastapi
+uvicorn
+python-multipart
+python-dotenv
+pydantic
+pillow
+pdfplumber
+pytesseract
+pdf2image
+langdetect
+google-genai
+

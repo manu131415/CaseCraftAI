@@ -8,12 +8,14 @@ import cloudinary.uploader
 from fastapi import APIRouter, File, UploadFile
 from pydantic import BaseModel
 from dotenv import load_dotenv
+from urllib.parse import urlparse
 
 load_dotenv(Path(__file__).resolve().parents[2] / ".env")
 
 cloudinary_url = os.getenv("CLOUDINARY_URL")
 if cloudinary_url:
-    cloudinary.config(cloud_name=cloudinary_url.split("://")[1].split(":")[0], secure=True)
+    parsed = urlparse(cloudinary_url)
+    cloudinary.config(cloud_name=parsed.netloc.split("@")[-1], secure=True)
 else:
     cloudinary.config(
         cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME") or "dpla4pwiw",

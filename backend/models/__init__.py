@@ -1,3 +1,6 @@
 from .complaint import Complaint
-from .evidence import Evidence
+from .case import Case
 from .officer import Officer
+from .evidence import Evidence
+from .document import Document
+from .case_diary import CaseDiary

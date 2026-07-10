@@ -17,10 +17,16 @@ import json
 import logging
 import os
 import sys
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 import time
-from pathlib import Path
+
 from typing import Any, Dict, List, Optional, Union
+from dotenv import load_dotenv
+from pathlib import Path
+
+BACKEND_ROOT = Path(__file__).resolve().parents[3]
+load_dotenv(BACKEND_ROOT / ".env")
 
 # Third-party dependencies
 try:
@@ -35,15 +41,7 @@ except ImportError:
     print("Error: The 'pydantic' library is required. Install it using 'pip install pydantic'.", file=sys.stderr)
     raise RuntimeError("...")
 
-try:
-    import google.generativeai as genai
-    from google.api_core import exceptions as google_exceptions
-except ImportError:
-    print("Error: The 'google-generativeai' library is required. Install it using 'pip install google-generativeai'.", file=sys.stderr)
-except Exception as e:
-    import traceback
-    traceback.print_exc()
-    raise Exception(f"Unable to process image: {str(e)}")
+
 
 # Configure logging
 logger = logging.getLogger("CrimeOS.ImageService")
@@ -68,7 +66,7 @@ class DocumentMeta(BaseModel):
         description="Height of the image in pixels."
     )
     analysis_model: str = Field(
-        "gemini-2.5-flash", 
+        "gemini-2.0-flash-001", 
         description="The Gemini model used for the visual analysis."
     )
 
@@ -380,7 +378,7 @@ def process_image(image_path: Union[str, Path]) -> Dict[str, Any]:
     logger.info(f"Starting analysis for image: {image_path.name}")
     
     # 1. Read API Key (Requirement 2)
-    api_key = os.environ.get("GEMINI_API_KEY")
+    api_key = os.environ.get("GOOGLE_API_KEY")
     if not api_key:
         error_msg = "GEMINI_API_KEY environment variable is not set."
         logger.error(error_msg)
@@ -393,7 +391,7 @@ def process_image(image_path: Union[str, Path]) -> Dict[str, Any]:
         }
         
     # Configure generative AI library
-    genai.configure(api_key=api_key)
+    client = genai.Client(api_key=api_key)
     
     # 2. Open and load image using Pillow
     try:
@@ -422,44 +420,54 @@ def process_image(image_path: Union[str, Path]) -> Dict[str, Any]:
         }
 
     # 3. Request analysis from Gemini (Requirement 1)
+    # 3. Request analysis from Gemini
     try:
-        model = genai.GenerativeModel("gemini-2.5-flash")
         prompt = get_gemini_prompt()
-        
-        logger.info(f"Sending image to Gemini 2.5 Flash Vision API...")
-        
-        # Configure model parameters
-        generation_config = {
-            "response_mime_type": "application/json",
-        }
-        
-        response = model.generate_content(
-            [pil_image, prompt],
-            generation_config=generation_config
+
+        # Detect MIME type automatically
+        suffix = image_path.suffix.lower()
+
+        if suffix == ".png":
+            mime_type = "image/png"
+        elif suffix in [".jpg", ".jpeg"]:
+            mime_type = "image/jpeg"
+        elif suffix == ".webp":
+            mime_type = "image/webp"
+        else:
+            raise ValueError(f"Unsupported image format: {suffix}")
+
+        # Read image bytes
+        with open(image_path, "rb") as f:
+            image_bytes = f.read()
+
+        response = client.models.generate_content(
+            model=os.getenv("GEMINI_MODEL", "gemini-2.0-flash-001"),
+            contents=[
+                prompt,
+                types.Part.from_bytes(
+                    data=image_bytes,
+                    mime_type=mime_type
+                ),
+            ],
+            config=types.GenerateContentConfig(
+                response_mime_type="application/json",
+                temperature=0,
+            ),
         )
-        
+
         raw_text = response.text
+
         if not raw_text:
             raise ValueError("Gemini returned an empty response.")
-            
-    except google_exceptions.GoogleAPICallError as e:
+
+    except Exception as e:
         error_msg = f"Gemini API call failed: {str(e)}"
-        logger.error(error_msg)
+        logger.exception(error_msg)
         return {
             "error": {
                 "code": "GEMINI_API_CALL_ERROR",
                 "message": error_msg,
-                "source_file": str(image_path.name)
-            }
-        }
-    except Exception as e:
-        error_msg = f"Unexpected error during Gemini analysis: {str(e)}"
-        logger.error(error_msg)
-        return {
-            "error": {
-                "code": "ANALYSIS_PIPELINE_ERROR",
-                "message": error_msg,
-                "source_file": str(image_path.name)
+                "source_file": str(image_path.name),
             }
         }
         
@@ -672,8 +680,8 @@ def main() -> int:
     setup_logging(args.verbose)
     
     # Check GEMINI_API_KEY requirement early
-    if not os.environ.get("GEMINI_API_KEY"):
-        logger.error("GEMINI_API_KEY environment variable is not defined. Please set it before running.")
+    if not os.environ.get("GOOGLE_API_KEY"):
+        logger.error("GOOGLE_API_KEY environment variable is not defined. Please set it before running.")
         return 1
 
     input_path = Path(args.input_path)

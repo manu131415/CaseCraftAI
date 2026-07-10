@@ -40,6 +40,9 @@ from google.genai import types
 from dotenv import load_dotenv
 from pathlib import Path
 
+BASE_DIR = Path(__file__).resolve().parents[3]   # backend/
+load_dotenv(BASE_DIR / ".env")
+
 
 # .env lives at backend/.env, but this file is at backend/app/services/ingestion/
 # so walk up to the backend root explicitly rather than relying on CWD
@@ -226,7 +229,7 @@ Rules:
 """
 
 
-def llm_extract(text: str, model: str = "gemini-2.5-flash") -> Optional[Dict[str, Any]]:
+def llm_extract(text: str, model: str = "gemini-2.0-flash") -> Optional[Dict[str, Any]]:
     api_key = os.environ.get("GOOGLE_API_KEY")
     ...
     client = genai.Client(api_key=api_key)

@@ -202,7 +202,7 @@ export default function ComplaintWizard() {
       </div>
 
       <div className="mt-10">
-        {step === 1 && <FileUploader form={form} setForm={setForm} />}
+        {step === 1 && <FileUploader form={form} setForm={setForm} onExtractComplete={() => setStep(2)} />}
         {step === 2 && <ComplaintDetails form={form} setForm={setForm} />}
         {step === 3 && <VictimDetails victims={form.victims} setVictims={setVictims} />}
         {step === 4 && <SuspectDetails suspects={form.suspects} setSuspects={setSuspects} />}

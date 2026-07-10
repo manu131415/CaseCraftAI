@@ -17,6 +17,7 @@ import json
 import logging
 import os
 import sys
+import google.generativeai as genai
 import time
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
@@ -26,20 +27,23 @@ try:
     from PIL import Image
 except ImportError:
     print("Error: The 'Pillow' library is required. Install it using 'pip install Pillow'.", file=sys.stderr)
-    sys.exit(1)
+    raise RuntimeError("...")
 
 try:
     from pydantic import BaseModel, Field, ValidationError
 except ImportError:
     print("Error: The 'pydantic' library is required. Install it using 'pip install pydantic'.", file=sys.stderr)
-    sys.exit(1)
+    raise RuntimeError("...")
 
 try:
     import google.generativeai as genai
     from google.api_core import exceptions as google_exceptions
 except ImportError:
     print("Error: The 'google-generativeai' library is required. Install it using 'pip install google-generativeai'.", file=sys.stderr)
-    sys.exit(1)
+except Exception as e:
+    import traceback
+    traceback.print_exc()
+    raise Exception(f"Unable to process image: {str(e)}")
 
 # Configure logging
 logger = logging.getLogger("CrimeOS.ImageService")
@@ -398,10 +402,10 @@ def process_image(image_path: Union[str, Path]) -> Dict[str, Any]:
             
         with Image.open(image_path) as img:
             image_width, image_height = img.size
+            img.verify()
             # Convert to RGB to verify image validity and prevent palette/transparency issues
+        with Image.open(image_path) as img:
             pil_image = img.convert("RGB")
-            # Force load image data into memory before context manager exits
-            pil_image.verify()
             
         # Re-open for actual generation to ensure PIL object is clean
         pil_image = Image.open(image_path)

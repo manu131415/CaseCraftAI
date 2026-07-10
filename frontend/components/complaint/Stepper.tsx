@@ -59,7 +59,7 @@ ${currentStep>index
 
 </div>
 
-<p className="text-sm mt-2">
+<p className="text-base mt-2">
 
 {step}
 

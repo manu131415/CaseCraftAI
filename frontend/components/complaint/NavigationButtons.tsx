@@ -13,7 +13,7 @@ export default function NavigationButtons({ currentStep, totalSteps, onBack, onN
         type="button"
         onClick={onBack}
         disabled={currentStep === 1}
-        className="rounded-full border border-slate-300 px-5 py-3 text-sm font-medium text-slate-700 transition disabled:cursor-not-allowed disabled:opacity-50"
+        className="rounded-full border border-slate-300 px-5 py-3 text-base font-medium text-slate-700 transition disabled:cursor-not-allowed disabled:opacity-50"
       >
         Back
       </button>
@@ -22,7 +22,7 @@ export default function NavigationButtons({ currentStep, totalSteps, onBack, onN
         <button
           type="button"
           onClick={onSubmit}
-          className="rounded-full bg-blue-600 px-5 py-3 text-sm font-medium text-white transition hover:bg-blue-700"
+          className="rounded-full bg-blue-600 px-5 py-3 text-base font-medium text-white transition hover:bg-blue-700"
         >
           Submit complaint
         </button>
@@ -30,7 +30,7 @@ export default function NavigationButtons({ currentStep, totalSteps, onBack, onN
         <button
           type="button"
           onClick={onNext}
-          className="rounded-full bg-slate-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-slate-700"
+          className="rounded-full bg-slate-900 px-5 py-3 text-base font-medium text-white transition hover:bg-slate-700"
         >
           Continue
         </button>

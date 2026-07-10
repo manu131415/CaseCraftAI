@@ -4,6 +4,16 @@ export interface UploadedFile {
   type: string;
 }
 
+export interface PersonEntry {
+  name: string;
+  contact: string;
+  relationship?: string;
+  statement?: string;
+  type?: string;
+  description?: string;
+  status?: string;
+}
+
 export interface ComplaintData {
   complaintType: string;
   category: string;
@@ -14,17 +24,7 @@ export interface ComplaintData {
   description: string;
   aiSummary: string;
   officerNotes: string;
-  complainantName: string;
-  complainantContact: string;
-  complainantRelationship: string;
-  complainantStatement: string;
-  victimType: string;
-  victimName: string;
-  victimContact: string;
-  victimStatement: string;
-  suspectType: string;
-  suspectName: string;
-  suspectContact: string;
-  suspectDescription: string;
-  suspectStatus: string;
+  complainants: PersonEntry[];
+  victims: PersonEntry[];
+  suspects: PersonEntry[];
 }

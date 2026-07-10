@@ -7,36 +7,72 @@ interface Props {
 }
 
 export default function ReviewSubmission({ form }: Props) {
-  const fields = [
-    { label: "Complaint type", value: form.complaintType || "Not provided" },
-    { label: "Category", value: form.category || "Not provided" },
-    { label: "Priority", value: form.priority || "Not provided" },
-    { label: "Location", value: form.location || "Not provided" },
-    { label: "Complainant", value: form.complainantName || "Not provided" },
-    { label: "Victim", value: form.victimName || "Not provided" },
-    { label: "Suspect", value: form.suspectName || "Not provided" },
-  ];
-
   return (
     <div className="space-y-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
       <div>
-        <p className="text-sm font-medium text-blue-600">Final review</p>
+        <p className="text-base font-medium text-blue-600">Final review</p>
         <h2 className="mt-1 text-2xl font-semibold text-slate-900">Review and confirm submission</h2>
-        <p className="mt-2 text-sm text-slate-500">
-          Check the complaint details before submitting them to the registry.
+        <p className="mt-2 text-base text-slate-500">
+          Check all complaint, complainant, victim, and suspect details before submitting.
         </p>
       </div>
 
       <div className="grid gap-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 md:grid-cols-2">
-        {fields.map((field) => (
-          <div key={field.label}>
-            <p className="text-sm font-medium text-slate-500">{field.label}</p>
-            <p className="mt-1 font-semibold text-slate-900">{field.value}</p>
+        <div>
+        <p className="text-base font-medium text-slate-500">Complaint type</p>
+          <p className="mt-1 font-semibold text-slate-900">{form.complaintType || "Not provided"}</p>
+        </div>
+        <div>
+        <p className="text-base font-medium text-slate-500">Category</p>
+          <p className="mt-1 font-semibold text-slate-900">{form.category || "Not provided"}</p>
+        </div>
+        <div>
+        <p className="text-base font-medium text-slate-500">Priority</p>
+          <p className="mt-1 font-semibold text-slate-900">{form.priority || "Not provided"}</p>
+        </div>
+        <div>
+        <p className="text-base font-medium text-slate-500">Location</p>
+          <p className="mt-1 font-semibold text-slate-900">{form.location || "Not provided"}</p>
+        </div>
+      </div>
+
+      <div className="space-y-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+        <p className="text-base font-semibold text-slate-800">Complainants</p>
+        {form.complainants.map((entry, index) => (
+          <div key={index} className="rounded-2xl bg-white p-4 shadow-sm">
+            <p className="text-base font-semibold text-slate-900">Complainant {index + 1}</p>
+            <p className="text-base text-slate-600">{entry.name || "No name"}</p>
+            <p className="text-base text-slate-500">Contact: {entry.contact || "Not provided"}</p>
+            <p className="text-base text-slate-500">Relationship: {entry.relationship || "Not provided"}</p>
           </div>
         ))}
       </div>
 
-      <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-700">
+      <div className="space-y-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+        <p className="text-base font-semibold text-slate-800">Victims</p>
+        {form.victims.map((entry, index) => (
+          <div key={index} className="rounded-2xl bg-white p-4 shadow-sm">
+            <p className="text-base font-semibold text-slate-900">Victim {index + 1}</p>
+            <p className="text-base text-slate-600">{entry.name || "No name"}</p>
+            <p className="text-base text-slate-500">Type: {entry.type || "Not provided"}</p>
+            <p className="text-base text-slate-500">Contact: {entry.contact || "Not provided"}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="space-y-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+        <p className="text-base font-semibold text-slate-800">Suspects</p>
+        {form.suspects.map((entry, index) => (
+          <div key={index} className="rounded-2xl bg-white p-4 shadow-sm">
+            <p className="text-base font-semibold text-slate-900">Suspect {index + 1}</p>
+            <p className="text-base text-slate-600">{entry.name || "No name"}</p>
+            <p className="text-base text-slate-500">Type: {entry.type || "Not provided"}</p>
+            <p className="text-base text-slate-500">Status: {entry.status || "Not provided"}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-base text-emerald-700">
         <p className="font-semibold">Submission preview</p>
         <p className="mt-2">
           Your complaint will be saved with the current incident summary, attached evidence, and investigator notes.

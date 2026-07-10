@@ -22,19 +22,31 @@ const initialForm: ComplaintData = {
   description: "",
   aiSummary: "",
   officerNotes: "",
-  complainantName: "",
-  complainantContact: "",
-  complainantRelationship: "",
-  complainantStatement: "",
-  victimType: "",
-  victimName: "",
-  victimContact: "",
-  victimStatement: "",
-  suspectType: "",
-  suspectName: "",
-  suspectContact: "",
-  suspectDescription: "",
-  suspectStatus: "",
+  complainants: [
+    {
+      name: "",
+      contact: "",
+      relationship: "",
+      statement: "",
+    },
+  ],
+  victims: [
+    {
+      type: "",
+      name: "",
+      contact: "",
+      statement: "",
+    },
+  ],
+  suspects: [
+    {
+      type: "",
+      name: "",
+      contact: "",
+      description: "",
+      status: "",
+    },
+  ],
 };
 
 export default function ComplaintWizard() {
@@ -56,6 +68,51 @@ export default function ComplaintWizard() {
     setSubmitted(true);
   }
 
+  function addVictim() {
+    setForm((prev) => ({
+      ...prev,
+      victims: [
+        ...prev.victims,
+        { type: "", name: "", contact: "", statement: "" },
+      ],
+    }));
+    setStep(3);
+  }
+
+  function addSuspect() {
+    setForm((prev) => ({
+      ...prev,
+      suspects: [
+        ...prev.suspects,
+        { type: "", name: "", contact: "", description: "", status: "" },
+      ],
+    }));
+    setStep(4);
+  }
+
+  function addComplainant() {
+    setForm((prev) => ({
+      ...prev,
+      complainants: [
+        ...prev.complainants,
+        { name: "", contact: "", relationship: "", statement: "" },
+      ],
+    }));
+    setStep(5);
+  }
+
+  function setVictims(victims: ComplaintData["victims"]) {
+    setForm((prev) => ({ ...prev, victims }));
+  }
+
+  function setSuspects(suspects: ComplaintData["suspects"]) {
+    setForm((prev) => ({ ...prev, suspects }));
+  }
+
+  function setComplainants(complainants: ComplaintData["complainants"]) {
+    setForm((prev) => ({ ...prev, complainants }));
+  }
+
   if (submitted) {
     return (
       <div className="mx-auto flex max-w-4xl flex-col items-center justify-center rounded-[32px] border border-emerald-200 bg-white p-10 text-center shadow-xl">
@@ -63,7 +120,7 @@ export default function ComplaintWizard() {
           <CheckCircle2 className="h-10 w-10" />
         </div>
         <h1 className="mt-6 text-3xl font-semibold text-slate-900">Complaint registered successfully</h1>
-        <p className="mt-3 max-w-xl text-sm text-slate-600">
+        <p className="mt-3 max-w-xl text-base text-slate-600">
           The complaint has been saved to the registry and is ready for review by the assigned team.
         </p>
         <button
@@ -72,7 +129,7 @@ export default function ComplaintWizard() {
             setStep(1);
             setForm(initialForm);
           }}
-          className="mt-8 rounded-full bg-blue-600 px-5 py-3 text-sm font-medium text-white transition hover:bg-blue-700"
+          className="mt-8 rounded-full bg-blue-600 px-5 py-3 text-base font-medium text-white transition hover:bg-blue-700"
         >
           Register another complaint
         </button>
@@ -81,17 +138,54 @@ export default function ComplaintWizard() {
   }
 
   return (
-    <div className="mx-auto max-w-6xl rounded-[32px] border border-slate-200 bg-white/90 p-6 shadow-[0_25px_80px_rgba(15,23,42,0.08)] backdrop-blur sm:p-8 lg:p-10">
-      <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
-        <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-blue-600">Complaint register</p>
+    <div className="w-full max-w-full rounded-[32px] border border-slate-200 bg-white/90 p-6 text-base shadow-[0_25px_80px_rgba(15,23,42,0.08)] backdrop-blur sm:p-8 lg:p-10">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div className="max-w-3xl">
+          <p className="text-base font-semibold uppercase tracking-[0.3em] text-blue-600">Complaint register</p>
           <h1 className="mt-2 text-3xl font-semibold text-slate-900">Register a new complaint</h1>
-          <p className="mt-3 max-w-2xl text-sm text-slate-600">
+          <p className="mt-3 text-base text-slate-600">
             Follow the guided steps below to capture evidence, complainant information, and case notes in one place.
           </p>
         </div>
-        <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
+
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={addVictim}
+            className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-base text-slate-700 transition hover:border-blue-200 hover:text-blue-700"
+          >
+            Add victim
+          </button>
+          <button
+            type="button"
+            onClick={addSuspect}
+            className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-base text-slate-700 transition hover:border-blue-200 hover:text-blue-700"
+          >
+            Add suspect
+          </button>
+          <button
+            type="button"
+            onClick={addComplainant}
+            className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-base text-slate-700 transition hover:border-blue-200 hover:text-blue-700"
+          >
+            Add complainant
+          </button>
+          <button
+            type="button"
+            onClick={() => setStep(2)}
+            className="rounded-full border border-blue-600 bg-blue-600 px-4 py-2 text-base font-semibold text-white transition hover:bg-blue-700"
+          >
+            Complaint details
+          </button>
+        </div>
+      </div>
+
+      <div className="mt-6 flex items-center justify-between gap-4">
+        <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-base text-slate-600">
           Step {step} of {totalSteps}
+        </div>
+        <div className="text-base text-slate-500">
+          Tip: Use the quick buttons to jump to the relevant section instantly.
         </div>
       </div>
 
@@ -102,9 +196,9 @@ export default function ComplaintWizard() {
       <div className="mt-10">
         {step === 1 && <FileUploader />}
         {step === 2 && <ComplaintDetails form={form} setForm={setForm} />}
-        {step === 3 && <VictimDetails form={form} setForm={setForm} />}
-        {step === 4 && <SuspectDetails form={form} setForm={setForm} />}
-        {step === 5 && <ComplainantDetails form={form} setForm={setForm} />}
+        {step === 3 && <VictimDetails victims={form.victims} setVictims={setVictims} />}
+        {step === 4 && <SuspectDetails suspects={form.suspects} setSuspects={setSuspects} />}
+        {step === 5 && <ComplainantDetails complainants={form.complainants} setComplainants={setComplainants} />}
         {step === 6 && <ReviewSubmission form={form} />}
       </div>
 

@@ -17,15 +17,15 @@ export default function ComplaintDetails({ form, setForm }: Props) {
   return (
     <div className="space-y-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
       <div>
-        <p className="text-sm font-medium text-blue-600">Step 2</p>
+        <p className="text-base font-medium text-blue-600">Step 2</p>
         <h2 className="mt-1 text-2xl font-semibold text-slate-900">Complaint information</h2>
-        <p className="mt-2 text-sm text-slate-500">
+        <p className="mt-2 text-base text-slate-500">
           Enter the core facts of the complaint so it can be triaged properly.
         </p>
       </div>
 
       <div>
-        <label className="text-sm font-medium text-slate-700">Complaint type</label>
+        <label className="text-base font-medium text-slate-700">Complaint type</label>
         <input
           name="complaintType"
           value={form.complaintType}
@@ -37,7 +37,7 @@ export default function ComplaintDetails({ form, setForm }: Props) {
 
       <div className="grid gap-6 md:grid-cols-2">
         <div>
-          <label className="text-sm font-medium text-slate-700">Category</label>
+          <label className="text-base font-medium text-slate-700">Category</label>
           <select
             name="category"
             value={form.category}
@@ -53,7 +53,7 @@ export default function ComplaintDetails({ form, setForm }: Props) {
           </select>
         </div>
         <div>
-          <label className="text-sm font-medium text-slate-700">Priority</label>
+          <label className="text-base font-medium text-slate-700">Priority</label>
           <select
             name="priority"
             value={form.priority}
@@ -70,7 +70,7 @@ export default function ComplaintDetails({ form, setForm }: Props) {
 
       <div className="grid gap-6 md:grid-cols-2">
         <div>
-          <label className="text-sm font-medium text-slate-700">Incident date</label>
+          <label className="text-base font-medium text-slate-700">Incident date</label>
           <input
             type="date"
             name="incidentDate"
@@ -80,7 +80,7 @@ export default function ComplaintDetails({ form, setForm }: Props) {
           />
         </div>
         <div>
-          <label className="text-sm font-medium text-slate-700">Incident time</label>
+          <label className="text-base font-medium text-slate-700">Incident time</label>
           <input
             type="time"
             name="incidentTime"
@@ -92,7 +92,7 @@ export default function ComplaintDetails({ form, setForm }: Props) {
       </div>
 
       <div>
-        <label className="text-sm font-medium text-slate-700">Incident location</label>
+        <label className="text-base font-medium text-slate-700">Incident location</label>
         <input
           name="location"
           value={form.location}
@@ -103,7 +103,7 @@ export default function ComplaintDetails({ form, setForm }: Props) {
       </div>
 
       <div>
-        <label className="text-sm font-medium text-slate-700">Incident description</label>
+        <label className="text-base font-medium text-slate-700">Incident description</label>
         <textarea
           rows={6}
           name="description"
@@ -115,7 +115,7 @@ export default function ComplaintDetails({ form, setForm }: Props) {
       </div>
 
       <div>
-        <label className="text-sm font-medium text-slate-700">AI summary</label>
+        <label className="text-base font-medium text-slate-700">AI summary</label>
         <textarea
           rows={4}
           name="aiSummary"
@@ -127,7 +127,7 @@ export default function ComplaintDetails({ form, setForm }: Props) {
       </div>
 
       <div>
-        <label className="text-sm font-medium text-slate-700">Officer notes</label>
+        <label className="text-base font-medium text-slate-700">Officer notes</label>
         <textarea
           rows={3}
           name="officerNotes"

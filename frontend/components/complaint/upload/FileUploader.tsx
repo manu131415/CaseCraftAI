@@ -97,7 +97,7 @@ export default function FileUploader() {
             Upload Complaint Documents
           </h2>
 
-          <p className="text-gray-500 mt-2 text-center">
+          <p className="text-base text-gray-500 mt-2 text-center">
             Drag & Drop PDF, Images, Audio, Video or Documents
           </p>
 
@@ -108,7 +108,7 @@ export default function FileUploader() {
             Browse Files
           </button>
 
-          <p className="text-sm text-gray-400 mt-3">
+          <p className="text-base text-gray-400 mt-3">
             Supports PDF • JPG • PNG • MP3 • MP4 • DOCX
           </p>
         </div>
@@ -135,14 +135,14 @@ export default function FileUploader() {
                   <div>
                     <p className="font-medium">{item.file.name}</p>
 
-                    <p className="text-sm text-gray-500">
+                    <p className="text-base text-gray-500">
                       {(item.file.size / 1024 / 1024).toFixed(2)} MB
                     </p>
                   </div>
                 </div>
 
                 <div className="flex gap-6 items-center">
-                  <span className="text-sm bg-gray-100 px-3 py-1 rounded-full">
+                  <span className="text-base bg-gray-100 px-3 py-1 rounded-full">
                     {item.category}
                   </span>
 

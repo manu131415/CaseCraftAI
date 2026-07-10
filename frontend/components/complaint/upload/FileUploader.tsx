@@ -15,156 +15,246 @@ import {
   CheckCircle2,
 } from "lucide-react";
 
-import { ComplaintData, AttachmentMeta } from "../types";
+import {
+  ComplaintData,
+  AttachmentMeta,
+} from "../types";
 
 interface UploadedFile {
   id: number;
   file: File;
-  category: string;
 }
 
 interface Props {
   form: ComplaintData;
-  setForm: React.Dispatch<React.SetStateAction<ComplaintData>>;
+  setForm: React.Dispatch<
+    React.SetStateAction<ComplaintData>
+  >;
+  onExtractComplete?: () => void;
 }
 
-export default function FileUploader({ form, setForm }: Props) {
+export default function FileUploader({
+  form,
+  setForm,
+  onExtractComplete,
+}: Props) {
+
   const [files, setFiles] = useState<UploadedFile[]>([]);
+
   const [loading, setLoading] = useState(false);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
+
     const uploaded = acceptedFiles.map((file) => ({
       id: Date.now() + Math.random(),
       file,
-      category: "Unknown",
     }));
 
     setFiles((prev) => [...prev, ...uploaded]);
+
   }, []);
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  const {
+
+    getRootProps,
+
+    getInputProps,
+
+    isDragActive,
+
+  } = useDropzone({
+
     onDrop,
+
     multiple: true,
+
     accept: {
+
       "application/pdf": [".pdf"],
+
       "image/*": [],
+
       "audio/*": [],
+
       "video/*": [],
+
+      "application/msword": [".doc"],
+
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
         [".docx"],
-      "application/msword": [".doc"],
+
       "text/plain": [".txt"],
+
     },
+
   });
 
   function removeFile(id: number) {
-    setFiles(files.filter((file) => file.id !== id));
-  }
 
-  async function extractDocuments() {
-    if (files.length === 0) {
-      alert("Please upload at least one document.");
-      return;
-    }
+    setFiles((prev) =>
+      prev.filter((f) => f.id !== id)
+    );
 
-    setLoading(true);
-
-    try {
-      const results = await Promise.all(
-        files.map(async (item) => {
-          const formData = new FormData();
-          formData.append("file", item.file);
-          const response = await axios.post("http://localhost:8000/api/complaints/upload", formData, {
-            headers: { "Content-Type": "multipart/form-data" },
-          });
-          const extraction = response.data.extraction || {};
-          const summary = extraction?.text || extraction?.transcript || extraction?.message || "";
-          return {
-            id: item.id.toString(),
-            fileName: item.file.name,
-            fileType: item.file.type || "document",
-            documentUrl: response.data.cloudinaryUrl,
-            extractedText: summary,
-            summary: summary.slice(0, 220),
-          } as AttachmentMeta;
-        })
-      );
-
-      setForm((prev) => {
-        const mergedAttachments = [...(prev.attachments || []), ...results];
-        const firstExtraction = results[0] as AttachmentMeta | undefined;
-        const extractionDetails = (firstExtraction?.extractedText || "") as string;
-        const parsed = results.reduce<Record<string, unknown>>((acc, result) => {
-          const value = result.extractedText || "";
-          if (typeof value === "string" && value) {
-            acc.summary = [acc.summary, value].filter(Boolean).join("\n\n");
-          }
-          return acc;
-        }, {});
-
-        const incidentDescription = extractionDetails || parsed.summary || "";
-        const incidentLocation = extractionDetails.match(/location[:\s-]+([^\n]+)/i)?.[1]?.trim() || "";
-        const complainantName = extractionDetails.match(/complainant[:\s-]+([^\n]+)/i)?.[1]?.trim() || "";
-        const phoneMatch = extractionDetails.match(/(?:phone|contact)[:\s-]+([^\n]+)/i)?.[1]?.trim() || "";
-        const accusedName = extractionDetails.match(/accused[:\s-]+([^\n]+)/i)?.[1]?.trim() || "";
-
-        const nextComplainants = prev.complainants?.length ? [...prev.complainants] : [{ name: "", contact: "", relationship: "", statement: "" }];
-        if (nextComplainants[0]) {
-          nextComplainants[0] = {
-            ...nextComplainants[0],
-            name: nextComplainants[0].name || complainantName,
-            contact: nextComplainants[0].contact || phoneMatch,
-            statement: nextComplainants[0].statement || incidentDescription,
-          };
-        }
-
-        const nextVictims = prev.victims?.length ? [...prev.victims] : [{ type: "", name: "", contact: "", statement: "" }];
-        if (nextVictims[0]) {
-          nextVictims[0] = {
-            ...nextVictims[0],
-            name: nextVictims[0].name || accusedName || complainantName,
-            contact: nextVictims[0].contact || phoneMatch,
-            statement: nextVictims[0].statement || incidentDescription,
-          };
-        }
-
-        const nextSuspects = prev.suspects?.length ? [...prev.suspects] : [{ type: "", name: "", contact: "", description: "", status: "" }];
-        if (nextSuspects[0]) {
-          nextSuspects[0] = {
-            ...nextSuspects[0],
-            name: nextSuspects[0].name || accusedName || "",
-            contact: nextSuspects[0].contact || phoneMatch,
-            description: nextSuspects[0].description || incidentDescription,
-          };
-        }
-
-        return {
-          ...prev,
-          attachments: mergedAttachments,
-          description: prev.description || incidentDescription,
-          aiSummary: prev.aiSummary || incidentDescription,
-          location: prev.location || incidentLocation,
-          complainants: nextComplainants,
-          victims: nextVictims,
-          suspects: nextSuspects,
-        };
-      });
-      setFiles([]);
-      alert("AI Extraction Completed");
-    } catch (error) {
-      console.error(error);
-      alert("Extraction failed. Check the backend logs.");
-    } finally {
-      setLoading(false);
-    }
   }
 
   function getIcon(type: string) {
-    if (type.startsWith("image")) return <ImageIcon className="text-blue-600" />;
-    if (type.startsWith("audio")) return <Music className="text-green-600" />;
-    if (type.startsWith("video")) return <Video className="text-red-600" />;
+
+    if (type.startsWith("image"))
+      return <ImageIcon className="text-blue-600" />;
+
+    if (type.startsWith("audio"))
+      return <Music className="text-green-600" />;
+
+    if (type.startsWith("video"))
+      return <Video className="text-red-600" />;
+
     return <FileText className="text-orange-500" />;
   }
+
+  async function extractDocuments() {
+  if (files.length === 0) {
+    alert("Please upload at least one document.");
+    return;
+  }
+
+  setLoading(true);
+
+  try {
+    const attachments: AttachmentMeta[] = [];
+
+    // This will contain the merged extraction from all uploaded files
+    const mergedExtraction: Partial<ComplaintData> = {
+      complainants: [],
+      victims: [],
+      suspects: [],
+    };
+
+    for (const item of files) {
+      const formData = new FormData();
+
+      formData.append("file", item.file);
+
+      const response = await axios.post(
+        "http://localhost:8000/api/complaints/upload",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      const extraction = response.data.extraction ?? {};
+
+      attachments.push({
+        id: String(item.id),
+        fileName: item.file.name,
+        fileType: item.file.type,
+        documentUrl: response.data.cloudinaryUrl,
+        extractedText: extraction.description ?? "",
+        summary: extraction.aiSummary ?? "",
+      });
+
+      // ---------- Merge simple fields ----------
+
+      if (!mergedExtraction.complaintType)
+        mergedExtraction.complaintType = extraction.complaintType;
+
+      if (!mergedExtraction.category)
+        mergedExtraction.category = extraction.category;
+
+      if (!mergedExtraction.priority)
+        mergedExtraction.priority = extraction.priority;
+
+      if (!mergedExtraction.incidentDate)
+        mergedExtraction.incidentDate = extraction.incidentDate;
+
+      if (!mergedExtraction.incidentTime)
+        mergedExtraction.incidentTime = extraction.incidentTime;
+
+      if (!mergedExtraction.location)
+        mergedExtraction.location = extraction.location;
+
+      if (!mergedExtraction.description)
+        mergedExtraction.description = extraction.description;
+
+      if (!mergedExtraction.aiSummary)
+        mergedExtraction.aiSummary = extraction.aiSummary;
+
+      if (!mergedExtraction.officerNotes)
+        mergedExtraction.officerNotes = extraction.officerNotes;
+
+      // ---------- Merge Arrays ----------
+
+      if (extraction.complainants?.length) {
+        mergedExtraction.complainants = [
+          ...(mergedExtraction.complainants || []),
+          ...extraction.complainants,
+        ];
+      }
+
+      if (extraction.victims?.length) {
+        mergedExtraction.victims = [
+          ...(mergedExtraction.victims || []),
+          ...extraction.victims,
+        ];
+      }
+
+      if (extraction.suspects?.length) {
+        mergedExtraction.suspects = [
+          ...(mergedExtraction.suspects || []),
+          ...extraction.suspects,
+        ];
+      }
+
+      console.log("Extraction", extraction);
+
+      console.log("Raw AI", response.data.raw_ai);
+    }
+
+    setForm((prev) => ({
+      ...prev,
+
+      ...mergedExtraction,
+
+      complainants:
+        mergedExtraction.complainants?.length
+          ? mergedExtraction.complainants
+          : prev.complainants,
+
+      victims:
+        mergedExtraction.victims?.length
+          ? mergedExtraction.victims
+          : prev.victims,
+
+      suspects:
+        mergedExtraction.suspects?.length
+          ? mergedExtraction.suspects
+          : prev.suspects,
+
+      attachments: [
+        ...prev.attachments,
+        ...attachments,
+      ],
+    }));
+
+    setFiles([]);
+
+    alert("AI Extraction Completed");
+
+    if (onExtractComplete) {
+      onExtractComplete();
+    }
+  } catch (error) {
+    console.error(error);
+
+    alert("Document extraction failed.");
+  } finally {
+    setLoading(false);
+  }
+}
+
+  
 
   return (
     <div className="space-y-8">
@@ -232,9 +322,7 @@ export default function FileUploader({ form, setForm }: Props) {
                 </div>
 
                 <div className="flex gap-6 items-center">
-                  <span className="text-base bg-gray-100 px-3 py-1 rounded-full">
-                    {item.category}
-                  </span>
+                  
 
                   <button
                     onClick={() => removeFile(item.id)}

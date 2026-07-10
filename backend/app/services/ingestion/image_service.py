@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
- Image Ingestion Service
+CrimeOS Image Ingestion Service
 ===============================
 This module provides a production-ready service and command-line interface (CLI)
 for extracting structured crime investigation information from images.
@@ -10,10 +10,6 @@ analyze images and extract specific details (people, vehicles, weapons, evidence
 into a validated JSON structure defined by Pydantic models.
 
 Supported formats: JPG, JPEG, PNG, WEBP.
-
-HOW TO RUN:
-python image_service.py capture.PNG 
-image in same folder
 """
 
 import argparse

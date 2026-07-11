@@ -52,11 +52,9 @@ def download_document(document_id: str):
             raise HTTPException(status_code=404, detail="Document not found")
         
         # Resolve full path
-        # If relative (e.g. generated/name.docx), make it absolute
         file_path = doc['file_path']
         if not os.path.isabs(file_path):
-            # assume relative to CaseCraftAI root
-            base_dir = r"c:\Users\vyomi\OneDrive\Desktop\CaseCraftAI"
+            base_dir = r"c:\Users\vyomi\OneDrive\Desktop\CaseCraftAI\backend"
             file_path = os.path.join(base_dir, file_path)
             
         if not os.path.exists(file_path):
@@ -75,3 +73,49 @@ def download_document(document_id: str):
     finally:
         cursor.close()
         conn.close()
+
+@router.get("/cases")
+def get_cases():
+    conn = psycopg2.connect(DATABASE_URL, cursor_factory=RealDictCursor)
+    cursor = conn.cursor()
+    try:
+        cursor.execute("SELECT case_id, case_number, title, police_station, current_stage FROM cases ORDER BY created_at DESC;")
+        return cursor.fetchall()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        cursor.close()
+        conn.close()
+
+@router.get("/cases/{case_id}")
+def get_case_details(case_id: str):
+    conn = psycopg2.connect(DATABASE_URL, cursor_factory=RealDictCursor)
+    cursor = conn.cursor()
+    try:
+        # Fetch Case
+        cursor.execute("SELECT * FROM cases WHERE case_id = %s;", (case_id,))
+        case = cursor.fetchone()
+        if not case:
+            raise HTTPException(status_code=404, detail="Case not found")
+            
+        # Fetch Officer
+        officer = None
+        if case.get('assigned_officer_id'):
+            cursor.execute("SELECT * FROM officers WHERE officer_id = %s;", (case['assigned_officer_id'],))
+            officer = cursor.fetchone()
+            
+        # Fetch Accused
+        cursor.execute("SELECT accused_id, full_name, alias, custody_status FROM accused WHERE case_id = %s ORDER BY created_at ASC;", (case_id,))
+        accused_list = cursor.fetchall()
+        
+        return {
+            "case": case,
+            "officer": officer,
+            "accused": accused_list
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        cursor.close()
+        conn.close()
+

@@ -25,6 +25,8 @@ class CaseDiaryCreate(BaseModel):
     occurred_at: Optional[datetime] = None
     related_evidence_id: Optional[str] = None
     related_document_id: Optional[str] = None
+    remarks: Optional[str] = None
+    next_action: Optional[str] = None
 
 
 class CaseDiaryUpdate(BaseModel):
@@ -35,6 +37,8 @@ class CaseDiaryUpdate(BaseModel):
     occurred_at: Optional[datetime] = None
     related_evidence_id: Optional[str] = None
     related_document_id: Optional[str] = None
+    remarks: Optional[str] = None
+    next_action: Optional[str] = None
 
 
 class CaseDiaryEntry(BaseModel):
@@ -48,6 +52,8 @@ class CaseDiaryEntry(BaseModel):
     created_at: Optional[str] = None
     related_evidence_id: Optional[str] = None
     related_document_id: Optional[str] = None
+    remarks: Optional[str] = None
+    next_action: Optional[str] = None
 
 
 class DiaryCreateData(BaseModel):
@@ -116,7 +122,9 @@ def create_diary_entry(payload: CaseDiaryCreate) -> Dict[str, Any]:
             location=payload.location,
             occurred_at=payload.occurred_at,
             related_evidence_id=payload.related_evidence_id,
-            related_document_id=payload.related_document_id
+            related_document_id=payload.related_document_id,
+            remarks=payload.remarks,
+            next_action=payload.next_action
         )
         
         db.add(diary_entry)
@@ -163,7 +171,9 @@ def get_all_diary_entries() -> Dict[str, Any]:
                     "occurred_at": e.occurred_at.isoformat() if e.occurred_at else None,
                     "created_at": e.created_at.isoformat() if e.created_at else None,
                     "related_evidence_id": e.related_evidence_id,
-                    "related_document_id": e.related_document_id
+                    "related_document_id": e.related_document_id,
+                    "remarks": e.remarks,
+                    "next_action": e.next_action
                 }
                 for e in entries
             ]
@@ -198,7 +208,9 @@ def get_diary_entry(diary_id: str) -> Dict[str, Any]:
             "occurred_at": entry.occurred_at.isoformat() if entry.occurred_at else None,
             "created_at": entry.created_at.isoformat() if entry.created_at else None,
             "related_evidence_id": entry.related_evidence_id,
-            "related_document_id": entry.related_document_id
+            "related_document_id": entry.related_document_id,
+            "remarks": entry.remarks,
+            "next_action": entry.next_action
         }
     except HTTPException:
         raise
@@ -255,6 +267,10 @@ def update_diary_entry(diary_id: str, payload: CaseDiaryUpdate) -> Dict[str, Any
             entry.related_evidence_id = payload.related_evidence_id
         if payload.related_document_id is not None:
             entry.related_document_id = payload.related_document_id
+        if payload.remarks is not None:
+            entry.remarks = payload.remarks
+        if payload.next_action is not None:
+            entry.next_action = payload.next_action
         
         db.commit()
         db.refresh(entry)

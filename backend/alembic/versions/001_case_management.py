@@ -19,13 +19,54 @@ depends_on = None
 
 def upgrade() -> None:
     op.create_table(
+        'complaints',
+        sa.Column('complaint_id', sa.String(), nullable=False),
+        sa.Column('complainant_name', sa.String(), nullable=True),
+        sa.Column('phone', sa.String(), nullable=True),
+        sa.Column('email', sa.String(), nullable=True),
+        sa.Column('crime_type', sa.String(), nullable=True),
+        sa.Column('location', sa.Text(), nullable=True),
+        sa.Column('description', sa.Text(), nullable=True),
+        sa.Column('status', sa.String(), server_default='Pending', nullable=True),
+        sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
+        sa.PrimaryKeyConstraint('complaint_id'),
+    )
+
+    op.create_table(
+        'officers',
+        sa.Column('officer_id', sa.String(), nullable=False),
+        sa.Column('badge_number', sa.String(), nullable=True),
+        sa.Column('name', sa.String(), nullable=True),
+        sa.Column('rank', sa.String(), nullable=True),
+        sa.Column('station', sa.String(), nullable=True),
+        sa.PrimaryKeyConstraint('officer_id'),
+    )
+
+    op.create_table(
+        'documents',
+        sa.Column('document_id', sa.String(), nullable=False),
+        sa.Column('case_id', sa.String(), nullable=True),
+        sa.Column('document_type', sa.String(), nullable=True),
+        sa.Column('title', sa.String(), nullable=True),
+        sa.Column('file_path', sa.String(), nullable=True),
+        sa.Column('status', sa.String(), server_default='Draft', nullable=True),
+        sa.Column('generated_by', sa.String(), nullable=True),
+        sa.Column('generated_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
+        sa.Column('version', sa.String(), nullable=True),
+        sa.Column('document_metadata', sa.Text(), nullable=True),
+        sa.PrimaryKeyConstraint('document_id'),
+        sa.ForeignKeyConstraint(['case_id'], ['cases.case_id']),
+        sa.ForeignKeyConstraint(['generated_by'], ['officers.officer_id']),
+    )
+
+    op.create_table(
         'cases',
         sa.Column('case_id', sa.String(), nullable=False),
         sa.Column('complaint_id', sa.String(), nullable=True),
         sa.Column('assigned_officer_id', sa.String(), nullable=True),
         sa.Column('case_number', sa.String(), nullable=True),
         sa.Column('title', sa.String(), nullable=True),
-        sa.Column('status', sa.String(), nullable=True),
+        sa.Column('status', sa.String(), server_default='Open', nullable=True),
         sa.Column('priority', sa.String(), nullable=True),
         sa.Column('description', sa.Text(), nullable=True),
         sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
@@ -70,3 +111,6 @@ def downgrade() -> None:
     op.drop_table('case_diaries')
     op.drop_table('evidences')
     op.drop_table('cases')
+    op.drop_table('documents')
+    op.drop_table('officers')
+    op.drop_table('complaints')

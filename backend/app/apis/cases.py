@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime
+from datetime import datetime, date
 from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, HTTPException
@@ -24,6 +24,19 @@ class CaseCreate(BaseModel):
     title: Optional[str] = None
     priority: Optional[str] = None
     description: Optional[str] = None
+    district: Optional[str] = None
+    police_station: Optional[str] = None
+    fir_no: Optional[str] = None
+    fir_year: Optional[int] = None
+    fir_date: Optional[date] = None
+    incident_datetime: Optional[datetime] = None
+    original_chargesheet_no: Optional[str] = None
+    original_chargesheet_date: Optional[date] = None
+    supplementary_chargesheet_no: Optional[str] = None
+    supplementary_reason: Optional[str] = None
+    court_name: Optional[str] = None
+    court_no: Optional[str] = None
+    current_stage: Optional[str] = None
 
 
 class CaseUpdate(BaseModel):
@@ -34,6 +47,19 @@ class CaseUpdate(BaseModel):
     priority: Optional[str] = None
     description: Optional[str] = None
     closed_at: Optional[datetime] = None
+    district: Optional[str] = None
+    police_station: Optional[str] = None
+    fir_no: Optional[str] = None
+    fir_year: Optional[int] = None
+    fir_date: Optional[date] = None
+    incident_datetime: Optional[datetime] = None
+    original_chargesheet_no: Optional[str] = None
+    original_chargesheet_date: Optional[date] = None
+    supplementary_chargesheet_no: Optional[str] = None
+    supplementary_reason: Optional[str] = None
+    court_name: Optional[str] = None
+    court_no: Optional[str] = None
+    current_stage: Optional[str] = None
 
 
 class CaseSummary(BaseModel):
@@ -48,6 +74,19 @@ class CaseSummary(BaseModel):
     created_at: Optional[str] = None
     updated_at: Optional[str] = None
     closed_at: Optional[str] = None
+    district: Optional[str] = None
+    police_station: Optional[str] = None
+    fir_no: Optional[str] = None
+    fir_year: Optional[int] = None
+    fir_date: Optional[str] = None
+    incident_datetime: Optional[str] = None
+    original_chargesheet_no: Optional[str] = None
+    original_chargesheet_date: Optional[str] = None
+    supplementary_chargesheet_no: Optional[str] = None
+    supplementary_reason: Optional[str] = None
+    court_name: Optional[str] = None
+    court_no: Optional[str] = None
+    current_stage: Optional[str] = None
 
 
 class CaseCreationData(BaseModel):
@@ -116,7 +155,20 @@ def create_case(payload: CaseCreate) -> Dict[str, Any]:
             title=payload.title,
             status="Open",
             priority=payload.priority,
-            description=payload.description
+            description=payload.description,
+            district=payload.district,
+            police_station=payload.police_station,
+            fir_no=payload.fir_no,
+            fir_year=payload.fir_year,
+            fir_date=payload.fir_date,
+            incident_datetime=payload.incident_datetime,
+            original_chargesheet_no=payload.original_chargesheet_no,
+            original_chargesheet_date=payload.original_chargesheet_date,
+            supplementary_chargesheet_no=payload.supplementary_chargesheet_no,
+            supplementary_reason=payload.supplementary_reason,
+            court_name=payload.court_name,
+            court_no=payload.court_no,
+            current_stage=payload.current_stage
         )
         
         db.add(case)
@@ -165,7 +217,20 @@ def get_all_cases() -> Dict[str, Any]:
                     "description": c.description,
                     "created_at": c.created_at.isoformat() if c.created_at else None,
                     "updated_at": c.updated_at.isoformat() if c.updated_at else None,
-                    "closed_at": c.closed_at.isoformat() if c.closed_at else None
+                    "closed_at": c.closed_at.isoformat() if c.closed_at else None,
+                    "district": c.district,
+                    "police_station": c.police_station,
+                    "fir_no": c.fir_no,
+                    "fir_year": c.fir_year,
+                    "fir_date": c.fir_date.isoformat() if c.fir_date else None,
+                    "incident_datetime": c.incident_datetime.isoformat() if c.incident_datetime else None,
+                    "original_chargesheet_no": c.original_chargesheet_no,
+                    "original_chargesheet_date": c.original_chargesheet_date.isoformat() if c.original_chargesheet_date else None,
+                    "supplementary_chargesheet_no": c.supplementary_chargesheet_no,
+                    "supplementary_reason": c.supplementary_reason,
+                    "court_name": c.court_name,
+                    "court_no": c.court_no,
+                    "current_stage": c.current_stage
                 }
                 for c in cases
             ]
@@ -201,7 +266,20 @@ def get_case(case_id: str) -> Dict[str, Any]:
             "description": case.description,
             "created_at": case.created_at.isoformat() if case.created_at else None,
             "updated_at": case.updated_at.isoformat() if case.updated_at else None,
-            "closed_at": case.closed_at.isoformat() if case.closed_at else None
+            "closed_at": case.closed_at.isoformat() if case.closed_at else None,
+            "district": case.district,
+            "police_station": case.police_station,
+            "fir_no": case.fir_no,
+            "fir_year": case.fir_year,
+            "fir_date": case.fir_date.isoformat() if case.fir_date else None,
+            "incident_datetime": case.incident_datetime.isoformat() if case.incident_datetime else None,
+            "original_chargesheet_no": case.original_chargesheet_no,
+            "original_chargesheet_date": case.original_chargesheet_date.isoformat() if case.original_chargesheet_date else None,
+            "supplementary_chargesheet_no": case.supplementary_chargesheet_no,
+            "supplementary_reason": case.supplementary_reason,
+            "court_name": case.court_name,
+            "court_no": case.court_no,
+            "current_stage": case.current_stage
         }
     except HTTPException:
         raise
@@ -246,6 +324,32 @@ def update_case(case_id: str, payload: CaseUpdate) -> Dict[str, Any]:
             case.description = payload.description
         if payload.closed_at is not None:
             case.closed_at = payload.closed_at
+        if payload.district is not None:
+            case.district = payload.district
+        if payload.police_station is not None:
+            case.police_station = payload.police_station
+        if payload.fir_no is not None:
+            case.fir_no = payload.fir_no
+        if payload.fir_year is not None:
+            case.fir_year = payload.fir_year
+        if payload.fir_date is not None:
+            case.fir_date = payload.fir_date
+        if payload.incident_datetime is not None:
+            case.incident_datetime = payload.incident_datetime
+        if payload.original_chargesheet_no is not None:
+            case.original_chargesheet_no = payload.original_chargesheet_no
+        if payload.original_chargesheet_date is not None:
+            case.original_chargesheet_date = payload.original_chargesheet_date
+        if payload.supplementary_chargesheet_no is not None:
+            case.supplementary_chargesheet_no = payload.supplementary_chargesheet_no
+        if payload.supplementary_reason is not None:
+            case.supplementary_reason = payload.supplementary_reason
+        if payload.court_name is not None:
+            case.court_name = payload.court_name
+        if payload.court_no is not None:
+            case.court_no = payload.court_no
+        if payload.current_stage is not None:
+            case.current_stage = payload.current_stage
         
         db.commit()
         db.refresh(case)

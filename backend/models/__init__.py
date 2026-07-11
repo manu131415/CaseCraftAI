@@ -4,3 +4,15 @@ from .officer import Officer
 from .evidence import Evidence
 from .document import Document
 from .case_diary import CaseDiary
+from .accused import Accused
+from .victim import Victim
+from .witness import Witness
+from .medical_report import MedicalReport
+from .remand_detail import RemandDetail
+from .court_custody import CourtCustody
+from .case_legal_sections import CaseLegalSection
+from .legal_sections import LegalSection
+from .legal_section_mappings import LegalSectionMapping
+from .recommendations import Recommendation
+from .fir_drafts import FirDraft
+from .landmarks import Landmark

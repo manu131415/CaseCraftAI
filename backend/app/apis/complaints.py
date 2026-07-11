@@ -4,6 +4,7 @@ import tempfile
 import uuid
 from pathlib import Path
 from typing import Any, Dict, List, Optional
+from datetime import datetime
 
 import cloudinary
 import cloudinary.uploader
@@ -104,6 +105,11 @@ class ComplaintUpdate(BaseModel):
     location: Optional[str] = None
     description: Optional[str] = None
     status: Optional[str] = None
+    complainant_father_name: Optional[str] = None
+    complainant_address: Optional[str] = None
+    incident_datetime: Optional[datetime] = None
+    incident_location: Optional[str] = None
+    address: Optional[str] = None
 
 
 class ComplaintSummary(BaseModel):
@@ -116,6 +122,11 @@ class ComplaintSummary(BaseModel):
     description: Optional[str] = None
     status: Optional[str] = None
     created_at: Optional[str] = None
+    complainant_father_name: Optional[str] = None
+    complainant_address: Optional[str] = None
+    incident_datetime: Optional[str] = None
+    incident_location: Optional[str] = None
+    address: Optional[str] = None
 
 
 class ComplaintSubmissionData(BaseModel):
@@ -178,7 +189,12 @@ def submit_complaint(payload: ComplaintSubmission) -> Dict[str, Any]:
             crime_type=payload.complaintType,
             location=payload.location,
             description=payload.description,
-            status="Pending"
+            status="Pending",
+            complainant_father_name=complainant_data.get("father_name"),
+            complainant_address=complainant_data.get("address"),
+            incident_datetime=datetime.fromisoformat(payload.incidentDate) if payload.incidentDate else None,
+            incident_location=payload.location,
+            address=complainant_data.get("address")
         )
         
         db.add(complaint)
@@ -223,7 +239,12 @@ def get_all_complaints() -> Dict[str, Any]:
                     "location": c.location,
                     "description": c.description,
                     "status": c.status,
-                    "created_at": c.created_at.isoformat() if c.created_at else None
+                    "created_at": c.created_at.isoformat() if c.created_at else None,
+                    "complainant_father_name": c.complainant_father_name,
+                    "complainant_address": c.complainant_address,
+                    "incident_datetime": c.incident_datetime.isoformat() if c.incident_datetime else None,
+                    "incident_location": c.incident_location,
+                    "address": c.address
                 }
                 for c in complaints
             ]
@@ -257,7 +278,12 @@ def get_complaint(complaint_id: str) -> Dict[str, Any]:
             "location": complaint.location,
             "description": complaint.description,
             "status": complaint.status,
-            "created_at": complaint.created_at.isoformat() if complaint.created_at else None
+            "created_at": complaint.created_at.isoformat() if complaint.created_at else None,
+            "complainant_father_name": complaint.complainant_father_name,
+            "complainant_address": complaint.complainant_address,
+            "incident_datetime": complaint.incident_datetime.isoformat() if complaint.incident_datetime else None,
+            "incident_location": complaint.incident_location,
+            "address": complaint.address
         }
     except HTTPException:
         raise
@@ -296,6 +322,16 @@ def update_complaint(complaint_id: str, payload: ComplaintUpdate) -> Dict[str, A
             complaint.description = payload.description
         if payload.status is not None:
             complaint.status = payload.status
+        if payload.complainant_father_name is not None:
+            complaint.complainant_father_name = payload.complainant_father_name
+        if payload.complainant_address is not None:
+            complaint.complainant_address = payload.complainant_address
+        if payload.incident_datetime is not None:
+            complaint.incident_datetime = payload.incident_datetime
+        if payload.incident_location is not None:
+            complaint.incident_location = payload.incident_location
+        if payload.address is not None:
+            complaint.address = payload.address
         
         db.commit()
         db.refresh(complaint)

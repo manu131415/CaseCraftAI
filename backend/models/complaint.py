@@ -2,6 +2,7 @@ from sqlalchemy import Column
 from sqlalchemy import String
 from sqlalchemy import Text
 from sqlalchemy import DateTime
+from sqlalchemy import Date
 from sqlalchemy.sql import func
 
 from database.db import Base
@@ -50,3 +51,13 @@ class Complaint(Base):
     status = Column(String, default="Pending")
 
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    complainant_father_name = Column(String(255))
+
+    complainant_address = Column(Text)
+
+    incident_datetime = Column(DateTime(timezone=True))
+
+    incident_location = Column(Text)
+
+    address = Column(Text)

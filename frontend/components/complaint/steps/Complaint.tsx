@@ -196,21 +196,7 @@ className="w-full border rounded-lg p-3"
 
 />
 
-<textarea
 
-rows={4}
-
-placeholder="AI Summary"
-
-name="aiSummary"
-
-value={form.aiSummary}
-
-onChange={handleChange}
-
-className="w-full border rounded-lg p-3 bg-blue-50"
-
-/>
 
 <textarea
 

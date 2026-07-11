@@ -3,13 +3,14 @@
 import { useState } from "react";
 import axios from "axios";
 import { CheckCircle2 } from "lucide-react";
+import { useLanguage } from "@/app/providers/LanguageProvider";
 import Stepper from "./Stepper";
-import FileUploader from "./upload/FileUploader";
 import ComplaintDetails from "./steps/ComplaintDetails";
 import VictimDetails from "./steps/VictimDetails";
 import SuspectDetails from "./steps/SuspectDetails";
 import ComplainantDetails from "./steps/ComplainantDetails";
 import ReviewSubmission from "./steps/ReviewSubmission";
+import DocumentsAndEvidence from "./steps/DocumentsAndEvidence";
 import NavigationButtons from "./NavigationButtons";
 import { ComplaintData } from "./types";
 
@@ -52,11 +53,12 @@ const initialForm: ComplaintData = {
 };
 
 export default function ComplaintWizard() {
+  const { t } = useLanguage();
   const [step, setStep] = useState(1);
   const [form, setForm] = useState<ComplaintData>(initialForm);
   const [submitted, setSubmitted] = useState(false);
 
-  const totalSteps = 6;
+  const totalSteps = 6; // 1: Complaint, 2: Victims, 3: Suspects, 4: Complainants, 5: Documents, 6: Review
 
   function handleNext() {
     if (step < totalSteps) setStep(step + 1);
@@ -84,7 +86,7 @@ export default function ComplaintWizard() {
         { type: "", name: "", contact: "", statement: "" },
       ],
     }));
-    setStep(3);
+    setStep(2);
   }
 
   function addSuspect() {
@@ -95,7 +97,7 @@ export default function ComplaintWizard() {
         { type: "", name: "", contact: "", description: "", status: "" },
       ],
     }));
-    setStep(4);
+    setStep(3);
   }
 
   function addComplainant() {
@@ -106,7 +108,7 @@ export default function ComplaintWizard() {
         { name: "", contact: "", relationship: "", statement: "" },
       ],
     }));
-    setStep(5);
+    setStep(4);
   }
 
   function setVictims(victims: ComplaintData["victims"]) {
@@ -180,7 +182,7 @@ export default function ComplaintWizard() {
           </button>
           <button
             type="button"
-            onClick={() => setStep(2)}
+            onClick={() => setStep(1)}
             className="rounded-full border border-blue-600 bg-blue-600 px-4 py-2 text-base font-semibold text-white transition hover:bg-blue-700"
           >
             Complaint details
@@ -190,10 +192,10 @@ export default function ComplaintWizard() {
 
       <div className="mt-6 flex items-center justify-between gap-4">
         <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-base text-slate-600">
-          Step {step} of {totalSteps}
+          {t("navigation.step", "complaints")} {step} {t("navigation.of", "complaints")} {totalSteps}
         </div>
         <div className="text-base text-slate-500">
-          Tip: Use the quick buttons to jump to the relevant section instantly.
+          {t("navigation.tip", "complaints")}
         </div>
       </div>
 
@@ -202,11 +204,26 @@ export default function ComplaintWizard() {
       </div>
 
       <div className="mt-10">
-        {step === 1 && <FileUploader form={form} setForm={setForm} onExtractComplete={() => setStep(2)} />}
-        {step === 2 && <ComplaintDetails form={form} setForm={setForm} />}
-        {step === 3 && <VictimDetails victims={form.victims} setVictims={setVictims} />}
-        {step === 4 && <SuspectDetails suspects={form.suspects} setSuspects={setSuspects} />}
-        {step === 5 && <ComplainantDetails complainants={form.complainants} setComplainants={setComplainants} />}
+        {step === 1 && <ComplaintDetails form={form} setForm={setForm} />}
+        {step === 2 && <VictimDetails victims={form.victims} setVictims={setVictims} />}
+        {step === 3 && <SuspectDetails suspects={form.suspects} setSuspects={setSuspects} />}
+        {step === 4 && <ComplainantDetails complainants={form.complainants} setComplainants={setComplainants} />}
+        {step === 5 && (
+          <DocumentsAndEvidence
+            onDocumentsSubmit={(uploadedFiles) => {
+              const newAttachments = uploadedFiles.map((file) => ({
+                id: file.id,
+                fileName: file.file.name,
+                fileType: file.file.type,
+                documentUrl: file.cloudinaryUrl,
+              }));
+              setForm((prev) => ({
+                ...prev,
+                attachments: [...prev.attachments, ...newAttachments],
+              }));
+            }}
+          />
+        )}
         {step === 6 && <ReviewSubmission form={form} />}
       </div>
 

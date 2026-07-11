@@ -41,7 +41,7 @@ export default function VictimDetails({ victims, setVictims }: Props) {
     <div className="space-y-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-base font-medium text-blue-600">Step 3</p>
+          <p className="text-base font-medium text-blue-600">Step 2</p>
           <h2 className="mt-1 text-2xl font-semibold text-slate-900">Victim details</h2>
           <p className="mt-2 text-base text-slate-500">
             Add one or more victims and include any protective notes.

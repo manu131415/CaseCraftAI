@@ -57,5 +57,5 @@ export interface ComplaintData {
   complainants: PersonEntry[];
   victims: PersonEntry[];
   suspects: PersonEntry[];
-  attachments : AttachmentMeta[];
+  attachments: AttachmentMeta[];
 }

@@ -4,6 +4,8 @@ import DashboardCard from "@/components/dashboard/DashboardCard";
 import RecentComplaint from "@/components/dashboard/RecentComplaint";
 import ActivityFeed from "@/components/dashboard/ActivityFeed";
 
+export const dynamic = 'force-dynamic';
+
 const stats = [
   { title: "Today’s complaints", value: "124", subtitle: "+18% vs yesterday", accent: "bg-blue-600" },
   { title: "Pending review", value: "36", subtitle: "6 require escalation", accent: "bg-amber-500" },

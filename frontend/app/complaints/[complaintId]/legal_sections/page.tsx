@@ -1,14 +1,320 @@
 'use client';
 
+import { use, useCallback, useEffect, useState } from 'react';
+
+// ---------- Types ----------
+
+interface CrossReference {
+  act: string;
+  section: string;
+  subject: string | null;
+  summary_of_comparison: string | null;
+}
+
+interface LegalSection {
+  id: string;
+  act_code: string;
+  section_number: string;
+  title: string;
+  section_text: string;
+  category: string;
+  similarity: number;
+  reason: string;
+  cross_references: CrossReference[];
+}
+
+interface LandmarkJudgment {
+  id: string;
+  case_title: string;
+  court: string;
+  case_date: string;
+  ipc_sections: string;
+  crime_type: string;
+  summary: string;
+  judgment_reason: string;
+  bail_outcome: string;
+  similarity: number;
+  reason: string;
+}
+
+interface AnalysisResult {
+  complaint_id: string;
+  case_summary: string;
+  sections: LegalSection[];
+  judgments: LandmarkJudgment[];
+}
+
+// Adjust to wherever your FastAPI backend is served
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:8000';
+// NOTE: set NEXT_PUBLIC_API_BASE_URL to the bare host (e.g. http://localhost:8000),
+// without a trailing /api — the /api prefix is already part of the fetch path below,
+// matching the router's `prefix="/api/complaints"` in legal_section_intelligence.py.
+
+// ---------- Small presentational helpers ----------
+
+function SimilarityBadge({ score }: { score: number }) {
+  const pct = Math.round(score * 100);
+  const tone =
+    pct >= 75 ? 'bg-emerald-50 text-emerald-700 ring-emerald-600/20'
+    : pct >= 50 ? 'bg-amber-50 text-amber-700 ring-amber-600/20'
+    : 'bg-slate-100 text-slate-600 ring-slate-500/20';
+  return (
+    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ring-1 ring-inset ${tone}`}>
+      {pct}% match
+    </span>
+  );
+}
+
+function ActBadge({ act }: { act: string }) {
+  const isNewAct = ['BNS', 'BNSS', 'BSA'].includes(act);
+  return (
+    <span
+      className={`inline-flex items-center rounded px-1.5 py-0.5 text-[11px] font-semibold tracking-wide ${
+        isNewAct ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-700'
+      }`}
+    >
+      {act}
+    </span>
+  );
+}
+
+function SectionCard({ section }: { section: LegalSection }) {
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <ActBadge act={section.act_code} />
+          <h3 className="font-semibold text-slate-900">
+            Sec {section.section_number} — {section.title}
+          </h3>
+        </div>
+        <SimilarityBadge score={section.similarity} />
+      </div>
+
+      <p className="mt-2 text-sm text-slate-600">{section.reason}</p>
+
+      <button
+        onClick={() => setExpanded((v) => !v)}
+        className="mt-2 text-xs font-medium text-indigo-600 hover:text-indigo-800"
+      >
+        {expanded ? 'Hide section text' : 'Show section text'}
+      </button>
+
+      {expanded && (
+        <p className="mt-2 rounded-md bg-slate-50 p-3 text-sm text-slate-700">
+          {section.section_text}
+        </p>
+      )}
+
+      {section.cross_references.length > 0 && (
+        <div className="mt-3 border-t border-slate-100 pt-3">
+          <p className="mb-1.5 text-xs font-medium uppercase tracking-wide text-slate-500">
+            Corresponds to
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {section.cross_references.map((xref, i) => (
+              <span
+                key={i}
+                title={xref.summary_of_comparison ?? undefined}
+                className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-xs text-slate-700"
+              >
+                <ActBadge act={xref.act} />
+                Sec {xref.section}
+                {xref.subject ? ` · ${xref.subject}` : ''}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function JudgmentCard({ judgment }: { judgment: LandmarkJudgment }) {
+  const outcomeTone =
+    judgment.bail_outcome?.toLowerCase().includes('grant')
+      ? 'bg-emerald-50 text-emerald-700'
+      : judgment.bail_outcome?.toLowerCase().includes('den') || judgment.bail_outcome?.toLowerCase().includes('reject')
+      ? 'bg-rose-50 text-rose-700'
+      : 'bg-slate-100 text-slate-600';
+
+  return (
+    <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <h3 className="font-semibold text-slate-900">{judgment.case_title}</h3>
+          <p className="text-xs text-slate-500">
+            {judgment.court} · {judgment.case_date}
+          </p>
+        </div>
+        <SimilarityBadge score={judgment.similarity} />
+      </div>
+
+      <p className="mt-2 text-sm text-slate-600">{judgment.reason}</p>
+
+      <div className="mt-3 flex flex-wrap items-center gap-2">
+        {judgment.ipc_sections && (
+          <span className="rounded-md bg-slate-50 px-2 py-1 text-xs text-slate-700 ring-1 ring-inset ring-slate-200">
+            IPC {judgment.ipc_sections}
+          </span>
+        )}
+        {judgment.bail_outcome && (
+          <span className={`rounded-md px-2 py-1 text-xs font-medium ${outcomeTone}`}>
+            {judgment.bail_outcome}
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function SkeletonCard() {
+  return (
+    <div className="animate-pulse rounded-lg border border-slate-200 bg-white p-4">
+      <div className="h-4 w-1/3 rounded bg-slate-200" />
+      <div className="mt-3 h-3 w-full rounded bg-slate-100" />
+      <div className="mt-2 h-3 w-2/3 rounded bg-slate-100" />
+    </div>
+  );
+}
+
+// ---------- Page ----------
+
 export default function LegalSectionsPage({
   params,
 }: {
-  params: { complaintId: string };
+  params: Promise<{ complaintId: string }>;
 }) {
+  const { complaintId } = use(params);
+
+  const [caseSummary, setCaseSummary] = useState('');
+  const [result, setResult] = useState<AnalysisResult | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [needsManualSummary, setNeedsManualSummary] = useState(false);
+
+  const runAnalysis = useCallback(
+    async (summaryOverride?: string) => {
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await fetch(`${API_BASE}/api/complaints/${complaintId}/legal-sections/analyze`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ case_summary: summaryOverride || null }),
+        });
+
+        if (res.status === 422) {
+          // Backend couldn't find a stored case summary — ask the officer to enter one.
+          setNeedsManualSummary(true);
+          setLoading(false);
+          return;
+        }
+
+        if (!res.ok) {
+          throw new Error(`Request failed (${res.status})`);
+        }
+
+        const data: AnalysisResult = await res.json();
+        setResult(data);
+        setCaseSummary(data.case_summary);
+        setNeedsManualSummary(false);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Something went wrong');
+      } finally {
+        setLoading(false);
+      }
+    },
+    [complaintId]
+  );
+
+  useEffect(() => {
+    runAnalysis();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [complaintId]);
+
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-semibold">Legal Sections - {params.complaintId}</h1>
-      <p className="text-slate-600 mt-2">Legal sections will be displayed here.</p>
+      <div className="mb-6">
+        <h1 className="text-2xl font-semibold text-slate-900">Legal Section Intelligence</h1>
+        <p className="mt-1 text-sm text-slate-500">Complaint {complaintId}</p>
+      </div>
+
+      {/* Case summary panel */}
+      <div className="mb-6 rounded-lg border border-slate-200 bg-white p-4">
+        <label className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-slate-500">
+          Case summary used for analysis
+        </label>
+        <textarea
+          value={caseSummary}
+          onChange={(e) => setCaseSummary(e.target.value)}
+          rows={3}
+          placeholder="Describe the incident (who, what, where, how)…"
+          className="w-full resize-none rounded-md border border-slate-200 p-2.5 text-sm text-slate-800 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
+        />
+        <div className="mt-2 flex items-center justify-between">
+          {needsManualSummary && (
+            <p className="text-xs text-amber-700">
+              No stored summary found for this complaint — enter one above to analyze.
+            </p>
+          )}
+          <button
+            onClick={() => runAnalysis(caseSummary)}
+            disabled={loading || !caseSummary.trim()}
+            className="ml-auto rounded-md bg-indigo-600 px-3.5 py-1.5 text-sm font-medium text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {loading ? 'Analyzing…' : 'Re-analyze'}
+          </button>
+        </div>
+      </div>
+
+      {error && (
+        <div className="mb-6 rounded-lg border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">
+          {error}
+        </div>
+      )}
+
+      {/* Sections */}
+      <section className="mb-8">
+        <h2 className="mb-3 text-lg font-semibold text-slate-900">Applicable Sections</h2>
+        {loading ? (
+          <div className="grid gap-3 sm:grid-cols-2">
+            {Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)}
+          </div>
+        ) : result && result.sections.length > 0 ? (
+          <div className="grid gap-3 sm:grid-cols-2">
+            {result.sections.map((s) => (
+              <SectionCard key={`${s.act_code}-${s.id}`} section={s} />
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-slate-500">
+            {needsManualSummary ? 'Waiting on a case summary.' : 'No relevant sections found.'}
+          </p>
+        )}
+      </section>
+
+      {/* Judgments */}
+      <section>
+        <h2 className="mb-3 text-lg font-semibold text-slate-900">Landmark Judgments</h2>
+        {loading ? (
+          <div className="grid gap-3 sm:grid-cols-2">
+            {Array.from({ length: 2 }).map((_, i) => <SkeletonCard key={i} />)}
+          </div>
+        ) : result && result.judgments.length > 0 ? (
+          <div className="grid gap-3 sm:grid-cols-2">
+            {result.judgments.map((j) => (
+              <JudgmentCard key={j.id} judgment={j} />
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-slate-500">
+            {needsManualSummary ? 'Waiting on a case summary.' : 'No relevant judgments found.'}
+          </p>
+        )}
+      </section>
     </div>
   );
 }

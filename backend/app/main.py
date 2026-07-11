@@ -1,38 +1,31 @@
-import os
-import psycopg2
+from typing import Dict
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from app.apis.complaints import router as complaints_router
+from app.apis.cases import router as cases_router
+from app.apis.case_diary import router as case_diary_router
+from app.apis.recommendations import router as recommendations
+app = FastAPI(title="CaseCraftAI", description="Case management API for complaints, cases, and investigation diary workflows.")
 
-conn = psycopg2.connect("postgresql://neondb_owner:npg_zU1jmX6IFCxZ@ep-spring-resonance-ahuzey41-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require")
-cur = conn.cursor()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-# List all tables
-cur.execute("""
-SELECT table_name
-FROM information_schema.tables
-WHERE table_schema = 'public'
-ORDER BY table_name;
-""")
+app.include_router(complaints_router)
+app.include_router(cases_router)
+app.include_router(case_diary_router)
+app.include_router(recommendations)
 
-tables = [row[0] for row in cur.fetchall()]
-
-print("Tables:")
-for t in tables:
-    print("-", t)
-
-print("\n==============================")
-
-# Show columns of every table
-for table in tables:
-    print(f"\nTABLE: {table}")
-
-    cur.execute("""
-        SELECT column_name, data_type
-        FROM information_schema.columns
-        WHERE table_name = %s
-        ORDER BY ordinal_position;
-    """, (table,))
-
-    for col in cur.fetchall():
-        print(col)
-
-cur.close()
-conn.close()
+@app.get(
+    "/health",
+    response_model=Dict[str, str],
+    summary="Health check",
+    description="Return the current API health status.",
+    tags=["system"],
+)
+def health_check():
+    return {"status": "ok"}

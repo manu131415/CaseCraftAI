@@ -43,3 +43,7 @@ class CaseDiary(Base):
         String,
         ForeignKey("documents.document_id")
     )
+
+    remarks = Column(Text)
+
+    next_action = Column(Text)

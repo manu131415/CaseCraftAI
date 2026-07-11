@@ -149,6 +149,42 @@ def create_diary_entry(payload: CaseDiaryCreate) -> Dict[str, Any]:
 
 
 @router.get(
+    "/case/{case_id}",
+    response_model=DiaryListResponse,
+    summary="List diary entries for a case",
+    description="Retrieve only the diary entries associated with the supplied case identifier.",
+    tags=["case-diary"],
+)
+def get_diary_entries_by_case(case_id: str) -> Dict[str, Any]:
+    db = SessionLocal()
+    try:
+        entries = db.query(CaseDiary).filter(CaseDiary.case_id == case_id).all()
+        return {
+            "diary_entries": [
+                {
+                    "diary_id": e.diary_id,
+                    "case_id": e.case_id,
+                    "officer_id": e.officer_id,
+                    "action_type": e.action_type,
+                    "description": e.description,
+                    "location": e.location,
+                    "occurred_at": e.occurred_at.isoformat() if e.occurred_at else None,
+                    "created_at": e.created_at.isoformat() if e.created_at else None,
+                    "related_evidence_id": e.related_evidence_id,
+                    "related_document_id": e.related_document_id,
+                    "remarks": e.remarks,
+                    "next_action": e.next_action
+                }
+                for e in entries
+            ]
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to retrieve diary entries: {str(e)}")
+    finally:
+        db.close()
+
+
+@router.get(
     "",
     response_model=DiaryListResponse,
     summary="List diary entries",

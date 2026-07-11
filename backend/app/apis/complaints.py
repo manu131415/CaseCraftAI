@@ -2,9 +2,10 @@ import json
 import os
 import tempfile
 import uuid
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
-from datetime import datetime
+from urllib.parse import urlparse
 
 import cloudinary
 import cloudinary.uploader

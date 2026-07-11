@@ -5,6 +5,8 @@ import requests
 from dotenv import load_dotenv
 from sentence_transformers import SentenceTransformer
 
+from app.core.section_mapping import enrich_sections_with_cross_references
+
 load_dotenv()
 db_url = os.getenv("DATABASE_URL")
 
@@ -130,6 +132,15 @@ Respond ONLY with valid JSON, no other text, in this exact format:
 def get_recommendations(case_summary: str):
     sections, judgments = retrieve_candidates(case_summary)
     ranked_sections, ranked_judgments = rerank_with_llm(case_summary, sections, judgments)
+
+    # Cross-reference each recommended section against legal_section_mappings
+    # (BNS<->IPC, BNSS<->CrPC, BSA<->IEA) so the UI can show old/new act equivalents.
+    conn = psycopg2.connect(db_url)
+    try:
+        ranked_sections = enrich_sections_with_cross_references(conn, ranked_sections)
+    finally:
+        conn.close()
+
     return {
         "sections": ranked_sections,
         "judgments": ranked_judgments
@@ -143,6 +154,8 @@ if __name__ == "__main__":
     print("\n--- Recommended Sections ---")
     for s in result["sections"]:
         print(f"{s['act_code']} Sec {s['section_number']} - {s['title']} | {s['reason']} (sim: {s['similarity']:.3f})")
+        for xref in s.get("cross_references", []):
+            print(f"    ↳ {xref['act']} Sec {xref['section']} - {xref['subject']}")
 
     print("\n--- Recommended Judgments ---")
     for j in result["judgments"]:

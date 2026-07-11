@@ -24,7 +24,7 @@ export type Namespace =
 interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
-  t: (key: string, namespace?: Namespace) => string;
+  t: (key: string, namespace?: Namespace, fallback?: string) => string;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -115,7 +115,8 @@ export function LanguageProvider({
 
   const t = (
     key: string,
-    namespace: Namespace = 'common'
+    namespace: Namespace = 'common',
+    fallbackText?: string
   ): string => {
     const currentNamespace = translations[language]?.[namespace];
     const englishNamespace = translations.en?.[namespace];
@@ -136,7 +137,7 @@ export function LanguageProvider({
       `[Translation Missing] ${namespace}.${key} (${language})`
     );
 
-    return key;
+    return fallbackText || key;
   };
 
   return (

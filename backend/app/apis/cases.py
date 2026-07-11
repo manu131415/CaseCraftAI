@@ -242,6 +242,54 @@ def get_all_cases() -> Dict[str, Any]:
 
 
 @router.get(
+    "/by-complaint/{complaint_id}",
+    response_model=CaseDetailResponse,
+    summary="Get case by complaint id",
+    description="Retrieve the case associated with the provided complaint identifier.",
+    tags=["cases"],
+)
+def get_case_by_complaint_id(complaint_id: str) -> Dict[str, Any]:
+    db = SessionLocal()
+    try:
+        case = db.query(Case).filter(Case.complaint_id == complaint_id).first()
+        if not case:
+            raise HTTPException(status_code=404, detail="Case not found")
+        
+        return {
+            "case_id": case.case_id,
+            "complaint_id": case.complaint_id,
+            "assigned_officer_id": case.assigned_officer_id,
+            "case_number": case.case_number,
+            "title": case.title,
+            "status": case.status,
+            "priority": case.priority,
+            "description": case.description,
+            "created_at": case.created_at.isoformat() if case.created_at else None,
+            "updated_at": case.updated_at.isoformat() if case.updated_at else None,
+            "closed_at": case.closed_at.isoformat() if case.closed_at else None,
+            "district": case.district,
+            "police_station": case.police_station,
+            "fir_no": case.fir_no,
+            "fir_year": case.fir_year,
+            "fir_date": case.fir_date.isoformat() if case.fir_date else None,
+            "incident_datetime": case.incident_datetime.isoformat() if case.incident_datetime else None,
+            "original_chargesheet_no": case.original_chargesheet_no,
+            "original_chargesheet_date": case.original_chargesheet_date.isoformat() if case.original_chargesheet_date else None,
+            "supplementary_chargesheet_no": case.supplementary_chargesheet_no,
+            "supplementary_reason": case.supplementary_reason,
+            "court_name": case.court_name,
+            "court_no": case.court_no,
+            "current_stage": case.current_stage
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to retrieve case: {str(e)}")
+    finally:
+        db.close()
+
+
+@router.get(
     "/{case_id}",
     response_model=CaseDetailResponse,
     summary="Get case details",

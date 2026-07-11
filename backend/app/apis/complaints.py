@@ -2,14 +2,13 @@ import json
 import os
 import tempfile
 import uuid
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
-from datetime import datetime
+from urllib.parse import urlparse
 
 import cloudinary
 import cloudinary.uploader
-from fastapi import APIRouter, File, UploadFile, HTTPException
-from pydantic import BaseModel
 from dotenv import load_dotenv
 from fastapi import APIRouter, File, HTTPException, UploadFile
 from pydantic import BaseModel
@@ -382,76 +381,6 @@ def delete_complaint(complaint_id: str) -> Dict[str, Any]:
         raise HTTPException(status_code=500, detail=f"Failed to delete complaint: {str(e)}")
     finally:
         db.close()
-
-                VALUES(
-
-                    :id,
-
-                    :source_type,
-
-                    :media_url,
-
-                    :raw_text,
-
-                    :extracted,
-
-                    :embedding,
-
-                    :status,
-
-                    NOW(),
-
-                    NOW()
-
-                )
-                """
-            ),
-
-            {
-
-                "id": complaint_id,
-
-                "source_type": "text",
-
-                "media_url": json.dumps(payload.attachments),
-
-                "raw_text": payload.description,
-
-                "extracted": json.dumps(complaint_payload),
-
-                "embedding": None,
-
-                "status": "ingested",
-
-            },
-        )
-
-        session.commit()
-
-        return {
-
-            "success": True,
-
-            "message": "Complaint saved successfully",
-
-            "complaintId": complaint_id,
-
-            "evidenceCount": len(payload.attachments),
-
-        }
-
-    except Exception as e:
-
-        session.rollback()
-
-        raise HTTPException(
-            status_code=500,
-            detail=str(e),
-        )
-
-    finally:
-
-        session.close()
 
 # ============================================================
 # UPLOAD + AI EXTRACTION

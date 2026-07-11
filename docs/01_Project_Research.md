@@ -221,7 +221,11 @@ The system analyzes the complaint submitted by the investigating officer and ext
 
 ### 2. Legal Section Recommendation
 
-Using Retrieval-Augmented Generation (RAG), the platform retrieves relevant legal provisions from a curated legal knowledge base containing BNS, BNSS, BSA, and other official legal references. Based on the retrieved information, the AI recommends applicable legal sections along with explanations for each recommendation.
+The platform implements a Retrieval-Augmented Generation (RAG) pipeline to recommend applicable legal provisions.
+
+The complaint summary is converted into a semantic embedding using the **intfloat/multilingual-e5-large** embedding model. The embedding is searched against a PostgreSQL database using the **pgvector** extension to retrieve the most relevant legal sections and landmark judgments.
+
+These retrieved records are then provided to **Llama 3.2**, running locally through **Ollama**, which reranks the retrieved candidates and generates explanations for every recommendation before presenting them to the investigating officer.
 
 ---
 
@@ -307,15 +311,19 @@ The backend validates the submitted information, generates a unique Case ID, and
 
 The complaint summary is forwarded to the AI analysis module.
 
-The NLP pipeline analyzes the complaint, identifies important entities and keywords, and prepares the query required for legal retrieval.
+The complaint summary is converted into a semantic embedding using the multilingual-e5-large SentenceTransformer model. This embedding represents the semantic meaning of the complaint and is used for similarity-based retrieval from the legal knowledge base.
 
 ---
 
 ### Step 4 – Legal Knowledge Retrieval (RAG)
 
-Instead of relying only on a Large Language Model, the system retrieves relevant legal information from its curated legal knowledge base containing BNS, BNSS, BSA, and other official legal references.
+The generated embedding is compared against vector embeddings stored within PostgreSQL using the pgvector extension.
 
-The retrieved legal provisions are then supplied to the language model as additional context before response generation. This Retrieval-Augmented Generation (RAG) approach improves factual accuracy, minimizes hallucinations, and grounds recommendations in official legal sources.
+The retrieval stage returns the most relevant legal sections (BNS, BNSS, and BSA) together with curated landmark judgments.
+
+These retrieved records are supplied as context to Llama 3.2, running locally through Ollama, which reranks the candidates, filters irrelevant results, and generates explanations for each recommendation.
+
+This Retrieval-Augmented Generation workflow grounds AI responses in trusted legal references while minimizing hallucinations.
 
 ---
 
@@ -434,29 +442,39 @@ The AI module performs complaint understanding and legal reasoning.
 
 Its responsibilities include:
 
-- Complaint Analysis
-- Legal Section Recommendation
-- FIR Draft Generation
-- Explanation Generation
-- Investigation Assistance
+- Semantic Complaint Embedding
+- Vector Similarity Search
+- Legal Section Retrieval
+- Landmark Judgment Retrieval
+- LLM-based Reranking
+- Recommendation Explanation Generation
 
 Rather than relying solely on a Large Language Model, the AI first retrieves relevant legal references from the knowledge base before generating responses.
+
+The recommendation pipeline follows a two-stage retrieval process:
+
+1. Semantic retrieval using pgvector to identify the most relevant legal sections and landmark judgments.
+
+2. LLM-based reranking using Llama 3.2 through Ollama to select the most applicable results and generate human-readable explanations for each recommendation.
 
 ---
 
 ### 5. Legal Knowledge Base
 
-The Legal Knowledge Base contains curated legal references required for Retrieval-Augmented Generation (RAG).
+The Legal Knowledge Base stores official legal references used by the Retrieval-Augmented Generation (RAG) pipeline.
 
-The knowledge base includes:
+The knowledge base currently contains:
 
-- Bharatiya Nyaya Sanhita (BNS)
-- Bharatiya Nagarik Suraksha Sanhita (BNSS)
-- Bharatiya Sakshya Adhiniyam (BSA)
-- Relevant Government Guidelines
-- Landmark Judgements (Future Expansion)
+- 1,059 legal sections
+  - Bharatiya Nyaya Sanhita (BNS)
+  - Bharatiya Nagarik Suraksha Sanhita (BNSS)
+  - Bharatiya Sakshya Adhiniyam (BSA)
 
-These documents are processed into searchable chunks, allowing the retrieval system to supply relevant legal context during AI analysis.
+- 147 curated landmark judgments
+
+Each legal section and landmark judgment is embedded as a single semantic record using the **intfloat/multilingual-e5-large** embedding model.
+
+The embeddings are stored within PostgreSQL using the **pgvector** extension, allowing efficient semantic similarity search without requiring additional document chunking.
 
 ---
 
@@ -496,3 +514,35 @@ The diary provides a chronological history of every significant event within a c
 After officer approval, generated documents can be exported as PDF files for official use, printing, and digital record keeping.
 
 This module ensures that AI-generated content can be easily integrated into existing documentation workflows.
+
+
+## 6.7 Technology Stack
+
+### Frontend
+- Next.js
+- React
+- TypeScript
+- Tailwind CSS
+
+### Backend
+- FastAPI
+- Python
+
+### Database
+- PostgreSQL (Neon)
+
+### ORM
+- SQLAlchemy
+
+### Database Migration
+- Alembic
+
+### AI Technologies
+- Embedding Model: intfloat/multilingual-e5-large
+- Large Language Model: Llama 3.2
+- LLM Runtime: Ollama
+- Vector Search: pgvector
+- Retrieval Method: Semantic Similarity Search
+
+### Document Generation
+- docxtpl

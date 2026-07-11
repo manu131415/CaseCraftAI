@@ -1,38 +1,38 @@
-import os
-import psycopg2
+import uvicorn
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
-conn = psycopg2.connect("postgresql://neondb_owner:npg_zU1jmX6IFCxZ@ep-spring-resonance-ahuzey41-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require")
-cur = conn.cursor()
+from app.apis.case_diary import router as case_diary_router
+from app.apis.complaints import router as complaints_router
+from app.apis.ingestion import router as ingestion_router
+from app.apis.legal_sections import router as legal_sections_router
+from app.apis.documents import router as documents_router
 
-# List all tables
-cur.execute("""
-SELECT table_name
-FROM information_schema.tables
-WHERE table_schema = 'public'
-ORDER BY table_name;
-""")
+app = FastAPI(
+    title="CaseCraftAI Backend API",
+    description="AI-Powered FIR Drafting and Investigation Assistance Platform",
+    version="1.0"
+)
 
-tables = [row[0] for row in cur.fetchall()]
+# CORS configuration
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-print("Tables:")
-for t in tables:
-    print("-", t)
+# Register routers
+app.include_router(case_diary_router)
+app.include_router(complaints_router)
+app.include_router(ingestion_router)
+app.include_router(legal_sections_router)
+app.include_router(documents_router)
 
-print("\n==============================")
+@app.get("/")
+def read_root():
+    return {"message": "Welcome to CaseCraftAI API Server"}
 
-# Show columns of every table
-for table in tables:
-    print(f"\nTABLE: {table}")
-
-    cur.execute("""
-        SELECT column_name, data_type
-        FROM information_schema.columns
-        WHERE table_name = %s
-        ORDER BY ordinal_position;
-    """, (table,))
-
-    for col in cur.fetchall():
-        print(col)
-
-cur.close()
-conn.close()
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

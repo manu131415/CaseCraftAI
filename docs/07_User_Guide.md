@@ -1,158 +1,246 @@
 # 07. User Guide
 
-## Introduction
+## Project Name
 
-The AI-Powered Investigation Assistant is designed to assist investigating officers throughout the criminal investigation process by simplifying complaint management, recommending relevant legal sections, and generating investigation documents. This guide explains how to use the system from complaint registration to document generation.
-
----
-
-# Step 1 – Login
-
-Open the application and log in using your authorized credentials.
-
-After successful authentication, the user is redirected to the Dashboard.
+**CaseCraftAI – AI-Assisted Investigation and Legal Documentation Platform**
 
 ---
 
-# Step 2 – Dashboard
+# 1. Introduction
 
-The Dashboard provides an overview of the investigation system.
+This user guide provides step-by-step instructions for using the CaseCraftAI platform. It is intended for investigating officers and authorized personnel responsible for complaint registration, case management, legal documentation, and investigation tracking.
 
-From here, officers can:
-
-- Create a New Case
-- View Existing Cases
-- Continue Ongoing Investigations
-- Access the Case Diary
-- View Generated Documents
+The system is designed to simplify investigation workflows by combining Artificial Intelligence, Retrieval-Augmented Generation (RAG), structured case management, and intelligent document generation while ensuring that officers retain full control over legal decisions.
 
 ---
 
-# Step 3 – Register a Complaint
+# 2. System Requirements
 
-Click **"Create New Case"** to begin registering a complaint.
+Before using the application, ensure the following:
 
-The Complaint Registration Wizard collects information such as:
+### Hardware
 
-- Complaint Details
-- Complainant Details
-- Victim Details
-- Suspect Details (if available)
-- Incident Details
+- Computer or Laptop
+- Stable Internet Connection
 
-Once completed, submit the complaint for processing.
+### Browser
 
----
-
-# Step 4 – Complaint Processing
-
-After submission, the system automatically:
-
-- Validates the entered information
-- Creates a unique Case ID
-- Stores the information in the Case Data Pool
-- Sends the complaint for AI analysis
-
-No user interaction is required during this stage.
+- Google Chrome (Recommended)
+- Microsoft Edge
+- Mozilla Firefox
 
 ---
 
-# Step 5 – AI Analysis
+# 3. Login
 
-The AI analyzes the complaint and retrieves relevant legal information using the RAG pipeline.
-
-The system provides:
-
-- Complaint Summary
-- Crime Category
-- Recommended Legal Sections
-- Explanation for Recommendations
-- FIR Draft
-
-These outputs are presented to the investigating officer for review.
+1. Open the CaseCraftAI application.
+2. Enter your registered email or username.
+3. Enter your password.
+4. Click **Login**.
+5. After successful authentication, the Officer Dashboard will open.
 
 ---
 
-# Step 6 – Review & Approval
+# 4. Dashboard Overview
 
-The officer reviews the AI-generated recommendations.
+The dashboard provides quick access to all major modules.
 
-The officer may:
-
-- Edit the complaint summary
-- Modify suggested legal sections
-- Update the FIR draft
-- Approve the final version
-
-No document is finalized without officer approval.
-
----
-
-# Step 7 – Generate Investigation Documents
-
-Once the FIR is approved, the system allows officers to generate investigation documents.
-
-Supported documents include:
-
-- First Information Report (FIR)
-- Remand Request
-- Medical Examination Request
-- Property Seizure Memo
-- Panchanama
-
-The documents are automatically populated using information stored in the Case Data Pool.
-
----
-
-# Step 8 – Case Diary
-
-All important investigation events are automatically recorded in the Digital Case Diary.
-
-The Case Diary includes:
+Available modules include:
 
 - Complaint Registration
-- AI Recommendations
-- Generated Documents
-- Investigation Updates
-- Officer Actions
+- Case Management
+- Investigation Timeline
+- AI Legal Recommendations
+- Document Generation
+- Search & Audit
+- Officer Profile
 
-This provides a complete chronological history of the investigation.
-
----
-
-# Step 9 – Export Documents
-
-After review and approval, generated documents can be exported as PDF files.
-
-These files may be:
-
-- Printed
-- Downloaded
-- Shared
-- Stored for future reference
+The dashboard also displays summary statistics such as total complaints, active cases, pending investigations, and recently generated documents.
 
 ---
 
-# Best Practices
+# 5. Registering a Complaint
 
-To achieve accurate AI recommendations:
+To register a new complaint:
 
-- Enter complete and accurate complaint information.
-- Review all AI-generated recommendations before approval.
-- Verify the suggested legal sections.
-- Update investigation-specific information where necessary.
-- Ensure all generated documents are reviewed before export.
+1. Open **Complaint Registration**.
+2. Enter the complainant details.
+3. Enter incident information.
+4. Add the complaint description.
+5. Upload supporting evidence (optional).
+6. Click **Submit**.
 
----
-
-# Notes
-
-- AI recommendations are intended to assist investigating officers and do not replace legal judgment.
-- All AI-generated outputs remain editable until approved.
-- Human approval is mandatory before any document becomes part of the official investigation record.
+The complaint is saved and processed by the AI extraction module.
 
 ---
 
-# Conclusion
+# 6. Uploading Evidence
 
-The AI-Powered Investigation Assistant streamlines the investigation workflow by reducing repetitive documentation while keeping investigating officers in complete control of all legal decisions. By combining AI assistance, Retrieval-Augmented Generation (RAG), and centralized case management, the platform enables faster, more consistent, and more efficient investigation processes.
+The system supports multiple evidence formats.
+
+Supported file types:
+
+- Images
+- PDF Documents
+- Audio Recordings
+
+To upload evidence:
+
+1. Click **Upload Evidence**.
+2. Select the desired file.
+3. Wait for upload completion.
+4. AI automatically processes the uploaded document.
+
+---
+
+# 7. AI Information Extraction
+
+After upload, the AI extracts structured information from the evidence.
+
+Extracted information may include:
+
+- Names
+- Locations
+- Dates
+- Incident details
+- Other relevant entities
+
+The extracted information is displayed to the officer for verification.
+
+The officer can:
+
+- Accept
+- Edit
+- Reject
+
+before saving the information.
+
+---
+
+# 8. Case Management
+
+After complaint verification:
+
+1. Open **Case Management**.
+2. Create or open a case.
+3. Assign an investigating officer.
+4. Update case priority.
+5. Modify investigation status.
+6. Save changes.
+
+The case remains accessible from the dashboard.
+
+---
+
+# 9. Legal Recommendations
+
+To obtain legal recommendations:
+
+1. Open the case.
+2. Select **Legal Recommendations**.
+3. The system retrieves relevant legal references using the knowledge base.
+4. AI suggests applicable legal sections.
+5. Review the recommendations before applying them to the case.
+
+Final legal decisions remain under officer supervision.
+
+---
+
+# 10. Investigation Timeline
+
+The timeline displays important investigation events.
+
+Examples include:
+
+- Complaint Registered
+- Case Created
+- Evidence Uploaded
+- Legal Sections Updated
+- Documents Generated
+- Investigation Closed
+
+The timeline provides a chronological history of case activities.
+
+---
+
+# 11. AI Document Generation
+
+To generate legal documents:
+
+1. Open the required case.
+2. Select **Generate Document**.
+3. Choose the document type.
+4. Generate the document.
+5. Review the generated content.
+6. Edit if necessary.
+7. Save or download the final version.
+
+Future versions may also support multilingual document generation.
+
+---
+
+# 12. Search & Audit
+
+The Search module allows officers to quickly retrieve previous records.
+
+Search can be performed using:
+
+- Case Number
+- Complaint Title
+- Keywords
+- Document Title
+- Document Type
+
+Matching cases and documents are displayed instantly.
+
+Future versions will include:
+
+- Version history
+- Audit logs
+- Change tracking
+
+---
+
+# 13. Logout
+
+To securely exit the application:
+
+1. Click the user profile icon.
+2. Select **Logout**.
+3. The current session ends securely.
+
+Always log out after completing work to protect sensitive information.
+
+---
+
+# 14. Best Practices
+
+For effective system usage:
+
+- Verify AI-generated information before saving.
+- Review legal recommendations carefully.
+- Upload clear and readable evidence.
+- Keep investigation timelines updated.
+- Generate documents only after reviewing case information.
+- Use search to avoid duplicate case entries.
+- Protect login credentials and maintain account security.
+
+---
+
+# 15. Troubleshooting
+
+| Problem                       | Possible Solution                                 |
+|-------------------------------|---------------------------------------------------|
+| Login Failed                  | Verify username and password                      |
+| Upload Failed                 | Check internet connection and supported file type |
+| AI Extraction Incomplete      | Review uploaded document quality                  |
+| Search Returns No Results     | Verify keywords or case number                    |
+| Document Generation Failed    | Ensure required case information is complete      |
+
+---
+
+# 16. Conclusion
+
+CaseCraftAI is designed to assist officers throughout the complete investigation lifecycle by reducing repetitive documentation work and improving access to legal information. The platform combines complaint registration, AI-assisted information extraction, legal recommendations, case management, intelligent document generation, and search capabilities within a unified system.
+
+While Artificial Intelligence provides valuable assistance, all legal decisions, document approvals, and investigation actions remain under the control of authorized officers, ensuring accountability, transparency, and legal compliance.

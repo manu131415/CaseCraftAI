@@ -11,9 +11,10 @@ import cloudinary.uploader
 from fastapi import APIRouter, File, UploadFile, HTTPException
 from pydantic import BaseModel
 from dotenv import load_dotenv
-from fastapi import APIRouter, File, HTTPException, UploadFile
+from fastapi import APIRouter, File, UploadFile, HTTPException
 from pydantic import BaseModel
 from sqlalchemy import text
+from urllib.parse import urlparse
 
 import database.init_db  # noqa: F401
 from database.db import SessionLocal
@@ -71,29 +72,17 @@ router = APIRouter(
 class ComplaintSubmission(BaseModel):
 
     complaintType: str = ""
-
     category: str = ""
-
     priority: str = "Medium"
-
     incidentDate: str = ""
-
     incidentTime: str = ""
-
     location: str = ""
-
     description: str = ""
-
     aiSummary: str = ""
-
     officerNotes: str = ""
-
     complainants: List[Dict[str, Any]] = []
-
     victims: List[Dict[str, Any]] = []
-
     suspects: List[Dict[str, Any]] = []
-
     attachments: List[Dict[str, Any]] = []
 
 
@@ -186,9 +175,20 @@ def submit_complaint(payload: ComplaintSubmission) -> Dict[str, Any]:
             complainant_name=complainant_data.get("name"),
             phone=complainant_data.get("phone"),
             email=complainant_data.get("email"),
+            complaint_type=payload.complaintType,
+            category=payload.category,
+            priority=payload.priority,
             crime_type=payload.complaintType,
+            incident_date=payload.incidentDate,
+            incident_time=payload.incidentTime,
             location=payload.location,
             description=payload.description,
+            officer_notes=payload.officerNotes,
+            # Store complex data as JSON
+            complainant_data=json.dumps([c.dict() if hasattr(c, 'dict') else c for c in payload.complainants]) if payload.complainants else json.dumps([]),
+            victim_data=json.dumps([v.dict() if hasattr(v, 'dict') else v for v in payload.victims]) if payload.victims else json.dumps([]),
+            suspect_data=json.dumps([s.dict() if hasattr(s, 'dict') else s for s in payload.suspects]) if payload.suspects else json.dumps([]),
+            attachment_data=json.dumps(payload.attachments) if payload.attachments else json.dumps([]),
             status="Pending",
             complainant_father_name=complainant_data.get("father_name"),
             complainant_address=complainant_data.get("address"),
@@ -383,75 +383,6 @@ def delete_complaint(complaint_id: str) -> Dict[str, Any]:
     finally:
         db.close()
 
-                VALUES(
-
-                    :id,
-
-                    :source_type,
-
-                    :media_url,
-
-                    :raw_text,
-
-                    :extracted,
-
-                    :embedding,
-
-                    :status,
-
-                    NOW(),
-
-                    NOW()
-
-                )
-                """
-            ),
-
-            {
-
-                "id": complaint_id,
-
-                "source_type": "text",
-
-                "media_url": json.dumps(payload.attachments),
-
-                "raw_text": payload.description,
-
-                "extracted": json.dumps(complaint_payload),
-
-                "embedding": None,
-
-                "status": "ingested",
-
-            },
-        )
-
-        session.commit()
-
-        return {
-
-            "success": True,
-
-            "message": "Complaint saved successfully",
-
-            "complaintId": complaint_id,
-
-            "evidenceCount": len(payload.attachments),
-
-        }
-
-    except Exception as e:
-
-        session.rollback()
-
-        raise HTTPException(
-            status_code=500,
-            detail=str(e),
-        )
-
-    finally:
-
-        session.close()
 
 # ============================================================
 # UPLOAD + AI EXTRACTION
@@ -606,4 +537,70 @@ async def upload_document(file: UploadFile = File(...)) -> Dict[str, Any]:
         # ⭐ This is full Gemini response
         "raw_ai": raw_ai,
 
+    }
+
+
+# ============================================================
+# UPLOAD EVIDENCE - FOR DOCUMENT & EVIDENCE COLLECTION
+# ============================================================
+
+@router.post(
+    "/upload-evidence",
+    summary="Upload evidence files",
+    description="Upload document and evidence files for a complaint (supports multiple file types, no AI extraction)",
+    tags=["complaints"],
+)
+async def upload_evidence(file: UploadFile = File(...)) -> Dict[str, Any]:
+    """
+    Upload evidence files for complaint documents section.
+    Accepts: PDF, Images, Audio, Video, Word, Excel, Text files.
+    Returns: cloudinaryUrl for frontend to store in attachments array.
+    """
+    file_bytes = await file.read()
+    content_type = file.content_type or ""
+    extension = Path(file.filename or "").suffix.lower()
+    
+    # Validate file type
+    allowed_extensions = {
+        # Documents
+        '.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx', '.txt',
+        # Images
+        '.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp',
+        # Audio
+        '.mp3', '.wav', '.aac', '.flac', '.m4a', '.ogg',
+        # Video
+        '.mp4', '.mov', '.avi', '.mkv', '.webm', '.flv'
+    }
+    
+    if extension not in allowed_extensions:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Unsupported file type: {extension}. Allowed types: {', '.join(allowed_extensions)}"
+        )
+    
+    upload_result = None
+    
+    try:
+        # Upload to Cloudinary
+        upload_result = cloudinary.uploader.upload(
+            file_bytes,
+            folder="casecraft/evidence",
+            resource_type="auto",
+            use_filename=True,
+            unique_filename=True,
+        )
+        
+    except Exception as e:
+        print(f"[Cloudinary Upload Error] {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to upload file to cloud storage: {str(e)}"
+        )
+    
+    # Return response with cloudinaryUrl for frontend
+    return {
+        "success": True,
+        "fileName": file.filename,
+        "fileType": content_type,
+        "cloudinaryUrl": upload_result.get("secure_url") if upload_result else None,
     }

@@ -12,5 +12,9 @@ langdetect
 
 sqlalchemy
 psycopg2-binary
+<<<<<<< HEAD
 
 openai
+=======
+google-generativeai
+>>>>>>> 9cdfe18fd4362723489c5f3fee2d700a4318cd66

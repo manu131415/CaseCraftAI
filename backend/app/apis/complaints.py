@@ -3,12 +3,12 @@ import os
 import tempfile
 import uuid
 from pathlib import Path
-from typing import Any, Dict, List
-from urllib.parse import urlparse
+from typing import Any, Dict, List, Optional
 
 import cloudinary
 import cloudinary.uploader
-
+from fastapi import APIRouter, File, UploadFile, HTTPException
+from pydantic import BaseModel
 from dotenv import load_dotenv
 from fastapi import APIRouter, File, HTTPException, UploadFile
 from pydantic import BaseModel
@@ -30,6 +30,9 @@ from app.services.mapper.complaint_mapper import (
 # ===========================
 # Load ENV
 # ===========================
+
+from database.db import SessionLocal
+from models.complaint import Complaint
 
 load_dotenv(Path(__file__).resolve().parents[2] / ".env")
 
@@ -93,138 +96,256 @@ class ComplaintSubmission(BaseModel):
     attachments: List[Dict[str, Any]] = []
 
 
-# ============================================================
-# GET ALL COMPLAINTS
-# ============================================================
+class ComplaintUpdate(BaseModel):
+    complainant_name: Optional[str] = None
+    phone: Optional[str] = None
+    email: Optional[str] = None
+    crime_type: Optional[str] = None
+    location: Optional[str] = None
+    description: Optional[str] = None
+    status: Optional[str] = None
 
 
-@router.get("/")
-def list_complaints() -> List[Dict[str, Any]]:
+class ComplaintSummary(BaseModel):
+    complaint_id: str
+    complainant_name: Optional[str] = None
+    phone: Optional[str] = None
+    email: Optional[str] = None
+    crime_type: Optional[str] = None
+    location: Optional[str] = None
+    description: Optional[str] = None
+    status: Optional[str] = None
+    created_at: Optional[str] = None
 
-    session = SessionLocal()
 
+class ComplaintSubmissionData(BaseModel):
+    complaint_id: str
+    status: str
+    created_at: Optional[str] = None
+
+
+class ComplaintSubmissionResponse(BaseModel):
+    success: bool
+    message: str
+    data: ComplaintSubmissionData
+
+
+class ComplaintListResponse(BaseModel):
+    complaints: List[ComplaintSummary]
+
+
+class ComplaintDetailResponse(ComplaintSummary):
+    pass
+
+
+class ComplaintUpdateResponse(BaseModel):
+    success: bool
+    message: str
+    data: ComplaintSubmissionData
+
+
+class ComplaintDeleteResponse(BaseModel):
+    success: bool
+    message: str
+
+
+class UploadDocumentResponse(BaseModel):
+    fileName: Optional[str] = None
+    fileType: str
+    storedPath: str
+    cloudinaryUrl: Optional[str] = None
+    extraction: Dict[str, Any]
+
+
+@router.post(
+    "/submit",
+    response_model=ComplaintSubmissionResponse,
+    summary="Submit a complaint",
+    description="Create a new complaint record from a submitted complaint payload.",
+    tags=["complaints"],
+)
+def submit_complaint(payload: ComplaintSubmission) -> Dict[str, Any]:
+    db = SessionLocal()
     try:
-
-        rows = session.execute(
-            text(
-                """
-                SELECT
-                    id,
-                    source_type,
-                    media_url,
-                    raw_text,
-                    extracted,
-                    status,
-                    created_at
-                FROM complaints
-                ORDER BY created_at DESC
-                """
-            )
-        ).mappings().all()
-
-        complaints = []
-
-        for row in rows:
-
-            complaints.append(
-                {
-                    "complaintId": str(row["id"]),
-                    "complaintType": row["source_type"],
-                    "category": "complaint",
-                    "location": "",
-                    "description": row["raw_text"],
-                    "status": row["status"],
-                    "createdAt": str(row["created_at"]),
-                }
-            )
-
-        return complaints
-
-    finally:
-
-        session.close()
-
-
-# ============================================================
-# SUBMIT COMPLAINT
-# ============================================================
-
-
-@router.post("/submit")
-def submit_complaint(payload: ComplaintSubmission):
-
-    complaint_id = str(uuid.uuid4())
-
-    session = SessionLocal()
-
-    try:
-
-        first_complainant = (
-            payload.complainants[0]
-            if payload.complainants
-            else {}
+        # Extract complainant information from the list
+        complainant_data = payload.complainants[0] if payload.complainants else {}
+        
+        complaint = Complaint(
+            complaint_id=str(uuid.uuid4()),
+            complainant_name=complainant_data.get("name"),
+            phone=complainant_data.get("phone"),
+            email=complainant_data.get("email"),
+            crime_type=payload.complaintType,
+            location=payload.location,
+            description=payload.description,
+            status="Pending"
         )
-
-        complaint_payload = {
-
-            "complaintId": complaint_id,
-
-            "complaintType": payload.complaintType,
-
-            "category": payload.category,
-
-            "priority": payload.priority,
-
-            "incidentDate": payload.incidentDate,
-
-            "incidentTime": payload.incidentTime,
-
-            "location": payload.location,
-
-            "description": payload.description,
-
-            "aiSummary": payload.aiSummary,
-
-            "officerNotes": payload.officerNotes,
-
-            "complainants": payload.complainants,
-
-            "victims": payload.victims,
-
-            "suspects": payload.suspects,
-
-            "attachments": payload.attachments,
-
-            "complainantName": first_complainant.get("name", ""),
-
-            "complainantContact": first_complainant.get("contact", ""),
+        
+        db.add(complaint)
+        db.commit()
+        db.refresh(complaint)
+        
+        return {
+            "success": True,
+            "message": "Complaint submitted successfully",
+            "data": {
+                "complaint_id": complaint.complaint_id,
+                "status": complaint.status,
+                "created_at": complaint.created_at.isoformat() if complaint.created_at else None
+            }
         }
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Failed to submit complaint: {str(e)}")
+    finally:
+        db.close()
 
-        session.execute(
 
-            text(
-                """
-                INSERT INTO complaints(
+@router.get(
+    "",
+    response_model=ComplaintListResponse,
+    summary="List complaints",
+    description="Retrieve all complaints available in the system.",
+    tags=["complaints"],
+)
+def get_all_complaints() -> Dict[str, Any]:
+    db = SessionLocal()
+    try:
+        complaints = db.query(Complaint).all()
+        return {
+            "complaints": [
+                {
+                    "complaint_id": c.complaint_id,
+                    "complainant_name": c.complainant_name,
+                    "phone": c.phone,
+                    "email": c.email,
+                    "crime_type": c.crime_type,
+                    "location": c.location,
+                    "description": c.description,
+                    "status": c.status,
+                    "created_at": c.created_at.isoformat() if c.created_at else None
+                }
+                for c in complaints
+            ]
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to retrieve complaints: {str(e)}")
+    finally:
+        db.close()
 
-                    id,
 
-                    source_type,
+@router.get(
+    "/{complaint_id}",
+    response_model=ComplaintDetailResponse,
+    summary="Get complaint details",
+    description="Retrieve a single complaint by its identifier.",
+    tags=["complaints"],
+)
+def get_complaint(complaint_id: str) -> Dict[str, Any]:
+    db = SessionLocal()
+    try:
+        complaint = db.query(Complaint).filter(Complaint.complaint_id == complaint_id).first()
+        if not complaint:
+            raise HTTPException(status_code=404, detail="Complaint not found")
+        
+        return {
+            "complaint_id": complaint.complaint_id,
+            "complainant_name": complaint.complainant_name,
+            "phone": complaint.phone,
+            "email": complaint.email,
+            "crime_type": complaint.crime_type,
+            "location": complaint.location,
+            "description": complaint.description,
+            "status": complaint.status,
+            "created_at": complaint.created_at.isoformat() if complaint.created_at else None
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to retrieve complaint: {str(e)}")
+    finally:
+        db.close()
 
-                    media_url,
 
-                    raw_text,
+@router.put(
+    "/{complaint_id}",
+    response_model=ComplaintUpdateResponse,
+    summary="Update a complaint",
+    description="Partially update an existing complaint record.",
+    tags=["complaints"],
+)
+def update_complaint(complaint_id: str, payload: ComplaintUpdate) -> Dict[str, Any]:
+    db = SessionLocal()
+    try:
+        complaint = db.query(Complaint).filter(Complaint.complaint_id == complaint_id).first()
+        if not complaint:
+            raise HTTPException(status_code=404, detail="Complaint not found")
+        
+        # Update only provided fields
+        if payload.complainant_name is not None:
+            complaint.complainant_name = payload.complainant_name
+        if payload.phone is not None:
+            complaint.phone = payload.phone
+        if payload.email is not None:
+            complaint.email = payload.email
+        if payload.crime_type is not None:
+            complaint.crime_type = payload.crime_type
+        if payload.location is not None:
+            complaint.location = payload.location
+        if payload.description is not None:
+            complaint.description = payload.description
+        if payload.status is not None:
+            complaint.status = payload.status
+        
+        db.commit()
+        db.refresh(complaint)
+        
+        return {
+            "success": True,
+            "message": "Complaint updated successfully",
+            "data": {
+                "complaint_id": complaint.complaint_id,
+                "status": complaint.status,
+                "created_at": complaint.created_at.isoformat() if complaint.created_at else None
+            }
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Failed to update complaint: {str(e)}")
+    finally:
+        db.close()
 
-                    extracted,
 
-                    embedding,
-
-                    status,
-
-                    created_at,
-
-                    updated_at
-
-                )
+@router.delete(
+    "/{complaint_id}",
+    response_model=ComplaintDeleteResponse,
+    summary="Delete a complaint",
+    description="Remove an existing complaint record from the system.",
+    tags=["complaints"],
+)
+def delete_complaint(complaint_id: str) -> Dict[str, Any]:
+    db = SessionLocal()
+    try:
+        complaint = db.query(Complaint).filter(Complaint.complaint_id == complaint_id).first()
+        if not complaint:
+            raise HTTPException(status_code=404, detail="Complaint not found")
+        
+        db.delete(complaint)
+        db.commit()
+        
+        return {
+            "success": True,
+            "message": "Complaint deleted successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Failed to delete complaint: {str(e)}")
+    finally:
+        db.close()
 
                 VALUES(
 
@@ -300,7 +421,13 @@ def submit_complaint(payload: ComplaintSubmission):
 # UPLOAD + AI EXTRACTION
 # ============================================================
 
-@router.post("/upload")
+@router.post(
+    "/upload",
+    response_model=UploadDocumentResponse,
+    summary="Upload a document",
+    description="Upload a complaint-related file and process it through the configured ingestion pipeline.",
+    tags=["complaints"],
+)
 async def upload_document(file: UploadFile = File(...)) -> Dict[str, Any]:
 
     file_bytes = await file.read()

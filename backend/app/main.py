@@ -1,8 +1,6 @@
 from typing import Dict
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
 from app.apis.complaints import router as complaints_router
 from app.apis.cases import router as cases_router
 from app.apis.case_diary import router as case_diary_router

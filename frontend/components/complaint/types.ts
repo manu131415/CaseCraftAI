@@ -11,6 +11,25 @@ export interface AttachmentMeta {
   documentUrl?: string;
   extractedText?: string;
   summary?: string;
+  extraction?: {
+    sections?: {
+      narrative_text?: string;
+      incident_details?: {
+        description?: string;
+      };
+      complainant_details?: {
+        name?: string;
+      };
+      accused_details?: Array<{ name?: string }>;
+    };
+    entities?: {
+      locations?: string[];
+      phone_numbers?: string[];
+      people?: Array<{ name?: string }>;
+    };
+    key_facts?: string[];
+    full_text?: string;
+  };
 }
 
 export interface PersonEntry {
@@ -38,5 +57,5 @@ export interface ComplaintData {
   complainants: PersonEntry[];
   victims: PersonEntry[];
   suspects: PersonEntry[];
-  attachments?: AttachmentMeta[];
+  attachments: AttachmentMeta[];
 }

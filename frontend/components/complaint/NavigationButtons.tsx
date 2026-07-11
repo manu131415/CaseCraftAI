@@ -1,3 +1,7 @@
+"use client";
+
+import { useLanguage } from "@/app/providers/LanguageProvider";
+
 interface Props {
   currentStep: number;
   totalSteps: number;
@@ -6,16 +10,24 @@ interface Props {
   onSubmit: () => void;
 }
 
-export default function NavigationButtons({ currentStep, totalSteps, onBack, onNext, onSubmit }: Props) {
+export default function NavigationButtons({
+  currentStep,
+  totalSteps,
+  onBack,
+  onNext,
+  onSubmit,
+}: Props) {
+  const { t } = useLanguage();
+
   return (
     <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-between">
       <button
         type="button"
         onClick={onBack}
         disabled={currentStep === 1}
-        className="rounded-full border border-slate-300 px-5 py-3 text-base font-medium text-slate-700 transition disabled:cursor-not-allowed disabled:opacity-50"
+        className="rounded-full border border-slate-300 px-5 py-3 text-base font-medium text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50"
       >
-        Back
+        {t("navigation.back", "complaints")}
       </button>
 
       {currentStep === totalSteps ? (
@@ -24,7 +36,7 @@ export default function NavigationButtons({ currentStep, totalSteps, onBack, onN
           onClick={onSubmit}
           className="rounded-full bg-blue-600 px-5 py-3 text-base font-medium text-white transition hover:bg-blue-700"
         >
-          Submit complaint
+          {t("navigation.submitComplaint", "complaints")}
         </button>
       ) : (
         <button
@@ -32,7 +44,7 @@ export default function NavigationButtons({ currentStep, totalSteps, onBack, onN
           onClick={onNext}
           className="rounded-full bg-slate-900 px-5 py-3 text-base font-medium text-white transition hover:bg-slate-700"
         >
-          Continue
+          {t("navigation.continue", "complaints")}
         </button>
       )}
     </div>

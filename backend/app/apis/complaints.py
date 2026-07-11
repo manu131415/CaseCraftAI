@@ -1,4 +1,6 @@
+import json
 import os
+import tempfile
 import uuid
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -9,7 +11,26 @@ import cloudinary.uploader
 from fastapi import APIRouter, File, UploadFile, HTTPException
 from pydantic import BaseModel
 from dotenv import load_dotenv
-from urllib.parse import urlparse
+from fastapi import APIRouter, File, HTTPException, UploadFile
+from pydantic import BaseModel
+from sqlalchemy import text
+
+import database.init_db  # noqa: F401
+from database.db import SessionLocal
+
+# ===========================
+# NEW IMPORTS
+# ===========================
+
+from app.services.mapper.complaint_mapper import (
+    map_pdf,
+    map_image,
+    map_audio,
+)
+
+# ===========================
+# Load ENV
+# ===========================
 
 from database.db import SessionLocal
 from models.complaint import Complaint
@@ -17,36 +38,62 @@ from models.complaint import Complaint
 load_dotenv(Path(__file__).resolve().parents[2] / ".env")
 
 cloudinary_url = os.getenv("CLOUDINARY_URL")
+
 if cloudinary_url:
     parsed = urlparse(cloudinary_url)
-    cloudinary.config(cloud_name=parsed.netloc.split("@")[-1], secure=True)
-else:
+
     cloudinary.config(
-        cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME") or "dpla4pwiw",
-        api_key=os.getenv("CLOUDINARY_API_KEY") or "566231367534642",
-        api_secret=os.getenv("CLOUDINARY_API_SECRET") or "Ybst8w8oBvtLx59aUFgdKAaoTyg",
+        cloud_name=parsed.hostname or "",
+        api_key=parsed.username or "",
+        api_secret=parsed.password or "",
         secure=True,
     )
 
-router = APIRouter(prefix="/api/complaints", tags=["complaints"])
+else:
 
-UPLOAD_DIR = Path(__file__).resolve().parents[2] / "uploads"
-UPLOAD_DIR.mkdir(exist_ok=True)
+    cloudinary.config(
+        cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
+        api_key=os.getenv("CLOUDINARY_API_KEY"),
+        api_secret=os.getenv("CLOUDINARY_API_SECRET"),
+        secure=True,
+    )
+
+router = APIRouter(
+    prefix="/api/complaints",
+    tags=["complaints"],
+)
+
+# ============================================================
+# Complaint Submission Model
+# ============================================================
 
 
 class ComplaintSubmission(BaseModel):
+
     complaintType: str = ""
+
     category: str = ""
-    priority: str = ""
+
+    priority: str = "Medium"
+
     incidentDate: str = ""
+
     incidentTime: str = ""
+
     location: str = ""
+
     description: str = ""
+
     aiSummary: str = ""
+
     officerNotes: str = ""
+
     complainants: List[Dict[str, Any]] = []
+
     victims: List[Dict[str, Any]] = []
+
     suspects: List[Dict[str, Any]] = []
+
     attachments: List[Dict[str, Any]] = []
 
 
@@ -336,6 +383,79 @@ def delete_complaint(complaint_id: str) -> Dict[str, Any]:
     finally:
         db.close()
 
+                VALUES(
+
+                    :id,
+
+                    :source_type,
+
+                    :media_url,
+
+                    :raw_text,
+
+                    :extracted,
+
+                    :embedding,
+
+                    :status,
+
+                    NOW(),
+
+                    NOW()
+
+                )
+                """
+            ),
+
+            {
+
+                "id": complaint_id,
+
+                "source_type": "text",
+
+                "media_url": json.dumps(payload.attachments),
+
+                "raw_text": payload.description,
+
+                "extracted": json.dumps(complaint_payload),
+
+                "embedding": None,
+
+                "status": "ingested",
+
+            },
+        )
+
+        session.commit()
+
+        return {
+
+            "success": True,
+
+            "message": "Complaint saved successfully",
+
+            "complaintId": complaint_id,
+
+            "evidenceCount": len(payload.attachments),
+
+        }
+
+    except Exception as e:
+
+        session.rollback()
+
+        raise HTTPException(
+            status_code=500,
+            detail=str(e),
+        )
+
+    finally:
+
+        session.close()
+
+# ============================================================
+# UPLOAD + AI EXTRACTION
+# ============================================================
 
 @router.post(
     "/upload",
@@ -345,35 +465,145 @@ def delete_complaint(complaint_id: str) -> Dict[str, Any]:
     tags=["complaints"],
 )
 async def upload_document(file: UploadFile = File(...)) -> Dict[str, Any]:
+
     file_bytes = await file.read()
-    file_path = UPLOAD_DIR / f"{uuid.uuid4()}_{file.filename or 'upload'}"
-    file_path.write_bytes(file_bytes)
 
     content_type = file.content_type or ""
-    result: Dict[str, Any] = {"message": "File received but no extraction pipeline is configured for this type."}
+
+    extension = Path(file.filename or "").suffix.lower()
+
+    # -------------------------------
+    # Save temporarily
+    # -------------------------------
+
+    temp = tempfile.NamedTemporaryFile(
+        suffix=extension,
+        delete=False
+    )
+
+    temp.write(file_bytes)
+    temp.close()
+
+    temp_path = temp.name
+
+    raw_ai = {}
+
+    extraction = {}
+
+    upload_result = None
 
     try:
+
+        # ===========================================
+        # IMAGE
+        # ===========================================
+
         if content_type.startswith("image/"):
-            from app.services.ingestion.image_service import process_image
-            result = process_image(str(file_path))
-        elif file_path.suffix.lower() == ".pdf":
-            from app.services.ingestion.pdf_service import process_pdf
-            result = process_pdf(str(file_path))
-        elif content_type.startswith("audio/") or file_path.suffix.lower() in {".wav", ".mp3", ".m4a", ".ogg"}:
-            from app.services.ingestion.audio_service import extract_audio_text
-            result = extract_audio_text(str(file_path))
-    except Exception as exc:
-        result = {"error": str(exc)}
 
-    try:
-        upload_result = cloudinary.uploader.upload(str(file_path), folder="casecraft/complaints")
-    except Exception:
-        upload_result = None
+            from app.services.ingestion.image_service import process_image
+
+            raw_ai = process_image(temp_path)
+
+            extraction = map_image(raw_ai)
+
+        # ===========================================
+        # PDF
+        # ===========================================
+
+        elif extension == ".pdf":
+
+            from app.services.ingestion.pdf_service import process_pdf
+
+            raw_ai = process_pdf(temp_path)
+
+            extraction = map_pdf(raw_ai)
+
+        # ===========================================
+        # AUDIO
+        # ===========================================
+
+        elif (
+            content_type.startswith("audio/")
+            or extension in [
+                ".wav",
+                ".mp3",
+                ".m4a",
+                ".ogg",
+            ]
+        ):
+
+            from app.services.ingestion.audio_service import (
+                extract_audio_text,
+            )
+
+            raw_ai = extract_audio_text(temp_path)
+
+            extraction = map_audio(raw_ai)
+
+        else:
+
+            raise HTTPException(
+                status_code=400,
+                detail="Unsupported file type",
+            )
+
+        # ===========================================
+        # Upload Original File to Cloudinary
+        # ===========================================
+
+        try:
+
+            upload_result = cloudinary.uploader.upload(
+                file_bytes,
+                folder="casecraft/complaints",
+                resource_type="auto",
+            )
+
+        except Exception as e:
+
+            print("[Cloudinary Error]", e)
+
+            upload_result = None
+
+    except Exception as e:
+
+        import traceback
+
+        traceback.print_exc()
+
+        raise HTTPException(
+            status_code=500,
+            detail=str(e),
+        )
+
+    finally:
+
+        try:
+            os.remove(temp_path)
+        except Exception:
+            pass
+
+    # ===========================================
+    # Response
+    # ===========================================
 
     return {
+
+        "success": True,
+
         "fileName": file.filename,
+
         "fileType": content_type,
-        "storedPath": str(file_path),
-        "cloudinaryUrl": upload_result.get("secure_url") if upload_result else None,
-        "extraction": result,
+
+        "cloudinaryUrl":
+            upload_result.get("secure_url")
+            if upload_result
+            else None,
+
+        # ⭐ This is what frontend fills the form with
+        "extraction": extraction,
+
+        # ⭐ This is full Gemini response
+        "raw_ai": raw_ai,
+
     }

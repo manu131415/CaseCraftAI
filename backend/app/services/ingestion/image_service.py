@@ -5,7 +5,7 @@ CrimeOS Image Ingestion Service
 This module provides a production-ready service and command-line interface (CLI)
 for extracting structured crime investigation information from images.
 
-It uses the Google Gemini 2.5 Flash model (via google-generativeai SDK) to
+It uses the Google Gemini 2.5 Flash model (via the new `google-genai` SDK) to
 analyze images and extract specific details (people, vehicles, weapons, evidence, etc.)
 into a validated JSON structure defined by Pydantic models.
 
@@ -17,29 +17,31 @@ import json
 import logging
 import os
 import sys
+from google import genai
+from google.genai import types
 import time
-from pathlib import Path
+
 from typing import Any, Dict, List, Optional, Union
+from dotenv import load_dotenv
+from pathlib import Path
+
+BACKEND_ROOT = Path(__file__).resolve().parents[3]
+load_dotenv(BACKEND_ROOT / ".env")
 
 # Third-party dependencies
 try:
     from PIL import Image
 except ImportError:
     print("Error: The 'Pillow' library is required. Install it using 'pip install Pillow'.", file=sys.stderr)
-    sys.exit(1)
+    raise RuntimeError("...")
 
 try:
     from pydantic import BaseModel, Field, ValidationError
 except ImportError:
     print("Error: The 'pydantic' library is required. Install it using 'pip install pydantic'.", file=sys.stderr)
-    sys.exit(1)
+    raise RuntimeError("...")
 
-try:
-    import google.generativeai as genai
-    from google.api_core import exceptions as google_exceptions
-except ImportError:
-    print("Error: The 'google-generativeai' library is required. Install it using 'pip install google-generativeai'.", file=sys.stderr)
-    sys.exit(1)
+
 
 # Configure logging
 logger = logging.getLogger("CrimeOS.ImageService")
@@ -52,19 +54,19 @@ logger = logging.getLogger("CrimeOS.ImageService")
 class DocumentMeta(BaseModel):
     """Metadata regarding the source file and analysis configuration."""
     source_file: str = Field(
-        ..., 
+        ...,
         description="The source filename or path of the analyzed image."
     )
     image_width: int = Field(
-        ..., 
+        ...,
         description="Width of the image in pixels."
     )
     image_height: int = Field(
-        ..., 
+        ...,
         description="Height of the image in pixels."
     )
     analysis_model: str = Field(
-        "gemini-2.5-flash", 
+        "gemini-2.0-flash-001", 
         description="The Gemini model used for the visual analysis."
     )
 
@@ -72,31 +74,31 @@ class DocumentMeta(BaseModel):
 class SceneDetails(BaseModel):
     """Environmental and situational details of the crime scene."""
     summary: str = Field(
-        ..., 
+        ...,
         description="A concise yet comprehensive summary of the visual scene."
     )
     environment: str = Field(
-        ..., 
+        ...,
         description="General description of the environment (e.g., urban, rural, forest, highway, industrial)."
     )
     location_type: str = Field(
-        ..., 
+        ...,
         description="Type of location (e.g., parking lot, convenience store, residential alleyway, bedroom)."
     )
     indoor_outdoor: str = Field(
-        ..., 
+        ...,
         description="Indication of whether the scene is indoors, outdoors, or a mix of both."
     )
     lighting: str = Field(
-        ..., 
+        ...,
         description="Lighting conditions (e.g., daylight, artificial streetlights, low-light, flashing siren lights)."
     )
     weather: str = Field(
-        ..., 
+        ...,
         description="Weather conditions visible (e.g., rain, snow, clear, foggy, overcast)."
     )
     time_of_day: str = Field(
-        ..., 
+        ...,
         description="Estimated time of day (e.g., morning, afternoon, dusk, night)."
     )
 
@@ -104,19 +106,19 @@ class SceneDetails(BaseModel):
 class PersonDetails(BaseModel):
     """Detailed information about a person detected in the image."""
     description: str = Field(
-        ..., 
+        ...,
         description="Physical description of the person including clothing, gender, height/build estimate, and age estimate."
     )
     activity: str = Field(
-        ..., 
+        ...,
         description="What the person is doing in the scene (e.g., running, holding an object, standing, interacting)."
     )
     suspicious_behavior: Optional[str] = Field(
-        None, 
+        None,
         description="Description of any suspicious actions or behaviors, if applicable."
     )
     location_in_scene: Optional[str] = Field(
-        None, 
+        None,
         description="Approximate location of the person within the frame (e.g., foreground left, near the vehicle)."
     )
 
@@ -124,27 +126,27 @@ class PersonDetails(BaseModel):
 class VehicleDetails(BaseModel):
     """Detailed information about a vehicle detected in the image."""
     type: str = Field(
-        ..., 
+        ...,
         description="Type of vehicle (e.g., car, SUV, motorcycle, truck, bicycle)."
     )
     color: Optional[str] = Field(
-        None, 
+        None,
         description="Visible color of the vehicle."
     )
     make_model: Optional[str] = Field(
-        None, 
+        None,
         description="Make and model of the vehicle if discernible (e.g., Toyota Camry, Ford F-150)."
     )
     license_plate: Optional[str] = Field(
-        None, 
+        None,
         description="License plate number and state/jurisdiction if readable."
     )
     suspicious_features: Optional[str] = Field(
-        None, 
+        None,
         description="Any suspicious characteristics (e.g., missing plates, broken windows, running engine without driver)."
     )
     location_in_scene: Optional[str] = Field(
-        None, 
+        None,
         description="Location of the vehicle in the frame."
     )
 
@@ -152,19 +154,19 @@ class VehicleDetails(BaseModel):
 class ObjectDetails(BaseModel):
     """Detailed information about an important object in the scene."""
     name: str = Field(
-        ..., 
+        ...,
         description="Name of the object."
     )
     description: str = Field(
-        ..., 
+        ...,
         description="Visual description of the object (color, size, state)."
     )
     location_in_scene: Optional[str] = Field(
-        None, 
+        None,
         description="Location of the object in the frame."
     )
     relevance_to_investigation: Optional[str] = Field(
-        None, 
+        None,
         description="How or why this object is relevant to a potential police investigation."
     )
 
@@ -172,15 +174,15 @@ class ObjectDetails(BaseModel):
 class TextDetection(BaseModel):
     """Legible text extracted from the scene."""
     text: str = Field(
-        ..., 
+        ...,
         description="The readable text exactly as it appears in the image."
     )
     source_type: str = Field(
-        ..., 
+        ...,
         description="Source of the text (e.g., license plate, storefront sign, document text, apparel, road sign)."
     )
     confidence: Optional[str] = Field(
-        None, 
+        None,
         description="Estimated readability or confidence level (e.g., clear, partially obscured, blurry)."
     )
 
@@ -188,15 +190,15 @@ class TextDetection(BaseModel):
 class BuildingDetails(BaseModel):
     """Details about buildings or structures in the scene."""
     type: str = Field(
-        ..., 
+        ...,
         description="Type of building/structure (e.g., warehouse, residential house, commercial store, fence)."
     )
     description: str = Field(
-        ..., 
+        ...,
         description="Visual details including structural condition, color, and key features."
     )
     visible_signs_or_details: Optional[str] = Field(
-        None, 
+        None,
         description="Any notable signage, entry points, or damage on the building."
     )
 
@@ -204,11 +206,11 @@ class BuildingDetails(BaseModel):
 class AnimalDetails(BaseModel):
     """Details about animals in the scene."""
     type: str = Field(
-        ..., 
+        ...,
         description="Type or breed of animal (e.g., dog, cat, horse)."
     )
     description: str = Field(
-        ..., 
+        ...,
         description="Visual description and status/activity of the animal."
     )
 
@@ -216,15 +218,15 @@ class AnimalDetails(BaseModel):
 class WeaponDetails(BaseModel):
     """Details about weapons detected in the scene."""
     type: str = Field(
-        ..., 
+        ...,
         description="Type of weapon (e.g., handgun, rifle, knife, blunt object, broken bottle)."
     )
     description: str = Field(
-        ..., 
+        ...,
         description="Detailed visual description (color, size, model if visible)."
     )
     location: Optional[str] = Field(
-        None, 
+        None,
         description="Where the weapon is located (e.g., in hand of person 1, on the floor next to the table)."
     )
 
@@ -232,15 +234,15 @@ class WeaponDetails(BaseModel):
 class EvidenceDetails(BaseModel):
     """Details about potential forensic evidence in the scene."""
     type: str = Field(
-        ..., 
+        ...,
         description="Type of potential evidence (e.g., bloodstain, cartridge case, footprint, toolmark, drug paraphernalia)."
     )
     description: str = Field(
-        ..., 
+        ...,
         description="Visual appearance and estimated importance level."
     )
     location: Optional[str] = Field(
-        None, 
+        None,
         description="Location of the evidence in the scene."
     )
 
@@ -248,11 +250,11 @@ class EvidenceDetails(BaseModel):
 class TimelineEvent(BaseModel):
     """Chronological event or action inferred from the visual context."""
     time_or_sequence: str = Field(
-        ..., 
+        ...,
         description="Time marker or step number (e.g., 'Step 1', 'Estimated 14:30', 'Post-impact')."
     )
     event: str = Field(
-        ..., 
+        ...,
         description="Inferred action or event that occurred or is occurring."
     )
 
@@ -286,7 +288,7 @@ class CrimeOSImageAnalysis(BaseModel):
         description="Keywords extracted for database searching and indexing."
     )
     confidence_score: float = Field(
-        ..., 
+        ...,
         description="Overall confidence score of the analysis (between 0.0 and 1.0)."
     )
 
@@ -299,15 +301,15 @@ def clean_gemini_output(raw_text: str) -> str:
     """
     Cleans the raw response from the Gemini model. (Requirement 17)
     Strips markdown formatting block backticks (```json ... ```) if present.
-    
+
     Args:
         raw_text: The raw string response from the Gemini API.
-        
+
     Returns:
         The cleaned JSON string ready for parsing.
     """
     text = raw_text.strip()
-    
+
     # Check if the output is wrapped in markdown code block
     if text.startswith("```"):
         # Find the end of the first line (e.g., ```json or ```)
@@ -316,11 +318,11 @@ def clean_gemini_output(raw_text: str) -> str:
             prefix = text[:first_newline].strip()
             if prefix in ("```json", "```"):
                 text = text[first_newline:].strip()
-        
+
         # Strip trailing code block marker
         if text.endswith("```"):
             text = text[:-3].strip()
-            
+
     return text
 
 
@@ -364,19 +366,19 @@ def get_gemini_prompt() -> str:
 def process_image(image_path: Union[str, Path]) -> Dict[str, Any]:
     """
     Processes a single image file through Gemini 2.5 Flash Vision. (Requirement 10 & 1)
-    Loads the image, configures Gemini API, executes analysis, and validates JSON.
-    
+    Loads the image, initializes the Gemini client, executes analysis, and validates JSON.
+
     Args:
         image_path: The file path to the target image.
-        
+
     Returns:
         A dictionary containing the validated JSON structure or a structured error object.
     """
     image_path = Path(image_path)
     logger.info(f"Starting analysis for image: {image_path.name}")
-    
+
     # 1. Read API Key (Requirement 2)
-    api_key = os.environ.get("GEMINI_API_KEY")
+    api_key = os.environ.get("GOOGLE_API_KEY")
     if not api_key:
         error_msg = "GEMINI_API_KEY environment variable is not set."
         logger.error(error_msg)
@@ -389,23 +391,23 @@ def process_image(image_path: Union[str, Path]) -> Dict[str, Any]:
         }
         
     # Configure generative AI library
-    genai.configure(api_key=api_key)
+    client = genai.Client(api_key=api_key)
     
     # 2. Open and load image using Pillow
     try:
         if not image_path.exists():
             raise FileNotFoundError(f"File not found: {image_path}")
-            
+
         with Image.open(image_path) as img:
             image_width, image_height = img.size
+            img.verify()
             # Convert to RGB to verify image validity and prevent palette/transparency issues
+        with Image.open(image_path) as img:
             pil_image = img.convert("RGB")
-            # Force load image data into memory before context manager exits
-            pil_image.verify()
             
         # Re-open for actual generation to ensure PIL object is clean
         pil_image = Image.open(image_path)
-        
+
     except Exception as e:
         error_msg = f"Failed to load or parse image file: {str(e)}"
         logger.error(error_msg)
@@ -418,50 +420,60 @@ def process_image(image_path: Union[str, Path]) -> Dict[str, Any]:
         }
 
     # 3. Request analysis from Gemini (Requirement 1)
+    # 3. Request analysis from Gemini
     try:
-        model = genai.GenerativeModel("gemini-2.5-flash")
         prompt = get_gemini_prompt()
-        
-        logger.info(f"Sending image to Gemini 2.5 Flash Vision API...")
-        
-        # Configure model parameters
-        generation_config = {
-            "response_mime_type": "application/json",
-        }
-        
-        response = model.generate_content(
-            [pil_image, prompt],
-            generation_config=generation_config
+
+        # Detect MIME type automatically
+        suffix = image_path.suffix.lower()
+
+        if suffix == ".png":
+            mime_type = "image/png"
+        elif suffix in [".jpg", ".jpeg"]:
+            mime_type = "image/jpeg"
+        elif suffix == ".webp":
+            mime_type = "image/webp"
+        else:
+            raise ValueError(f"Unsupported image format: {suffix}")
+
+        # Read image bytes
+        with open(image_path, "rb") as f:
+            image_bytes = f.read()
+
+        response = client.models.generate_content(
+            model=os.getenv("GEMINI_MODEL", "gemini-2.0-flash-001"),
+            contents=[
+                prompt,
+                types.Part.from_bytes(
+                    data=image_bytes,
+                    mime_type=mime_type
+                ),
+            ],
+            config=types.GenerateContentConfig(
+                response_mime_type="application/json",
+                temperature=0,
+            ),
         )
-        
+
         raw_text = response.text
+
         if not raw_text:
             raise ValueError("Gemini returned an empty response.")
-            
-    except google_exceptions.GoogleAPICallError as e:
+
+    except Exception as e:
         error_msg = f"Gemini API call failed: {str(e)}"
-        logger.error(error_msg)
+        logger.exception(error_msg)
         return {
             "error": {
                 "code": "GEMINI_API_CALL_ERROR",
                 "message": error_msg,
-                "source_file": str(image_path.name)
+                "source_file": str(image_path.name),
             }
         }
-    except Exception as e:
-        error_msg = f"Unexpected error during Gemini analysis: {str(e)}"
-        logger.error(error_msg)
-        return {
-            "error": {
-                "code": "ANALYSIS_PIPELINE_ERROR",
-                "message": error_msg,
-                "source_file": str(image_path.name)
-            }
-        }
-        
+
     # 4. Automatically clean Gemini output (Requirement 17 & 18)
     cleaned_text = clean_gemini_output(raw_text)
-    
+
     try:
         parsed_json = json.loads(cleaned_text)
     except json.JSONDecodeError as e:
@@ -477,19 +489,19 @@ def process_image(image_path: Union[str, Path]) -> Dict[str, Any]:
                 "source_file": str(image_path.name)
             }
         }
-        
+
     # 5. Populate/correct document_meta in Python
     # This guarantees width, height, and filename are mathematically accurate
     if "document_meta" not in parsed_json or not isinstance(parsed_json["document_meta"], dict):
         parsed_json["document_meta"] = {}
-        
+
     parsed_json["document_meta"].update({
         "source_file": image_path.name,
         "image_width": image_width,
         "image_height": image_height,
         "analysis_model": "gemini-2.5-flash"
     })
-    
+
     # 6. Validate using Pydantic (Requirement 14 & 7)
     try:
         validated_model = CrimeOSImageAnalysis(**parsed_json)
@@ -514,39 +526,39 @@ def process_image(image_path: Union[str, Path]) -> Dict[str, Any]:
 # =====================================================================
 
 def process_batch(
-    input_dir: Union[str, Path], 
+    input_dir: Union[str, Path],
     output_dir: Optional[Union[str, Path]] = None,
 ) -> Dict[str, Any]:
     """
     Scans a directory for supported images and processes each sequentially. (Requirement 8 & 9)
     Saves outputs to the output directory if specified, or prints results.
-    
+
     Args:
         input_dir: Directory containing image files.
         output_dir: Directory to store the resulting JSON files.
-        
+
     Returns:
         A batch execution report summary.
     """
     input_path = Path(input_dir)
     output_path = Path(output_dir) if output_dir else None
-    
+
     if not input_path.is_dir():
         raise NotADirectoryError(f"Input path is not a directory: {input_path}")
-        
+
     if output_path:
         output_path.mkdir(parents=True, exist_ok=True)
-        
-    supported_extensions = {".jpg", ".jpeg", ".png", ".webp"} # Requirement 9
-    
+
+    supported_extensions = {".jpg", ".jpeg", ".png", ".webp"}  # Requirement 9
+
     # Find all matching files
     image_files = [
-        f for f in input_path.iterdir() 
+        f for f in input_path.iterdir()
         if f.is_file() and f.suffix.lower() in supported_extensions
     ]
-    
+
     logger.info(f"Found {len(image_files)} supported images in {input_path}")
-    
+
     results = {
         "batch_meta": {
             "input_directory": str(input_path.absolute()),
@@ -557,15 +569,15 @@ def process_batch(
         "processed_files": [],
         "failures": []
     }
-    
+
     success_count = 0
     failure_count = 0
-    
+
     for idx, img_file in enumerate(image_files, 1):
         logger.info(f"[{idx}/{len(image_files)}] Processing {img_file.name}...")
-        
+
         result_dict = process_image(img_file)
-        
+
         # Save output to directory or track failures
         if "error" in result_dict:
             failure_count += 1
@@ -573,7 +585,7 @@ def process_batch(
                 "file": img_file.name,
                 "error": result_dict["error"]
             })
-            
+
             # If an output directory was specified, write the error payload there too
             if output_path:
                 out_filename = img_file.stem + "_error.json"
@@ -586,7 +598,7 @@ def process_batch(
         else:
             success_count += 1
             results["processed_files"].append(img_file.name)
-            
+
             if output_path:
                 out_filename = img_file.stem + ".json"
                 target_out = output_path / out_filename
@@ -601,18 +613,18 @@ def process_batch(
                 print(f"\n--- Analysis Results for {img_file.name} ---")
                 print(json.dumps(result_dict, indent=2))
                 print("------------------------------------------\n")
-                
+
     end_time = time.time()
     results["batch_meta"]["end_time"] = end_time
     results["batch_meta"]["duration_seconds"] = round(end_time - results["batch_meta"]["start_time"], 2)
     results["batch_meta"]["successes"] = success_count
     results["batch_meta"]["failures"] = failure_count
-    
+
     logger.info(
         f"Batch processing completed in {results['batch_meta']['duration_seconds']}s. "
         f"Successes: {success_count}, Failures: {failure_count}."
     )
-    
+
     return results
 
 
@@ -623,13 +635,13 @@ def process_batch(
 def setup_logging(verbose: bool) -> None:
     """
     Sets up the application log level and format.
-    
+
     Args:
         verbose: If True, sets log level to DEBUG; otherwise INFO.
     """
     log_level = logging.DEBUG if verbose else logging.INFO
     log_format = "%(asctime)s [%(levelname)s] %(name)s - %(message)s"
-    
+
     logging.basicConfig(
         level=log_level,
         format=log_format,
@@ -642,7 +654,7 @@ def setup_logging(verbose: bool) -> None:
 def main() -> int:
     """
     CLI main entry point matching pdf_to_json.py patterns. (Requirement 11 & 12)
-    
+
     Returns:
         Exit code (0 for success, 1 for failure).
     """
@@ -663,26 +675,26 @@ def main() -> int:
         action="store_true",
         help="Enable detailed diagnostic logging."
     )
-    
+
     args = parser.parse_args()
     setup_logging(args.verbose)
-    
+
     # Check GEMINI_API_KEY requirement early
-    if not os.environ.get("GEMINI_API_KEY"):
-        logger.error("GEMINI_API_KEY environment variable is not defined. Please set it before running.")
+    if not os.environ.get("GOOGLE_API_KEY"):
+        logger.error("GOOGLE_API_KEY environment variable is not defined. Please set it before running.")
         return 1
 
     input_path = Path(args.input_path)
     if not input_path.exists():
         logger.error(f"Specified input path does not exist: {input_path}")
         return 1
-        
+
     try:
         if input_path.is_dir():
             # Batch Folder Processing Mode (Requirement 8)
             logger.info(f"Directory detected. Initiating batch processing on: {input_path}")
             batch_summary = process_batch(input_path, args.out)
-            
+
             # Print final batch processing summary statistics
             if args.out:
                 summary_file = Path(args.out) / "batch_summary.json"
@@ -693,19 +705,19 @@ def main() -> int:
                 except Exception as e:
                     logger.error(f"Failed to write summary metadata to {summary_file}: {e}")
             return 0 if batch_summary["batch_meta"]["failures"] == 0 else 1
-            
+
         elif input_path.is_file():
             # Single Image Processing Mode (Requirement 8)
-            supported_extensions = {".jpg", ".jpeg", ".png", ".webp"} # Requirement 9
+            supported_extensions = {".jpg", ".jpeg", ".png", ".webp"}  # Requirement 9
             if input_path.suffix.lower() not in supported_extensions:
                 logger.error(
                     f"Unsupported image format: {input_path.suffix}. "
                     f"Supported formats are: {', '.join(supported_extensions)}"
                 )
                 return 1
-                
+
             result = process_image(input_path)
-            
+
             if "error" in result:
                 logger.error(f"Processing failed: {result['error']['message']}")
                 # If output path is provided, save the structured error details (Requirement 14)
@@ -720,14 +732,14 @@ def main() -> int:
                 else:
                     print(json.dumps(result, indent=2))
                 return 1
-            
+
             # Save or print successful validation results
             if args.out:
                 out_path = Path(args.out)
                 if out_path.is_dir() or args.out.endswith("/") or args.out.endswith("\\"):
                     out_path.mkdir(parents=True, exist_ok=True)
                     out_path = out_path / (input_path.stem + ".json")
-                
+
                 with open(out_path, "w", encoding="utf-8") as f:
                     json.dump(result, f, indent=4)
                 logger.info(f"Saved validated JSON output to {out_path}")
@@ -738,7 +750,7 @@ def main() -> int:
         else:
             logger.error(f"Invalid input type: {input_path}")
             return 1
-            
+
     except Exception as e:
         logger.critical(f"Unhandled exception in CLI processing execution: {e}", exc_info=True)
         return 1

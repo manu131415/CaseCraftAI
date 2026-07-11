@@ -17,7 +17,7 @@ export default function ComplaintDetails({ form, setForm }: Props) {
   return (
     <div className="space-y-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
       <div>
-        <p className="text-base font-medium text-blue-600">Step 2</p>
+        <p className="text-base font-medium text-blue-600">Step 1</p>
         <h2 className="mt-1 text-2xl font-semibold text-slate-900">Complaint information</h2>
         <p className="mt-2 text-base text-slate-500">
           Enter the core facts of the complaint so it can be triaged properly.
@@ -111,18 +111,6 @@ export default function ComplaintDetails({ form, setForm }: Props) {
           onChange={handleChange}
           className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none ring-0"
           placeholder="Describe what happened"
-        />
-      </div>
-
-      <div>
-        <label className="text-base font-medium text-slate-700">AI summary</label>
-        <textarea
-          rows={4}
-          name="aiSummary"
-          value={form.aiSummary}
-          onChange={handleChange}
-          className="mt-2 w-full rounded-2xl border border-slate-200 bg-blue-50 px-4 py-3 outline-none ring-0"
-          placeholder="Suggested AI-generated summary"
         />
       </div>
 

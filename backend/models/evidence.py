@@ -4,6 +4,8 @@ from sqlalchemy import Text
 from sqlalchemy import DateTime
 from sqlalchemy import Integer
 from sqlalchemy import ForeignKey
+from sqlalchemy import DateTime
+from sqlalchemy.sql import func
 
 from database.db import Base
 
@@ -14,9 +16,9 @@ class Evidence(Base):
 
     evidence_id = Column(String, primary_key=True)
 
-    case_id = Column(
+    complaint_id = Column(
         String,
-        ForeignKey("cases.case_id")
+        ForeignKey("complaints.complaint_id")
     )
 
     evidence_type = Column(String)

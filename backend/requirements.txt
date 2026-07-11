@@ -1,0 +1,16 @@
+cloudinary
+fastapi
+uvicorn
+python-multipart
+python-dotenv
+pydantic
+pillow
+pdfplumber
+pytesseract
+pdf2image
+langdetect
+sqlalchemy
+psycopg2-binary
+openai
+google-generativeai
+alembic

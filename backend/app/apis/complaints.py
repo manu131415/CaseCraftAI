@@ -13,6 +13,7 @@ from dotenv import load_dotenv
 from fastapi import APIRouter, File, HTTPException, UploadFile
 from pydantic import BaseModel
 from sqlalchemy import text
+from urllib.parse import urlparse
 
 import database.init_db  # noqa: F401
 from database.db import SessionLocal
@@ -347,75 +348,75 @@ def delete_complaint(complaint_id: str) -> Dict[str, Any]:
     finally:
         db.close()
 
-                VALUES(
+    #             VALUES(
 
-                    :id,
+    #                 :id,
 
-                    :source_type,
+    #                 :source_type,
 
-                    :media_url,
+    #                 :media_url,
 
-                    :raw_text,
+    #                 :raw_text,
 
-                    :extracted,
+    #                 :extracted,
 
-                    :embedding,
+    #                 :embedding,
 
-                    :status,
+    #                 :status,
 
-                    NOW(),
+    #                 NOW(),
 
-                    NOW()
+    #                 NOW()
 
-                )
-                """
-            ),
+    #             )
+    #             """
+    #         ),
 
-            {
+    #         {
 
-                "id": complaint_id,
+    #             "id": complaint_id,
 
-                "source_type": "text",
+    #             "source_type": "text",
 
-                "media_url": json.dumps(payload.attachments),
+    #             "media_url": json.dumps(payload.attachments),
 
-                "raw_text": payload.description,
+    #             "raw_text": payload.description,
 
-                "extracted": json.dumps(complaint_payload),
+    #             "extracted": json.dumps(complaint_payload),
 
-                "embedding": None,
+    #             "embedding": None,
 
-                "status": "ingested",
+    #             "status": "ingested",
 
-            },
-        )
+    #         },
+    #     )
 
-        session.commit()
+    #     session.commit()
 
-        return {
+    #     return {
 
-            "success": True,
+    #         "success": True,
 
-            "message": "Complaint saved successfully",
+    #         "message": "Complaint saved successfully",
 
-            "complaintId": complaint_id,
+    #         "complaintId": complaint_id,
 
-            "evidenceCount": len(payload.attachments),
+    #         "evidenceCount": len(payload.attachments),
 
-        }
+    #     }
 
-    except Exception as e:
+    # except Exception as e:
 
-        session.rollback()
+    #     session.rollback()
 
-        raise HTTPException(
-            status_code=500,
-            detail=str(e),
-        )
+    #     raise HTTPException(
+    #         status_code=500,
+    #         detail=str(e),
+    #     )
 
-    finally:
+    # finally:
 
-        session.close()
+    #     session.close()
 
 # ============================================================
 # UPLOAD + AI EXTRACTION

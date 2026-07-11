@@ -1,146 +1,331 @@
 # 05. System Workflow
 
-## Introduction
+## Project Name
 
-The AI-Powered Investigation Assistant follows a structured workflow that assists investigating officers from complaint registration to document generation while maintaining complete human supervision over all legal decisions.
-
-The workflow integrates complaint processing, AI analysis, legal retrieval, document generation, and case management into a single investigation pipeline.
+**CaseCraftAI – AI-Assisted Investigation and Legal Documentation Platform**
 
 ---
 
-# Step 1 – Complaint Registration
+# 1. Introduction
 
-The investigation begins when an investigating officer registers a new complaint through the Complaint Registration Wizard.
+CaseCraftAI follows a structured workflow that assists investigating officers throughout the complete lifecycle of a criminal case. The workflow begins with complaint registration and continues through AI-assisted information extraction, case management, legal recommendations, document generation, search, and audit.
 
-The officer enters all available case information, including:
-
-- Complaint Details
-- Complainant Details
-- Victim Details
-- Suspect Details (if available)
-- Incident Details
-- Supporting Evidence (future scope)
-
-Once submitted, the information is forwarded to the Complaint Ingestion API.
+Rather than replacing officers, the system automates repetitive tasks while ensuring that all important legal decisions remain under human supervision.
 
 ---
 
-# Step 2 – Complaint Ingestion
+# 2. Overall System Workflow
 
-The Complaint Ingestion API validates the received information and converts it into a structured case format.
+```
 
-The system:
+Citizen / Officer
+        │
+        ▼
+Complaint Registration
+        │
+        ▼
+Evidence Upload
+(Image / PDF / Audio)
+        │
+        ▼
+AI Information Extraction
+        │
+        ▼
+Officer Verification
+        │
+        ▼
+Complaint Saved
+        │
+        ▼
+Case Creation
+        │
+        ▼
+Knowledge Base (RAG)
+        │
+        ▼
+Legal Section Recommendation
+        │
+        ▼
+Investigation Timeline
+        │
+        ▼
+AI Document Generation
+        │
+        ▼
+Search & Audit
+        │
+        ▼
+Case Management Dashboard
 
-- Validates mandatory fields
-- Generates a unique Case ID
-- Standardizes collected information
-- Stores the information in the Case Data Pool
-
-This centralized repository becomes the single source of truth for all subsequent modules.
-
----
-
-# Step 3 – AI Complaint Analysis
-
-The complaint is analyzed using Natural Language Processing (NLP).
-
-The AI identifies important entities such as:
-
-- Victim
-- Suspect
-- Location
-- Crime Type
-- Dates & Time
-- Important Events
-
-These extracted entities help create a structured understanding of the complaint.
-
----
-
-# Step 4 – Legal Knowledge Retrieval (RAG)
-
-Instead of relying only on a Large Language Model, the system retrieves relevant legal information from its legal knowledge base.
-
-The retrieval system searches:
-
-- Bharatiya Nyaya Sanhita (BNS)
-- Bharatiya Nagarik Suraksha Sanhita (BNSS)
-- Bharatiya Sakshya Adhiniyam (BSA)
-- Government Guidelines
-- Landmark Judgements
-
-The retrieved information is provided to the LLM as context before response generation, improving factual accuracy and reducing hallucinations.
-
----
-
-# Step 5 – AI Legal Assistance
-
-Using the complaint information together with retrieved legal references, the AI generates:
-
-- Complaint Summary
-- Crime Category
-- Applicable Legal Sections
-- Explanation for each recommendation
-- FIR Draft
-
-The generated outputs act as recommendations and are presented for officer review.
+```
 
 ---
 
-# Step 6 – Officer Review & Approval
+# 3. Complaint Registration Workflow
 
-Every AI-generated recommendation is reviewed by the investigating officer.
+The investigation process begins with complaint registration.
 
-The officer may:
+```
+Officer
+    │
+    ▼
+Enter Complaint Details
+    │
+    ▼
+Upload Supporting Evidence
+    │
+    ▼
+Submit Complaint
+```
 
-- Review recommendations
-- Edit generated content
-- Modify legal sections
-- Approve the final FIR
-
-No AI-generated content becomes official without officer approval.
-
----
-
-# Step 7 – Investigation Document Generation
-
-Once the FIR is approved, CaseCraftAI generates investigation documents using predefined templates and the centralized Case Data Pool.
-
-Supported documents include:
-
-- Remand Request
-- Medical Examination Request
-- Property Seizure Memo
-- Panchanama
-
-The system automatically fills common information while allowing officers to edit investigation-specific details before finalization.
+The complaint information is validated before being processed by the AI extraction module.
 
 ---
 
-# Step 8 – Digital Case Diary
+# 4. Evidence Processing Workflow
 
-Throughout the investigation, all significant events are recorded in a digital Case Diary.
+The system accepts multiple evidence formats.
 
-This includes:
+```
+Image
+PDF
+Audio
+    │
+    ▼
+Upload
+    │
+    ▼
+AI Extraction
+    │
+    ▼
+Structured Information
+```
 
-- Complaint Registration
-- AI Recommendations
-- Generated Documents
-- Officer Actions
-- Investigation Updates
-
-The Case Diary provides a chronological history of the investigation.
+The extracted information is displayed to officers for review before being stored in the database.
 
 ---
 
-# Step 9 – Document Export
+# 5. AI Extraction Workflow
 
-After approval, all generated documents can be exported as PDF files for official use.
+Artificial Intelligence processes uploaded evidence to identify important information.
 
-These documents become part of the digital investigation record and may be printed, shared, or stored for future reference.
+```
+Uploaded Evidence
+        │
+        ▼
+AI Model
+        │
+        ▼
+Extract:
+
+• Names
+• Locations
+• Dates
+• Incident Details
+• Supporting Information
+        │
+        ▼
+Officer Review
+        │
+        ▼
+Database
+```
+
+Human verification ensures that extracted information remains accurate.
 
 ---
 
-# Conclusion
+# 6. Case Management Workflow
 
-The workflow demonstrates how AI can assist investigating officers throughout the investigation lifecycle without replacing human decision-making. By combining structured complaint processing, Retrieval-Augmented Generation (RAG), centralized case management, and automated document generation, the platform reduces repetitive administrative work while maintaining legal accountability, transparency, and human oversight.
+Once the complaint is verified, a case is created.
+
+```
+Verified Complaint
+        │
+        ▼
+Generate Case
+        │
+        ▼
+Assign Officer
+        │
+        ▼
+Assign Case Number
+        │
+        ▼
+Update Status
+        │
+        ▼
+Investigation Progress
+```
+
+Officers can continuously update case information throughout the investigation.
+
+---
+
+# 7. Knowledge Base Workflow (RAG)
+
+Instead of relying entirely on AI-generated responses, CaseCraftAI retrieves relevant legal information from a trusted knowledge base.
+
+```
+Complaint
+        │
+        ▼
+Knowledge Base Search
+        │
+        ▼
+Relevant Legal Documents
+        │
+        ▼
+AI Response Generation
+        │
+        ▼
+Legal Recommendations
+```
+
+This approach improves reliability and reduces AI hallucinations.
+
+---
+
+# 8. Legal Recommendation Workflow
+
+The recommendation engine assists officers by identifying relevant legal provisions.
+
+```
+Case Details
+        │
+        ▼
+Knowledge Base
+        │
+        ▼
+Relevant Legal Sections
+        │
+        ▼
+Officer Review
+        │
+        ▼
+Case Updated
+```
+
+The final legal decision always remains under officer supervision.
+
+---
+
+# 9. Investigation Timeline Workflow
+
+Every important investigation activity is recorded.
+
+```
+Complaint Registered
+        │
+        ▼
+Case Created
+        │
+        ▼
+Evidence Added
+        │
+        ▼
+Legal Sections Updated
+        │
+        ▼
+Documents Generated
+        │
+        ▼
+Case Closed
+```
+
+This provides officers with a chronological history of the investigation.
+
+---
+
+# 10. AI Document Generation Workflow
+
+The system assists officers in preparing official legal documents.
+
+```
+Case Information
+        │
+        ▼
+AI + Templates
+        │
+        ▼
+Generated Document
+        │
+        ▼
+Officer Review
+        │
+        ▼
+Edit (if required)
+        │
+        ▼
+Final Document
+```
+
+Documents remain editable before final approval.
+
+---
+
+# 11. Search & Audit Workflow
+
+Officers can retrieve previous cases and documents quickly.
+
+```
+Officer Search
+        │
+        ▼
+Keyword / Case Number
+        │
+        ▼
+Search Cases
+Search Documents
+        │
+        ▼
+Matching Results
+        │
+        ▼
+View Details
+```
+
+The audit mechanism maintains document history and supports future version tracking.
+
+---
+
+# 12. Complete Investigation Lifecycle
+
+```
+Complaint Registration
+        │
+        ▼
+Evidence Upload
+        │
+        ▼
+AI Extraction
+        │
+        ▼
+Officer Verification
+        │
+        ▼
+Case Creation
+        │
+        ▼
+Legal Recommendation
+        │
+        ▼
+Timeline Updates
+        │
+        ▼
+Document Generation
+        │
+        ▼
+Search & Audit
+        │
+        ▼
+Case Closure
+```
+
+---
+
+# 13. Workflow Summary
+
+The workflow of CaseCraftAI combines Artificial Intelligence, Retrieval-Augmented Generation (RAG), structured case management, and legal document automation into a single investigation support platform.
+
+Each module performs a specific task while maintaining a smooth flow of information between complaint registration, AI processing, legal recommendations, document generation, search, and audit. Human verification remains an essential part of every stage to ensure legal accuracy and accountability.

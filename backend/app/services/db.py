@@ -1,74 +1,50 @@
 import psycopg2
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
 
-DATABASE_URL = "postgresql://neondb_owner:npg_SPA0yzWHXIM6@ep-spring-resonance-ahuzey41-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 
 def get_connection():
-
     return psycopg2.connect(DATABASE_URL)
 
-
-
 def get_complaint(case_id):
-
     conn = get_connection()
-
     cursor = conn.cursor()
 
-    cursor.execute(
-        """
+    cursor.execute("""
         SELECT
-            id,
-            raw_text,
-            extracted
+            complaint_id,
+            complainant_name,
+            phone,
+            email,
+            crime_type,
+            location,
+            description,
+            status,
+            created_at
         FROM complaints
-        WHERE id=%s;
-        """,
-        (case_id,)
-    )
-
+        WHERE complaint_id = %s;
+    """, (case_id,))
 
     row = cursor.fetchone()
 
-
     cursor.close()
     conn.close()
-
 
     if row is None:
         return None
 
-
     return {
-        "id": row[0],
-        "raw_text": row[1],
-        "extracted": row[2]
+        "complaint_id": row[0],
+        "complainant_name": row[1],
+        "phone": row[2],
+        "email": row[3],
+        "crime_type": row[4],
+        "location": row[5],
+        "description": row[6],
+        "status": row[7],
+        "created_at": row[8],
     }
-
-
-
-def get_officer():
-
-    conn = get_connection()
-
-    cursor = conn.cursor()
-
-
-    cursor.execute(
-        """
-        SELECT *
-        FROM officers
-        LIMIT 1;
-        """
-    )
-
-
-    row = cursor.fetchone()
-
-
-    cursor.close()
-    conn.close()
-
-
-    return row

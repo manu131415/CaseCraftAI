@@ -1,38 +1,26 @@
-import os
+from pathlib import Path
 from docxtpl import DocxTemplate
 
+BASE_DIR = Path(__file__).resolve().parent
+TEMPLATE_DIR = BASE_DIR / "templates"
+OUTPUT_DIR = BASE_DIR / "generated"
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
-TEMPLATE_DIR = os.path.join(
-    BASE_DIR,
-    "templates"
-)
-
-OUTPUT_DIR = os.path.join(
-    BASE_DIR,
-    "generated"
-)
+OUTPUT_DIR.mkdir(exist_ok=True)
 
 
 def render_document(template_name, context, output_name):
+    template_path = TEMPLATE_DIR / template_name
+    output_path = OUTPUT_DIR / output_name
 
-    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    print("Template Path:", template_path)
+    print("Exists:", template_path.exists())
 
-    template_path = os.path.join(
-        TEMPLATE_DIR,
-        template_name
-    )
+    if not template_path.exists():
+        raise FileNotFoundError(f"Template not found: {template_path}")
 
-    doc = DocxTemplate(template_path)
-
+    doc = DocxTemplate(str(template_path))
+    print(context)
     doc.render(context)
+    doc.save(str(output_path))
 
-    output_path = os.path.join(
-        OUTPUT_DIR,
-        output_name
-    )
-
-    doc.save(output_path)
-
-    print("Generated:", output_path)
+    print(f"Saved to: {output_path}")

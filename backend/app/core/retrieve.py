@@ -11,7 +11,7 @@ db_url = os.getenv("DATABASE_URL")
 model = SentenceTransformer('intfloat/multilingual-e5-large')
 
 OLLAMA_URL = "http://localhost:11434/api/generate"
-OLLAMA_MODEL = "llama3.2:3b"  
+OLLAMA_MODEL = "llama3.2:3b"
 
 
 def embed_query(text: str):

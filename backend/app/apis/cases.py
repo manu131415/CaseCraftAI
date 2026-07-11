@@ -2,6 +2,8 @@ import uuid
 from datetime import datetime, date
 from typing import Any, Dict, List, Optional
 
+from sqlalchemy import or_
+
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
@@ -124,6 +126,32 @@ class CaseUpdateResponse(BaseModel):
 class CaseDeleteResponse(BaseModel):
     success: bool
     message: str
+
+# ============================================
+# SEARCH MODELS
+# ============================================
+
+class SearchCase(BaseModel):
+    case_id: str
+    case_number: str | None = None
+    title: str | None = None
+    status: str | None = None
+    priority: str | None = None
+    description: str | None = None
+
+
+class SearchDocument(BaseModel):
+    document_id: str
+    case_id: str
+    document_type: str | None = None
+    title: str | None = None
+    status: str | None = None
+    version: str | None = None
+
+
+class SearchResponse(BaseModel):
+    cases: List[SearchCase]
+    documents: List[SearchDocument]
 
 
 @router.post(
@@ -457,5 +485,73 @@ def delete_case(case_id: str) -> Dict[str, Any]:
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=500, detail=f"Failed to delete case: {str(e)}")
+    finally:
+        db.close()
+        
+@router.get(
+    "/search",
+    response_model=SearchResponse,
+    summary="Search cases and documents",
+    description="Search by case number, title, description or document title/type.",
+    tags=["cases"],
+)
+def search_cases(q: str):
+    db = SessionLocal()
+
+    try:
+        matching_cases = (
+            db.query(Case)
+            .filter(
+                or_(
+                    Case.case_number.ilike(f"%{q}%"),
+                    Case.title.ilike(f"%{q}%"),
+                    Case.description.ilike(f"%{q}%"),
+                )
+            )
+            .all()
+        )
+
+        matching_documents = (
+            db.query(Document)
+            .filter(
+                or_(
+                    Document.title.ilike(f"%{q}%"),
+                    Document.document_type.ilike(f"%{q}%"),
+                )
+            )
+            .all()
+        )
+
+        return {
+            "cases": [
+                {
+                    "case_id": c.case_id,
+                    "case_number": c.case_number,
+                    "title": c.title,
+                    "status": c.status,
+                    "priority": c.priority,
+                    "description": c.description,
+                }
+                for c in matching_cases
+            ],
+            "documents": [
+                {
+                    "document_id": d.document_id,
+                    "case_id": d.case_id,
+                    "document_type": d.document_type,
+                    "title": d.title,
+                    "status": d.status,
+                    "version": d.version,
+                }
+                for d in matching_documents
+            ],
+        }
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Search failed: {str(e)}"
+        )
+
     finally:
         db.close()

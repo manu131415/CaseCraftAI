@@ -1,55 +1,75 @@
-# CaseCraftAI
+# 01. Project Research
 
-## Project Research & Solution Proposal
+## Project Name
 
----
-
-# 1. Problem Statement
-
-## Problem Statement
-
-CrimeGPT – AI-Powered Automation for Crime Documentation and Legal Intelligence
+**CaseCraftAI – AI-Assisted Investigation and Legal Documentation Platform**
 
 ---
 
-# 2. Introduction
+# 1. Introduction
 
-Police officers spend a significant amount of time preparing First Information Reports (FIRs), identifying applicable legal provisions, generating investigation documents, and maintaining case records. These tasks are often repetitive, time-consuming, and require referring to multiple legal documents and manuals.
+Law enforcement agencies handle a large number of complaints, witness statements, evidence records, legal documents, and investigation reports every day. Preparing these documents manually is time-consuming, repetitive, and often leads to inconsistencies in formatting, delayed investigations, and increased administrative workload.
 
-Due to the complexity of legal procedures and increasing case loads, manual documentation can lead to delays, inconsistencies, missing information, and human errors. Investigating officers also need to prepare multiple documents during different stages of an investigation, making the overall workflow lengthy and inefficient.
+Recent advances in Artificial Intelligence, Natural Language Processing (NLP), and Large Language Models (LLMs) have introduced new opportunities to assist police officers in documentation, legal analysis, and information retrieval. However, because legal information demands a high degree of accuracy, AI systems must operate under human supervision and rely on trusted legal knowledge rather than generating responses solely from model memory.
 
-Recent developments in Artificial Intelligence, Large Language Models (LLMs), and Retrieval-Augmented Generation (RAG) provide an opportunity to assist law enforcement agencies by automating documentation while ensuring that generated information is based on verified legal references rather than model assumptions.
-
----
-
-# 3. Objective
-
-The objective of CaseCraftAI is to develop an AI-powered assistant that supports police officers throughout the documentation process by:
-
-- Assisting in complaint analysis.
-- Recommending applicable legal sections.
-- Generating structured FIR drafts.
-- Creating investigation documents using predefined templates.
-- Maintaining a digital case diary.
-- Providing legally grounded responses using Retrieval-Augmented Generation (RAG).
-
-The system is designed to reduce documentation time, improve consistency, minimize human error, and assist officers without replacing human decision-making.
+CaseCraftAI was conceptualized to address these challenges by combining AI-assisted complaint analysis, Retrieval-Augmented Generation (RAG), legal section recommendation, intelligent document generation, case management, and investigation support within a single platform.
 
 ---
 
-# 4. Proposed Solution Overview
+# 2. Research Objectives
 
-CaseCraftAI is an AI-assisted crime documentation platform that combines modern web technologies with Retrieval-Augmented Generation (RAG) to assist law enforcement officers during the documentation process.
+The research phase aimed to understand existing AI applications in policing and legal documentation while identifying gaps that could be addressed through an integrated solution.
 
-Instead of relying solely on a Large Language Model, the system retrieves relevant legal provisions, procedural guidelines, and official reference material from a curated knowledge base before generating responses. This approach improves reliability, reduces hallucinations, and ensures that recommendations are supported by authoritative legal sources.
+The primary objectives were:
 
-The platform guides officers through complaint registration, analyzes the complaint, recommends relevant legal sections, generates an FIR draft, assists in preparing investigation documents, and maintains a structured digital case history throughout the investigation lifecycle.
-
-The final decision always remains with the investigating officer, who can review, modify, and approve AI-generated content before it is finalized.
+- Study the current complaint registration and investigation workflow.
+- Understand the role of Artificial Intelligence in modern policing.
+- Explore AI-assisted legal document generation techniques.
+- Research Retrieval-Augmented Generation (RAG) for reliable legal recommendations.
+- Analyze existing legal AI systems and their limitations.
+- Identify opportunities to reduce manual documentation work while maintaining legal accuracy.
+- Design a system that assists officers without replacing human decision-making.
 
 ---
 
-# 5. Literature Review & Research Findings
+# 3. Research Methodology
+
+The research was conducted using multiple reliable sources to understand both the technical and practical aspects of AI-assisted legal systems.
+
+The study included:
+
+- Government reports published by the Bureau of Police Research & Development (BPR&D).
+- Research papers on AI in law enforcement.
+- IEEE papers on AI-assisted FIR generation.
+- Research papers on Retrieval-Augmented Generation (RAG).
+- Studies on legal document automation.
+- Existing complaint registration workflows.
+- Official legal documents including Bharatiya Nyaya Sanhita (BNS), Bharatiya Nagarik Suraksha Sanhita (BNSS), and related legal references used in the project's knowledge base.
+
+The collected information was analyzed to understand existing solutions, identify research gaps, and determine how AI could be safely integrated into police workflows.
+
+---
+
+# 4. Existing Challenges
+
+Traditional complaint and investigation workflows involve significant manual effort.
+
+Some of the major challenges identified during research include:
+
+- Manual preparation of complaints and investigation documents.
+- Time-consuming legal section identification.
+- Difficulty searching historical case records.
+- Inconsistent document formatting across officers.
+- Heavy dependency on officer experience for legal documentation.
+- Risk of missing relevant legal provisions.
+- Administrative workload reducing investigation efficiency.
+- Limited integration between complaint management, AI assistance, and document generation.
+
+These challenges highlighted the need for an intelligent investigation support system rather than an AI system that attempts to replace officers.
+
+---
+
+# 5. Literature Review and Research Findings
 
 Before designing CaseCraftAI, research was conducted on existing AI applications in law enforcement, government initiatives, commercial solutions, and recent academic work related to AI-assisted crime documentation. The objective was to understand current limitations, identify best practices, and design a solution that addresses real-world policing challenges.
 
@@ -185,364 +205,45 @@ CaseCraftAI follows a Human-in-the-Loop design. Every AI-generated FIR, legal re
 
 
 
-# 6. Proposed Solution
+---
 
-## 6.1 Solution Overview
+# 6. Research Gap
 
-CaseCraftAI is an AI-assisted crime documentation and legal intelligence platform designed to support police officers throughout the investigation process. Instead of functioning as an autonomous decision-maker, the platform acts as an intelligent assistant that simplifies documentation, reduces repetitive administrative work, and provides legally grounded recommendations.
+The literature review revealed that existing solutions typically focus on individual aspects of legal assistance rather than providing a complete investigation support platform.
 
-The system combines Retrieval-Augmented Generation (RAG), Large Language Models (LLMs), and structured document generation to assist officers in analyzing complaints, identifying applicable legal provisions, preparing FIR drafts, generating investigation documents, and maintaining a digital case diary.
+Common limitations observed include:
 
-By retrieving relevant legal information from a curated knowledge base before generating responses, CaseCraftAI minimizes hallucinations and ensures that recommendations are supported by official legal references. Every AI-generated output remains editable and requires officer approval before becoming part of the official case record.
+- Many systems only generate FIR drafts without supporting the complete investigation lifecycle.
+- Existing legal chatbots provide answers but lack structured case management.
+- Several AI systems rely solely on Large Language Models, increasing the risk of hallucinated legal information.
+- Most document generation tools are not integrated with complaint registration workflows.
+- Limited support exists for multilingual legal documentation.
+- Existing systems rarely combine complaint analysis, legal recommendations, case management, document generation, and intelligent search within a single platform.
 
-The platform aims to improve efficiency, consistency, and accuracy while allowing investigating officers to retain complete control over all legal decisions.
-
-
-## 6.2 Objectives
-
-The primary objectives of CaseCraftAI are:
-
-- Reduce the time required for preparing FIRs and investigation documents.
-- Assist officers in identifying relevant legal sections using AI.
-- Improve consistency and completeness in police documentation.
-- Reduce repetitive manual work through document automation.
-- Generate legally grounded recommendations using Retrieval-Augmented Generation (RAG).
-- Maintain a structured digital case diary throughout the investigation lifecycle.
-- Keep officers in complete control by ensuring every AI-generated output can be reviewed, edited, and approved before final submission.
-
-
-## 6.3 Core Features
-
-### 1. AI-Assisted Complaint Analysis
-
-The system analyzes the complaint submitted by the investigating officer and extracts relevant information required for further legal processing. Instead of manually studying lengthy complaint descriptions, officers receive a structured summary that forms the foundation for subsequent legal analysis.
+These observations indicated the need for an integrated AI-assisted investigation system.
 
 ---
 
-### 2. Legal Section Recommendation
+# 7. Research Outcome
 
-The platform implements a Retrieval-Augmented Generation (RAG) pipeline to recommend applicable legal provisions.
+The findings from the research directly influenced the design of CaseCraftAI.
 
-The complaint summary is converted into a semantic embedding using the **intfloat/multilingual-e5-large** embedding model. The embedding is searched against a PostgreSQL database using the **pgvector** extension to retrieve the most relevant legal sections and landmark judgments.
+The platform was designed around the following principles:
 
-These retrieved records are then provided to **Llama 3.2**, running locally through **Ollama**, which reranks the retrieved candidates and generates explanations for every recommendation before presenting them to the investigating officer.
+- AI should assist investigating officers rather than replace them.
+- Legal recommendations should be grounded in trusted legal knowledge through Retrieval-Augmented Generation (RAG).
+- Human review should remain mandatory before finalizing documents.
+- Complaint registration, case management, AI analysis, document generation, timeline management, and intelligent search should be integrated into a unified workflow.
+- The system should remain modular and scalable to support future enhancements such as multilingual document generation, audit logging, analytics, and predictive investigation support.
 
----
-
-### 3. AI-Generated FIR Draft
-
-Based on the complaint details and retrieved legal context, the system generates a structured First Information Report (FIR) draft. Officers can review, edit, and finalize the generated draft before submission, ensuring that the final document remains under human supervision.
-
----
-
-### 4. Automated Investigation Document Generation
-
-The platform assists officers by generating investigation documents using predefined templates. For the MVP, the following documents are supported:
-
-- Seizure Receipt
-- Medical Treatment Letter
-- Remand Request
-- Accused Panchanama
-
-Each document is generated using the case information already collected during complaint registration, reducing repetitive manual work.
+These principles shaped the overall architecture and feature set implemented in CaseCraftAI.
 
 ---
 
-### 5. Digital Case Diary
+# 8. Conclusion
 
-CaseCraftAI maintains a structured digital case diary that records important events throughout the investigation. Officers can track the progress of the case, generated documents, AI recommendations, and investigation updates from a single interface.
+The research phase established a strong foundation for the development of CaseCraftAI. Existing literature demonstrated that Artificial Intelligence has significant potential to improve efficiency, consistency, and accessibility within legal and law enforcement workflows. However, it also highlighted the importance of maintaining human oversight, transparency, and factual accuracy.
 
----
+Based on these findings, CaseCraftAI was designed as an AI-assisted investigation platform that combines complaint analysis, legal knowledge retrieval, structured case management, intelligent document generation, and investigation support while ensuring that final decisions remain under the control of investigating officers.
 
-### 6. Human-in-the-Loop Review
-
-Every AI-generated recommendation and document remains editable. The investigating officer reviews, modifies (if required), and approves all outputs before they become part of the official case record. This ensures that AI functions as an assistive tool rather than an autonomous decision-maker.
-
----
-
-### 7. PDF Export
-
-After review and approval, generated documents can be exported as PDF files for official use, printing, or digital record keeping.
-
-
-## 6.4 Future Scope
-
-The current implementation focuses on providing a functional MVP for AI-assisted crime documentation. Several additional capabilities can be incorporated in future versions of the platform, including:
-
-- Audio-based complaint registration using speech-to-text.
-- Multi-language complaint support and document generation.
-- Evidence and attachment management.
-- Charge Sheet generation.
-- Integration with police databases and e-FIR systems.
-- Investigation timeline visualization.
-- AI-assisted evidence summarization.
-- Analytics dashboard for case management.
-- Secure role-based access for police personnel.
-- Integration with national crime record systems and legal databases.
-
-
-## 6.5 System Workflow
-
-CaseCraftAI follows a structured workflow that assists investigating officers from complaint registration to document generation while ensuring that every AI-generated output remains under human supervision.
-
-The complete workflow is described below:
-
-### Step 1 – Complaint Registration
-
-The investigating officer creates a new case using the Complaint Wizard. During this step, the system collects all essential case information, including:
-
-- Complaint Details
-- Complainant Details
-- Victim Details
-- Suspect Details
-- Incident Details
-
-Once completed, the information is submitted to the backend for further processing.
-
----
-
-### Step 2 – Complaint Ingestion
-
-The backend validates the submitted information, generates a unique Case ID, and stores all collected information in the Case Data Pool. This centralized data repository acts as the primary source of information for all subsequent modules.
-
----
-
-### Step 3 – AI-Based Legal Analysis
-
-The complaint summary is forwarded to the AI analysis module.
-
-The complaint summary is converted into a semantic embedding using the multilingual-e5-large SentenceTransformer model. This embedding represents the semantic meaning of the complaint and is used for similarity-based retrieval from the legal knowledge base.
-
----
-
-### Step 4 – Legal Knowledge Retrieval (RAG)
-
-The generated embedding is compared against vector embeddings stored within PostgreSQL using the pgvector extension.
-
-The retrieval stage returns the most relevant legal sections (BNS, BNSS, and BSA) together with curated landmark judgments.
-
-These retrieved records are supplied as context to Llama 3.2, running locally through Ollama, which reranks the candidates, filters irrelevant results, and generates explanations for each recommendation.
-
-This Retrieval-Augmented Generation workflow grounds AI responses in trusted legal references while minimizing hallucinations.
-
----
-
-### Step 5 – FIR Draft Generation
-
-Using the complaint details together with the retrieved legal context, the AI generates:
-
-- Crime Category
-- Applicable Legal Sections
-- Explanation for each recommended section
-- Structured FIR Draft
-
-These outputs serve as the initial draft for officer review.
-
----
-
-### Step 6 – Officer Review & Approval
-
-Every AI-generated recommendation is presented to the investigating officer for verification.
-
-The officer can:
-
-- Review recommendations
-- Modify generated content
-- Edit the FIR draft
-- Approve the final version
-
-This Human-in-the-Loop workflow ensures that all legal decisions remain under officer supervision.
-
----
-
-### Step 7 – Investigation Document Generation
-
-Once the FIR is approved, the system generates investigation documents using predefined templates and the information already available in the Case Data Pool.
-
-For the MVP, the following documents are supported:
-
-- Seizure Receipt
-- Medical Treatment Letter
-- Remand Request
-- Accused Panchanama
-
----
-
-### Step 8 – Digital Case Diary
-
-All important investigation events, AI recommendations, generated documents, and case updates are recorded within a structured digital case diary.
-
-This enables officers to maintain a centralized record of the investigation throughout the case lifecycle.
-
----
-
-### Step 9 – Export & Record Management
-
-Approved documents can be exported as PDF files for printing, submission, or digital record keeping.
-
-The completed case remains stored within the system for future reference and further investigation.
-
-
-## 6.6 System Architecture
-
-CaseCraftAI follows a modular architecture where each component performs a specific responsibility while communicating through well-defined APIs. This modular approach improves scalability, maintainability, and simplifies future enhancements.
-
-The system consists of the following major components:
-
-### 1. Frontend
-
-The frontend serves as the primary interface for investigating officers. It provides a guided complaint registration workflow, displays AI-generated recommendations, allows document review, and enables document download.
-
-Major responsibilities include:
-
-- Complaint Registration Wizard
-- Case Dashboard
-- AI Result Visualization
-- FIR Review & Editing
-- Document Preview
-- PDF Download
-
----
-
-### 2. Backend Services
-
-The backend acts as the central coordinator of the system. It receives complaint data, stores case information, communicates with the AI module, and coordinates document generation.
-
-Major responsibilities include:
-
-- Complaint Ingestion
-- Case Data Management
-- API Services
-- Database Operations
-- Integration between all modules
-
----
-
-### 3. Case Data Pool
-
-The Case Data Pool acts as the centralized repository for all investigation-related information.
-
-It stores:
-
-- Complaint Details
-- Victim Information
-- Suspect Information
-- Officer Information
-- AI Analysis Results
-- Generated Documents
-- Case Diary Entries
-
-Since every module accesses this common dataset, duplicate data entry is avoided during document generation.
-
----
-
-### 4. AI & Legal Intelligence Module
-
-The AI module performs complaint understanding and legal reasoning.
-
-Its responsibilities include:
-
-- Semantic Complaint Embedding
-- Vector Similarity Search
-- Legal Section Retrieval
-- Landmark Judgment Retrieval
-- LLM-based Reranking
-- Recommendation Explanation Generation
-
-Rather than relying solely on a Large Language Model, the AI first retrieves relevant legal references from the knowledge base before generating responses.
-
-The recommendation pipeline follows a two-stage retrieval process:
-
-1. Semantic retrieval using pgvector to identify the most relevant legal sections and landmark judgments.
-
-2. LLM-based reranking using Llama 3.2 through Ollama to select the most applicable results and generate human-readable explanations for each recommendation.
-
----
-
-### 5. Legal Knowledge Base
-
-The Legal Knowledge Base stores official legal references used by the Retrieval-Augmented Generation (RAG) pipeline.
-
-The knowledge base currently contains:
-
-- 1,059 legal sections
-  - Bharatiya Nyaya Sanhita (BNS)
-  - Bharatiya Nagarik Suraksha Sanhita (BNSS)
-  - Bharatiya Sakshya Adhiniyam (BSA)
-
-- 147 curated landmark judgments
-
-Each legal section and landmark judgment is embedded as a single semantic record using the **intfloat/multilingual-e5-large** embedding model.
-
-The embeddings are stored within PostgreSQL using the **pgvector** extension, allowing efficient semantic similarity search without requiring additional document chunking.
-
----
-
-### 6. Document Generation Module
-
-The Document Generation module creates investigation documents using predefined templates and information available within the Case Data Pool.
-
-Initially supported documents include:
-
-- Seizure Receipt
-- Medical Treatment Letter
-- Remand Request
-- Accused Panchanama
-
-Additional document types can be added without modifying the core system architecture.
-
----
-
-### 7. Digital Case Diary
-
-The Digital Case Diary records important investigation activities throughout the case lifecycle.
-
-This includes:
-
-- Complaint Registration
-- AI Analysis
-- Generated Documents
-- Officer Actions
-- Investigation Updates
-
-The diary provides a chronological history of every significant event within a case.
-
----
-
-### 8. PDF Export
-
-After officer approval, generated documents can be exported as PDF files for official use, printing, and digital record keeping.
-
-This module ensures that AI-generated content can be easily integrated into existing documentation workflows.
-
-
-## 6.7 Technology Stack
-
-### Frontend
-- Next.js
-- React
-- TypeScript
-- Tailwind CSS
-
-### Backend
-- FastAPI
-- Python
-
-### Database
-- PostgreSQL (Neon)
-
-### ORM
-- SQLAlchemy
-
-### Database Migration
-- Alembic
-
-### AI Technologies
-- Embedding Model: intfloat/multilingual-e5-large
-- Large Language Model: Llama 3.2
-- LLM Runtime: Ollama
-- Vector Search: pgvector
-- Retrieval Method: Semantic Similarity Search
-
-### Document Generation
-- docxtpl
+The research conducted during this phase guided both the technical architecture and the functional design of the system, ensuring that the proposed solution addresses practical challenges faced by law enforcement agencies while remaining aligned with responsible AI principles.

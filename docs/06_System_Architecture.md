@@ -1,179 +1,324 @@
 # 06. System Architecture
 
-## Introduction
+## Project Name
 
-The AI-Powered Investigation Assistant follows a modular architecture in which each component performs a specific responsibility while communicating through well-defined APIs. This approach improves maintainability, scalability, and allows different modules to be developed independently before being integrated into a single system.
-
-The architecture combines complaint processing, AI-based legal assistance, Retrieval-Augmented Generation (RAG), document generation, and centralized case management into one unified platform.
+**CaseCraftAI – AI-Assisted Investigation and Legal Documentation Platform**
 
 ---
 
-# Design Principles
+# 1. Introduction
 
-The system is designed around the following principles:
+CaseCraftAI follows a modular client-server architecture that combines Artificial Intelligence, Retrieval-Augmented Generation (RAG), and structured case management to support law enforcement officers during complaint registration, investigation, legal recommendation, and document generation.
 
-- Modular architecture for easier development and maintenance.
-- Human-in-the-Loop AI to ensure legal accountability.
-- Centralized Case Data Pool to eliminate duplicate data entry.
-- Retrieval-Augmented Generation (RAG) to improve factual accuracy and reduce hallucinations.
-- Template-based document generation for consistency across official documents.
-- Scalable design allowing additional investigation modules to be added in the future.
+The architecture separates the frontend, backend, AI services, database, and knowledge base into independent components, making the system scalable, maintainable, and easier to extend.
 
 ---
 
-# 1. Frontend
+# 2. High-Level Architecture
 
-The frontend provides the primary interface for investigating officers to interact with the system.
-
-Major responsibilities include:
-
-- Complaint Registration
-- Case Dashboard
-- AI Recommendation Display
-- FIR Review & Editing
-- Document Preview
-- PDF Download
-- Case Timeline Visualization
-
-The frontend communicates with the backend through REST APIs.
-
----
-
-# 2. Backend
-
-The backend acts as the central coordinator of the application.
-
-Its responsibilities include:
-
-- Processing incoming complaints
-- Managing case records
-- Communicating with AI services
-- Retrieving legal references
-- Generating investigation documents
-- Managing APIs and database operations
-
-The backend also coordinates communication between all major modules.
+```
+                    ┌─────────────────────────────┐
+                    │        Frontend (Next.js)    │
+                    │ Officer Dashboard & UI       │
+                    └──────────────┬──────────────┘
+                                   │
+                              REST APIs
+                                   │
+                    ┌──────────────▼──────────────┐
+                    │      Backend (FastAPI)       │
+                    │ Business Logic & APIs        │
+                    └───────┬─────────┬────────────┘
+                            │         │
+                            │         │
+                 ┌──────────▼───┐  ┌──▼──────────────┐
+                 │ PostgreSQL   │  │ AI Services     │
+                 │ Database     │  │ Gemini + RAG    │
+                 └──────────────┘  └──────┬──────────┘
+                                          │
+                               ┌──────────▼──────────┐
+                               │ Legal Knowledge Base│
+                               │ BNS / BNSS / PDFs   │
+                               └─────────────────────┘
+```
 
 ---
 
-# 3. Case Data Pool
+# 3. Architecture Components
 
-The Case Data Pool serves as the centralized repository for all investigation-related information.
+## 3.1 Frontend Layer
 
-It stores:
+The frontend provides the interface used by police officers.
 
-- Complaint Details
-- Complainant Information
-- Victim Details
-- Suspect Details
-- Investigation Updates
-- AI Recommendations
-- Generated Documents
-- Case Diary Entries
+Responsibilities include:
 
-All modules access this common dataset, ensuring information remains consistent throughout the investigation lifecycle.
+- User authentication
+- Complaint registration
+- Case management
+- Timeline visualization
+- Document generation
+- Search & Audit
+- Dashboard and reports
 
----
+### Technologies
 
-# 4. AI & Legal Intelligence Module
-
-The AI module assists investigating officers by understanding complaints and generating legally relevant recommendations.
-
-Its responsibilities include:
-
-- Complaint Analysis
-- Entity Extraction
-- Complaint Summarization
-- Crime Classification
-- Legal Section Recommendation
-- FIR Draft Generation
-
-Rather than generating responses independently, the AI first receives relevant legal context through the RAG pipeline.
+- Next.js
+- React
+- TypeScript
+- Tailwind CSS
 
 ---
 
-# 5. Legal Knowledge Base
+## 3.2 Backend Layer
 
-The Legal Knowledge Base contains official legal resources used by the Retrieval-Augmented Generation (RAG) system.
+The backend manages all business logic and communication between the frontend, AI services, and database.
 
-The knowledge base includes:
+Responsibilities include:
+
+- Complaint APIs
+- Case APIs
+- AI extraction
+- Search APIs
+- Timeline management
+- Document generation
+- Recommendation engine
+- Database interaction
+
+### Technologies
+
+- FastAPI
+- Python
+- SQLAlchemy ORM
+
+---
+
+## 3.3 Database Layer
+
+The PostgreSQL database stores all structured information used by the system.
+
+Major entities include:
+
+- Complaints
+- Cases
+- Officers
+- Documents
+- Timeline Events
+- Audit Records (Future)
+- Legal Recommendations
+
+The database serves as the central source of truth for all investigation data.
+
+---
+
+## 3.4 AI Layer
+
+Artificial Intelligence assists officers during complaint processing and investigation.
+
+The AI layer is responsible for:
+
+- Information extraction
+- Complaint understanding
+- Legal recommendation
+- Document assistance
+- Structured response generation
+
+The AI never makes final legal decisions independently.
+
+---
+
+## 3.5 Knowledge Base (RAG)
+
+Instead of relying only on the language model, the system retrieves relevant legal information from a curated knowledge base.
+
+The knowledge base contains:
 
 - Bharatiya Nyaya Sanhita (BNS)
 - Bharatiya Nagarik Suraksha Sanhita (BNSS)
-- Bharatiya Sakshya Adhiniyam (BSA)
-- Government Guidelines
-- Landmark Judgements (Future Scope)
+- Other legal reference documents
+- Project-specific legal resources
 
-The documents are processed into searchable chunks, allowing relevant legal information to be retrieved before AI response generation.
-
----
-
-# 6. Document Generation Module
-
-The Document Generation Module creates official investigation documents using predefined templates and information already stored in the Case Data Pool.
-
-The initial implementation supports:
-
-- First Information Report (FIR)
-- Remand Request
-- Medical Examination Request
-- Property Seizure Memo
-- Panchanama
-
-The system automatically fills common information while allowing officers to review and edit investigation-specific details before finalization.
+Retrieved information is provided to the AI before generating recommendations.
 
 ---
 
-# 7. Digital Case Diary
+# 4. Request Flow
 
-The Digital Case Diary maintains a chronological record of the investigation.
+A typical request follows the sequence below.
 
-It records:
-
-- Complaint Registration
-- AI Recommendations
-- Officer Actions
-- Generated Documents
-- Investigation Progress
-
-This provides investigators with a centralized timeline of all important case activities.
-
----
-
-# 8. Data Flow
-
-The interaction between system components follows the sequence below:
-
-1. Complaint Registration
-2. Complaint Ingestion
-3. Case Data Pool
-4. AI Complaint Analysis
-5. Legal Knowledge Retrieval (RAG)
-6. AI Recommendation Generation
-7. Officer Review & Approval
-8. Document Generation
-9. Case Diary Update
-10. PDF Export
-
-Each stage builds upon the previous one while using the centralized Case Data Pool as the primary source of information.
+```
+Officer
+    │
+    ▼
+Frontend
+    │
+REST API
+    │
+    ▼
+FastAPI Backend
+    │
+    ├── Database
+    │
+    ├── AI Services
+    │
+    └── Knowledge Base
+    │
+    ▼
+Processed Response
+    │
+    ▼
+Frontend
+```
 
 ---
 
-# Advantages of the Architecture
+# 5. Complaint Processing Architecture
 
-The proposed architecture offers several advantages:
-
-- Modular and scalable design.
-- Reduced repetitive data entry.
-- Improved legal accuracy through Retrieval-Augmented Generation (RAG).
-- Human oversight for every AI-generated recommendation.
-- Easier integration of future AI modules and additional investigation documents.
-- Consistent document generation using standardized templates.
+```
+Complaint
+      │
+      ▼
+Validation
+      │
+      ▼
+Evidence Upload
+      │
+      ▼
+AI Extraction
+      │
+      ▼
+Officer Verification
+      │
+      ▼
+Database
+      │
+      ▼
+Case Creation
+```
 
 ---
 
-# Conclusion
+# 6. Search & Audit Architecture
 
-The modular architecture of CaseCraftAI enables seamless collaboration between complaint processing, AI analysis, legal retrieval, document generation, and case management. By combining Retrieval-Augmented Generation (RAG) with a centralized Case Data Pool and Human-in-the-Loop validation, the platform assists investigating officers while ensuring that all legal decisions remain under human supervision.
+The Search & Audit module allows officers to retrieve historical records efficiently.
 
-The architecture is designed to support future enhancements, including additional investigation documents, multilingual support, advanced analytics, and integration with external law enforcement systems.
+Search supports:
+
+- Case Number
+- Complaint Title
+- Keywords
+- Document Title
+- Document Type
+
+Workflow:
+
+```
+Search Request
+      │
+      ▼
+Backend API
+      │
+      ▼
+Database Query
+      │
+      ▼
+Matching Cases
+Matching Documents
+      │
+      ▼
+Frontend Results
+```
+
+Future versions will extend this module with:
+
+- Audit logs
+- Version history
+- Activity tracking
+- Change comparison
+
+---
+
+# 7. AI Recommendation Architecture
+
+```
+Complaint
+      │
+      ▼
+Knowledge Base Search
+      │
+      ▼
+Relevant Legal Context
+      │
+      ▼
+Gemini AI
+      │
+      ▼
+Legal Recommendations
+      │
+      ▼
+Officer Review
+```
+
+Using Retrieval-Augmented Generation (RAG) improves factual reliability by grounding AI responses in trusted legal documents.
+
+---
+
+# 8. Security Architecture
+
+The system incorporates multiple security measures.
+
+### Authentication
+
+- Secure officer login
+
+### Authorization
+
+- Role-based access control
+
+### Data Protection
+
+- Secure database storage
+- Controlled API access
+- Human verification before document approval
+
+### Auditability
+
+- Timeline tracking
+- Search history (future)
+- Audit trail (future)
+
+---
+
+# 9. Scalability
+
+The modular architecture allows future enhancements without major redesign.
+
+Possible future modules include:
+
+- Mobile Application
+- Court Management Integration
+- Digital Signatures
+- Multilingual Document Generation
+- Predictive Investigation Analytics
+- Government Database Integration
+- Cloud Deployment
+
+---
+
+# 10. Advantages of the Architecture
+
+The proposed architecture offers several benefits:
+
+- Modular design
+- Easy maintenance
+- High scalability
+- Separation of concerns
+- AI-assisted but human-controlled workflow
+- Reliable legal recommendations using RAG
+- Simplified integration of future modules
+
+---
+
+# 11. Conclusion
+
+CaseCraftAI adopts a modular client-server architecture that integrates modern web technologies, Artificial Intelligence, Retrieval-Augmented Generation (RAG), and structured database management into a unified investigation support platform.
+
+The architecture enables efficient communication between the frontend, backend, AI services, database, and knowledge base while maintaining scalability, maintainability, and legal reliability. Its modular design also provides a strong foundation for future enhancements such as multilingual document generation, advanced audit tracking, analytics, and cloud deployment.

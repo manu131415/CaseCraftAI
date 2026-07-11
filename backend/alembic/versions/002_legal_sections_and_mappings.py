@@ -26,13 +26,13 @@ def upgrade():
         sa.Column('title', sa.Text(), nullable=True),
         sa.Column('section_text', sa.Text(), nullable=False),
         sa.Column('category', sa.Text(), nullable=True),
-        sa.Column('embedding', postgresql.ARRAY(type_=None, dimensions=1024), nullable=False),
+        sa.Column('embedding', sa.Text(), nullable=False),
         sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
         sa.PrimaryKeyConstraint('id'),
         sa.UniqueConstraint('act_code', 'section_number', name='legal_sections_act_code_section_number_key')
     )
     op.create_index('legal_sections_category_idx', 'legal_sections', ['category'])
-    op.create_index('legal_sections_embedding_idx', 'legal_sections', ['embedding'], postgresql_using='ivfflat')
+    op.create_index('legal_sections_embedding_idx', 'legal_sections', ['embedding'])
 
     # Create legal_section_mappings table
     op.create_table(
@@ -53,7 +53,7 @@ def upgrade():
         sa.CheckConstraint("old_act IN ('IPC', 'CrPC', 'IEA')", name='legal_section_mappings_old_act_check')
     )
     op.create_index('idx_lsm_act_pair', 'legal_section_mappings', ['act_pair'])
-    op.create_index('idx_lsm_fts', 'legal_section_mappings', [], postgresql_using='gin', postgresql_ops={'to_tsvector': 'to_tsvector(\'english\'::regconfig, ((COALESCE(subject, \'\'::text) || \' \'::text) || COALESCE(summary_of_comparison, \'\'::text)))'})
+    op.create_index('idx_lsm_fts', 'legal_section_mappings', [], postgresql_using='gin')
     op.create_index('idx_lsm_new_section', 'legal_section_mappings', ['new_section'])
     op.create_index('idx_lsm_old_section', 'legal_section_mappings', ['old_section'])
 

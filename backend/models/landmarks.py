@@ -1,14 +1,14 @@
 from sqlalchemy import Column
-from sqlalchemy import String
 from sqlalchemy import Text
 from sqlalchemy import DateTime
 from sqlalchemy import Date
 from sqlalchemy import BigInteger
 from sqlalchemy import Boolean
-from sqlalchemy.dialects.postgresql import UUID, ARRAY
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
 
 from database.db import Base
+from models._types import Vector
 
 
 class Landmark(Base):
@@ -65,6 +65,6 @@ class Landmark(Base):
 
     source_filename = Column(Text)
 
-    embedding = Column(ARRAY(type_=None, dimensions=1024), nullable=False)
+    embedding = Column(Vector(1024), nullable=False)
 
     created_at = Column(DateTime(timezone=True), server_default=func.now())

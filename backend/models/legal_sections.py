@@ -1,11 +1,11 @@
 from sqlalchemy import Column
-from sqlalchemy import String
 from sqlalchemy import Text
 from sqlalchemy import DateTime
-from sqlalchemy.dialects.postgresql import UUID, ARRAY
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
 
 from database.db import Base
+from models._types import Vector
 
 
 class LegalSection(Base):
@@ -24,6 +24,6 @@ class LegalSection(Base):
 
     category = Column(Text)
 
-    embedding = Column(ARRAY(type_=None, dimensions=1024), nullable=False)
+    embedding = Column(Vector(1024), nullable=False)
 
     created_at = Column(DateTime(timezone=True), server_default=func.now())

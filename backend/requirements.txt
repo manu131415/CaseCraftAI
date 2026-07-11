@@ -9,7 +9,8 @@ pdfplumber
 pytesseract
 pdf2image
 langdetect
-google-genai
+
 sqlalchemy
 psycopg2-binary
-google-generativeai
+
+openai

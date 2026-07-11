@@ -32,11 +32,11 @@ from typing import List, Dict, Any, Optional
 
 import pdfplumber
 import pytesseract
+from openai import OpenAI
 from pdf2image import convert_from_path
 from langdetect import detect_langs, DetectorFactory
 from pydantic import BaseModel, Field, ValidationError
-from google import genai
-from google.genai import types
+
 from dotenv import load_dotenv
 from pathlib import Path
 
@@ -48,7 +48,7 @@ load_dotenv(BASE_DIR / ".env")
 # so walk up to the backend root explicitly rather than relying on CWD
 BACKEND_ROOT = Path(__file__).resolve().parents[3]  # ingestion -> services -> app -> backend
 load_dotenv(BACKEND_ROOT / ".env")
-print("Key loaded:", bool(os.environ.get("GOOGLE_API_KEY")))
+print("Key loaded:", bool(os.environ.get("OPENAI_API_KEY")))
 
 DetectorFactory.seed = 0  # deterministic langdetect results
 
@@ -229,21 +229,52 @@ Rules:
 """
 
 
-def llm_extract(text: str, model: str = "gemini-2.0-flash") -> Optional[Dict[str, Any]]:
-    api_key = os.environ.get("GOOGLE_API_KEY")
-    ...
-    client = genai.Client(api_key=api_key)
-    response = client.models.generate_content(
-        model=model,
-        contents=text[:15000],
-        config=types.GenerateContentConfig(
-            system_instruction=EXTRACTION_SYSTEM_PROMPT,
-            response_mime_type="application/json",  # forces valid JSON directly
-            temperature=0,
-        ),
-    )
-    raw = response.text
-    return json.loads(raw)
+def llm_extract(text: str) -> Optional[Dict[str, Any]]:
+    """
+    Uses OpenAI GPT to extract structured complaint information.
+    Returns None if extraction fails.
+    """
+
+    api_key = os.getenv("OPENAI_API_KEY")
+
+    if not api_key:
+        return None
+
+    client = OpenAI(api_key=api_key)
+
+    prompt = f"""
+{EXTRACTION_SYSTEM_PROMPT}
+
+Complaint Text:
+
+{text}
+"""
+
+    try:
+        response = client.responses.create(
+    model=os.getenv("OPENAI_MODEL", "gpt-4.1-mini"),
+    input=prompt,
+    temperature=0,
+    text={"format": {"type": "json_object"}}
+)
+
+        raw = response.output_text.strip()
+
+        # Sometimes model returns ```json ... ```
+        if raw.startswith("```"):
+            raw = raw.replace("```json", "")
+            raw = raw.replace("```", "")
+            raw = raw.strip()
+
+        return json.loads(raw)
+
+    except json.JSONDecodeError as e:
+        print(f"OpenAI returned invalid JSON: {e}")
+        return None
+
+    except Exception as e:
+        print(f"OpenAI extraction failed: {e}")
+        return None
 
 
 # --------------------------------------------------------------------------

@@ -78,11 +78,11 @@ function ActBadge({ act }: { act: string }) {
   );
 }
 
-function SectionCard({ section }: { section: LegalSection }) {
+function SectionCard({ section, selected, onToggle }: { section: LegalSection; selected: boolean; onToggle: () => void }) {
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+    <div className={`rounded-lg border p-4 shadow-sm ${selected ? 'border-indigo-500 bg-indigo-50/40' : 'border-slate-200 bg-white'}`}>
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-2">
           <ActBadge act={section.act_code} />
@@ -90,7 +90,13 @@ function SectionCard({ section }: { section: LegalSection }) {
             Sec {section.section_number} — {section.title}
           </h3>
         </div>
-        <SimilarityBadge score={section.similarity} />
+        <div className="flex items-center gap-2">
+          <SimilarityBadge score={section.similarity} />
+          <label className="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-2 py-1 text-xs font-medium text-slate-700 shadow-sm">
+            <input type="checkbox" checked={selected} onChange={onToggle} />
+            Select
+          </label>
+        </div>
       </div>
 
       <p className="mt-2 text-sm text-slate-600">{section.reason}</p>
@@ -132,7 +138,7 @@ function SectionCard({ section }: { section: LegalSection }) {
   );
 }
 
-function JudgmentCard({ judgment }: { judgment: LandmarkJudgment }) {
+function JudgmentCard({ judgment, selected, onToggle }: { judgment: LandmarkJudgment; selected: boolean; onToggle: () => void }) {
   const outcomeTone =
     judgment.bail_outcome?.toLowerCase().includes('grant')
       ? 'bg-emerald-50 text-emerald-700'
@@ -141,7 +147,7 @@ function JudgmentCard({ judgment }: { judgment: LandmarkJudgment }) {
       : 'bg-slate-100 text-slate-600';
 
   return (
-    <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+    <div className={`rounded-lg border p-4 shadow-sm ${selected ? 'border-indigo-500 bg-indigo-50/40' : 'border-slate-200 bg-white'}`}>
       <div className="flex items-start justify-between gap-3">
         <div>
           <h3 className="font-semibold text-slate-900">{judgment.case_title}</h3>
@@ -149,7 +155,13 @@ function JudgmentCard({ judgment }: { judgment: LandmarkJudgment }) {
             {judgment.court} · {judgment.case_date}
           </p>
         </div>
-        <SimilarityBadge score={judgment.similarity} />
+        <div className="flex items-center gap-2">
+          <SimilarityBadge score={judgment.similarity} />
+          <label className="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-2 py-1 text-xs font-medium text-slate-700 shadow-sm">
+            <input type="checkbox" checked={selected} onChange={onToggle} />
+            Select
+          </label>
+        </div>
       </div>
 
       <p className="mt-2 text-sm text-slate-600">{judgment.reason}</p>
@@ -194,6 +206,11 @@ export default function LegalSectionsPage({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [needsManualSummary, setNeedsManualSummary] = useState(false);
+  const [selectedSectionIds, setSelectedSectionIds] = useState<string[]>([]);
+  const [selectedJudgmentIds, setSelectedJudgmentIds] = useState<string[]>([]);
+  const [draftId, setDraftId] = useState<string | null>(null);
+  const [savingDraft, setSavingDraft] = useState(false);
+  const [downloadError, setDownloadError] = useState<string | null>(null);
 
   const runAnalysis = useCallback(
     async (summaryOverride?: string) => {
@@ -221,6 +238,13 @@ export default function LegalSectionsPage({
         setResult(data);
         setCaseSummary(data.case_summary);
         setNeedsManualSummary(false);
+
+        setSelectedSectionIds((current) =>
+          current.filter((id) => data.sections.some((section) => section.id === id)),
+        );
+        setSelectedJudgmentIds((current) =>
+          current.filter((id) => data.judgments.some((judgment) => judgment.id === id)),
+        );
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Something went wrong');
       } finally {
@@ -234,6 +258,69 @@ export default function LegalSectionsPage({
     runAnalysis();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [complaintId]);
+
+  const selectedSections = result?.sections.filter((section) => selectedSectionIds.includes(section.id)) ?? [];
+  const selectedJudgments = result?.judgments.filter((judgment) => selectedJudgmentIds.includes(judgment.id)) ?? [];
+
+  const selectedCount = selectedSections.length + selectedJudgments.length;
+
+  async function handleSaveDraft() {
+    if (!result) return;
+    setSavingDraft(true);
+    setError(null);
+    try {
+      const payload = {
+        complaint_id: complaintId,
+        crime_category: result.sections[0]?.category || null,
+        summary: caseSummary,
+        draft_content: {
+          selected_sections: selectedSections,
+          selected_judgments: selectedJudgments,
+        },
+      };
+
+      const res = await fetch(`${API_BASE}/api/fir-drafts`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        throw new Error(data?.detail || `Request failed (${res.status})`);
+      }
+
+      const data = await res.json();
+      setDraftId(data.data.id);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to save FIR draft');
+    } finally {
+      setSavingDraft(false);
+    }
+  }
+
+  async function handleDownloadDraft() {
+    if (!draftId) return;
+    setDownloadError(null);
+    try {
+      const res = await fetch(`${API_BASE}/api/fir-drafts/${draftId}/download`);
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        throw new Error(data?.detail || `Request failed (${res.status})`);
+      }
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = `fir_draft_${draftId}.docx`;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      setDownloadError(err instanceof Error ? err.message : 'Failed to download DOCX');
+    }
+  }
 
   return (
     <div className="p-6">
@@ -254,7 +341,7 @@ export default function LegalSectionsPage({
           placeholder="Describe the incident (who, what, where, how)…"
           className="w-full resize-none rounded-md border border-slate-200 p-2.5 text-sm text-slate-800 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
         />
-        <div className="mt-2 flex items-center justify-between">
+        <div className="mt-2 flex items-center justify-between gap-4">
           {needsManualSummary && (
             <p className="text-xs text-amber-700">
               No stored summary found for this complaint — enter one above to analyze.
@@ -276,6 +363,43 @@ export default function LegalSectionsPage({
         </div>
       )}
 
+      {draftId && (
+        <div className="mb-6 rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-700">
+          FIR draft saved. You can now download it below.
+        </div>
+      )}
+
+      {downloadError && (
+        <div className="mb-6 rounded-lg border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">
+          {downloadError}
+        </div>
+      )}
+
+      <div className="mb-6 rounded-lg border border-slate-200 bg-white p-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-sm font-semibold text-slate-900">Selected items</p>
+            <p className="text-sm text-slate-500">{selectedCount} item{selectedCount === 1 ? '' : 's'} selected</p>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <button
+              onClick={handleSaveDraft}
+              disabled={savingDraft || selectedCount === 0 || !result}
+              className="rounded-md bg-indigo-600 px-3.5 py-1.5 text-sm font-medium text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {savingDraft ? 'Saving draft…' : 'Save FIR draft'}
+            </button>
+            <button
+              onClick={handleDownloadDraft}
+              disabled={!draftId}
+              className="rounded-md bg-emerald-600 px-3.5 py-1.5 text-sm font-medium text-white hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Download DOCX
+            </button>
+          </div>
+        </div>
+      </div>
+
       {/* Sections */}
       <section className="mb-8">
         <h2 className="mb-3 text-lg font-semibold text-slate-900">Applicable Sections</h2>
@@ -286,7 +410,16 @@ export default function LegalSectionsPage({
         ) : result && result.sections.length > 0 ? (
           <div className="grid gap-3 sm:grid-cols-2">
             {result.sections.map((s) => (
-              <SectionCard key={`${s.act_code}-${s.id}`} section={s} />
+              <SectionCard
+                key={`${s.act_code}-${s.id}`}
+                section={s}
+                selected={selectedSectionIds.includes(s.id)}
+                onToggle={() => {
+                  setSelectedSectionIds((prev) =>
+                    prev.includes(s.id) ? prev.filter((id) => id !== s.id) : [...prev, s.id],
+                  );
+                }}
+              />
             ))}
           </div>
         ) : (
@@ -306,7 +439,16 @@ export default function LegalSectionsPage({
         ) : result && result.judgments.length > 0 ? (
           <div className="grid gap-3 sm:grid-cols-2">
             {result.judgments.map((j) => (
-              <JudgmentCard key={j.id} judgment={j} />
+              <JudgmentCard
+                key={j.id}
+                judgment={j}
+                selected={selectedJudgmentIds.includes(j.id)}
+                onToggle={() => {
+                  setSelectedJudgmentIds((prev) =>
+                    prev.includes(j.id) ? prev.filter((id) => id !== j.id) : [...prev, j.id],
+                  );
+                }}
+              />
             ))}
           </div>
         ) : (

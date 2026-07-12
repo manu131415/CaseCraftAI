@@ -1,11 +1,15 @@
 import uuid
+from io import BytesIO
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
+from docx import Document
 from fastapi import APIRouter, HTTPException
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
 from database.db import SessionLocal
+from models.complaint import Complaint
 from models.fir_drafts import FirDraft
 
 
@@ -271,5 +275,101 @@ def delete_fir_draft(id: str) -> Dict[str, Any]:
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=500, detail=f"Failed to delete FIR draft: {str(e)}")
+    finally:
+        db.close()
+
+
+@router.get(
+    "/{id}/download",
+    summary="Download FIR draft as DOCX",
+    description="Generate a DOCX document for an FIR draft and download it.",
+    response_class=StreamingResponse,
+    tags=["fir-drafts"],
+)
+def download_fir_draft(id: str):
+    db = SessionLocal()
+    try:
+        fir_draft = db.query(FirDraft).filter(FirDraft.id == uuid.UUID(id)).first()
+        if not fir_draft:
+            raise HTTPException(status_code=404, detail="FIR draft not found")
+
+        complaint = db.query(Complaint).filter(Complaint.complaint_id == str(fir_draft.complaint_id)).first()
+        document = Document()
+
+        document.add_heading(f"FIR Draft for Complaint {fir_draft.complaint_id}", level=1)
+        document.add_paragraph(f"FIR Draft ID: {fir_draft.id}")
+        document.add_paragraph(f"Complaint ID: {fir_draft.complaint_id}")
+        document.add_paragraph(f"Crime category: {fir_draft.crime_category or 'Not specified'}")
+        document.add_paragraph(f"Status: {fir_draft.status}")
+        document.add_paragraph("")
+
+        if complaint:
+            document.add_heading("Complaint details", level=2)
+            document.add_paragraph(f"Complainant: {complaint.complainant_name or 'Not provided'}")
+            document.add_paragraph(f"Phone: {complaint.phone or 'Not provided'}")
+            document.add_paragraph(f"Email: {complaint.email or 'Not provided'}")
+            document.add_paragraph(f"Location: {complaint.location or 'Not provided'}")
+            document.add_paragraph(f"Description: {complaint.description or 'Not provided'}")
+            document.add_paragraph("")
+
+        if fir_draft.summary:
+            document.add_heading("Case summary", level=2)
+            document.add_paragraph(fir_draft.summary)
+            document.add_paragraph("")
+
+        draft_content = fir_draft.draft_content or {}
+        selected_sections = draft_content.get("selected_sections", [])
+        if selected_sections:
+            document.add_heading("Selected legal sections", level=2)
+            for section in selected_sections:
+                document.add_paragraph(
+                    f"{section.get('act_code', '')} Sec {section.get('section_number', '')} — {section.get('title', '')}",
+                    style="List Bullet",
+                )
+                if section.get("reason"):
+                    document.add_paragraph(f"Reason: {section['reason']}")
+                cross_references = section.get("cross_references", [])
+                if cross_references:
+                    document.add_paragraph("Cross references:")
+                    for xref in cross_references:
+                        document.add_paragraph(
+                            f"- {xref.get('act')} Sec {xref.get('section')} {xref.get('subject', '')}",
+                        )
+            document.add_paragraph("")
+
+        selected_judgments = draft_content.get("selected_judgments", [])
+        if selected_judgments:
+            document.add_heading("Selected landmark judgments", level=2)
+            for judgment in selected_judgments:
+                document.add_paragraph(
+                    f"{judgment.get('case_title', '')} ({judgment.get('court', '')}, {judgment.get('case_date', '')})",
+                    style="List Bullet",
+                )
+                if judgment.get("ipc_sections"):
+                    document.add_paragraph(f"IPC Sections: {judgment['ipc_sections']}")
+                if judgment.get("judgment_reason"):
+                    document.add_paragraph(f"Reason: {judgment['judgment_reason']}")
+                if judgment.get("summary"):
+                    document.add_paragraph(f"Summary: {judgment['summary']}")
+            document.add_paragraph("")
+
+        buffer = BytesIO()
+        document.save(buffer)
+        buffer.seek(0)
+
+        filename = f"fir_draft_{id}.docx"
+        return StreamingResponse(
+            buffer,
+            media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            headers={
+                "Content-Disposition": f'attachment; filename="{filename}"',
+            },
+        )
+    except HTTPException:
+        raise
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid id format")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to generate DOCX document: {str(e)}")
     finally:
         db.close()

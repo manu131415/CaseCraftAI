@@ -15,3 +15,5 @@ openai
 google-generativeai
 alembic
 sentence-transformer
+docxtpl
+python-docx

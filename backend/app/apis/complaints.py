@@ -136,7 +136,14 @@ class ComplaintListResponse(BaseModel):
 
 
 class ComplaintDetailResponse(ComplaintSummary):
-    pass
+    
+    officerNotes: Optional[str] = None
+    notes: Optional[str] = None
+
+    attachments: List[Dict[str, Any]] = []
+    complainants: List[Dict[str, Any]] = []
+    victims: List[Dict[str, Any]] = []
+    suspects: List[Dict[str, Any]] = []
 
 
 class ComplaintUpdateResponse(BaseModel):
@@ -189,6 +196,7 @@ def submit_complaint(payload: ComplaintSubmission) -> Dict[str, Any]:
             incident_time=payload.incidentTime,
             location=payload.location,
             description=payload.description,
+            ai_summary=payload.aiSummary,
             officer_notes=payload.officerNotes,
             # Store complex data as JSON
             complainant_data=json.dumps([c.dict() if hasattr(c, 'dict') else c for c in payload.complainants]) if payload.complainants else json.dumps([]),
@@ -280,6 +288,13 @@ def get_complaint(complaint_id: str) -> Dict[str, Any]:
         if not complaint:
             raise HTTPException(status_code=404, detail="Complaint not found")
         
+        # parse stored JSON fields to return full structured data
+        def _safe_json_load(s):
+            try:
+                return json.loads(s) if s else []
+            except Exception:
+                return []
+
         return {
             "complaint_id": complaint.complaint_id,
             "complainant_name": complaint.complainant_name,
@@ -288,6 +303,12 @@ def get_complaint(complaint_id: str) -> Dict[str, Any]:
             "crime_type": complaint.crime_type,
             "location": complaint.location,
             "description": complaint.description,
+            "aiSummary": complaint.ai_summary,
+            "officerNotes": complaint.officer_notes,
+            "attachments": _safe_json_load(complaint.attachment_data),
+            "complainants": _safe_json_load(complaint.complainant_data),
+            "victims": _safe_json_load(complaint.victim_data),
+            "suspects": _safe_json_load(complaint.suspect_data),
             "status": complaint.status,
             "created_at": complaint.created_at.isoformat() if complaint.created_at else None,
             "complainant_father_name": complaint.complainant_father_name,

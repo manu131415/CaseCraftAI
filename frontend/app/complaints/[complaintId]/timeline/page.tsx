@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { loadDiaryEntriesForComplaint, type DiaryEntry } from "@/lib/api/caseDiary";
+import { loadDiaryEntriesForComplaint, getCaseByComplaint, type DiaryEntry } from "@/lib/api/caseDiary";
+import axios from "axios";
 
 export default function TimelinePage() {
   const params = useParams<{ complaintId: string }>();
@@ -24,14 +25,57 @@ export default function TimelinePage() {
       setError(null);
 
       try {
-        const { entries: diaryEntries, hasCase: caseExists } = await loadDiaryEntriesForComplaint(complaintId);
-        setHasCase(caseExists);
-        const sortedEntries = [...diaryEntries].sort((a, b) => {
+        const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
+
+        // fetch complaint to get registration timestamp
+        let complaintCreatedAt: string | undefined = undefined;
+        try {
+          const cre = await axios.get(`${API_BASE}/api/complaints/${encodeURIComponent(complaintId)}`);
+          const cdata = cre.data.complaint || cre.data || null;
+          complaintCreatedAt = cdata?.created_at || cdata?.createdAt || undefined;
+        } catch (e) {
+          // ignore
+        }
+
+        const caseRecord = await getCaseByComplaint(complaintId);
+
+        const allEntries: DiaryEntry[] = [];
+
+        // registration event
+        allEntries.push({
+          diary_id: `reg-${complaintId}`,
+          case_id: caseRecord?.case_id || "",
+          officer_id: "",
+          action_type: "Complaint registered",
+          description: `Complaint ${complaintId} was registered`,
+          occurred_at: complaintCreatedAt || null,
+        });
+
+        if (caseRecord) {
+          setHasCase(true);
+          allEntries.push({
+            diary_id: `case-${caseRecord.case_id}`,
+            case_id: caseRecord.case_id,
+            officer_id: "",
+            action_type: "Case created",
+            description: `Case ${caseRecord.case_id} was created for this complaint`,
+            occurred_at: caseRecord.created_at || caseRecord.createdAt || null,
+          });
+
+          // load diary entries for the case
+          const { entries: diaryEntries } = await loadDiaryEntriesForComplaint(complaintId);
+          allEntries.push(...(diaryEntries || []));
+        } else {
+          setHasCase(false);
+        }
+
+        const sortedEntries = [...allEntries].sort((a, b) => {
           const aTime = a.occurred_at || a.created_at || "";
           const bTime = b.occurred_at || b.created_at || "";
           return aTime.localeCompare(bTime);
         });
-        setEntries(sortedEntries);
+
+        setEntries(sortedEntries as DiaryEntry[]);
       } catch (err) {
         console.error(err);
         setError("Unable to load the investigation timeline right now.");

@@ -17,17 +17,35 @@ interface ComplaintSummary {
   incident_datetime?: string;
 }
 
-export default function ComplaintList() {
-  const [complaints, setComplaints] = useState<ComplaintSummary[]>([]);
+export default function ComplaintList({ initialComplaints }: { initialComplaints?: ComplaintSummary[] }) {
+  const [complaints, setComplaints] = useState<ComplaintSummary[]>(initialComplaints || []);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [caseComplaintIds, setCaseComplaintIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    async function loadComplaints() {
+    async function loadData() {
       try {
         const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
-        const response = await axios.get(`${API_BASE}/api/complaints`);
-        setComplaints(response.data.complaints || []);
+
+        if (!initialComplaints) {
+          const response = await axios.get(`${API_BASE}/api/complaints`);
+          setComplaints(response.data.complaints || []);
+        }
+
+        // fetch cases to detect which complaints already have cases
+        try {
+          const casesRes = await axios.get(`${API_BASE}/api/cases`);
+          const cases = casesRes.data.cases || [];
+          const ids = new Set<string>();
+          for (const c of cases) {
+            if (c.complaint_id) ids.add(String(c.complaint_id));
+          }
+          setCaseComplaintIds(ids);
+        } catch (e) {
+          // non-fatal
+          console.warn("Could not load cases to detect linked complaints", e);
+        }
       } catch (err: any) {
         console.error("Failed to load complaints:", err);
         const msg = err?.response?.data?.detail || err?.message || String(err);
@@ -37,7 +55,7 @@ export default function ComplaintList() {
       }
     }
 
-    loadComplaints();
+    loadData();
   }, []);
 
   if (loading) {
@@ -70,8 +88,11 @@ export default function ComplaintList() {
 
         const desc = complaint.description || "Not provided";
 
+        const hasCase = caseComplaintIds.has(complaint.complaint_id);
+        const caseMarker = hasCase ? "ring-2 ring-emerald-200" : "";
+
         return (
-          <div key={complaint.complaint_id} className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-md hover:shadow-lg transition-shadow">
+          <div key={complaint.complaint_id} className={`relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-md hover:shadow-lg transition-shadow ${caseMarker}`}>
             <div className="flex items-start justify-between gap-4">
               <div>
                 <h3 className="text-lg font-semibold text-slate-900">{complaint.complaint_id}</h3>
@@ -97,8 +118,9 @@ export default function ComplaintList() {
             <div className="mt-4 flex items-center gap-4">
               <Link href={`/complaints/${complaint.complaint_id}`} className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-700">View details</Link>
 
-              <a href={`/complaints/${complaint.complaint_id}/legal_sections`} className="text-sm text-indigo-600 hover:underline">Legal sections</a>
-              <a href={`/complaints/${complaint.complaint_id}/case_diary`} className="text-sm text-indigo-600 hover:underline">Case diary</a>
+              {hasCase && (
+                <Link href="/cases" className="text-sm text-emerald-600 hover:underline">View case</Link>
+              )}
             </div>
           </div>
         );

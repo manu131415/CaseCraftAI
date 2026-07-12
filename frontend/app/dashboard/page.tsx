@@ -3,6 +3,7 @@ import Navbar from "@/components/layout/Navbar";
 import DashboardCard from "@/components/dashboard/DashboardCard";
 import RecentComplaint from "@/components/dashboard/RecentComplaint";
 import ActivityFeed from "@/components/dashboard/ActivityFeed";
+import CaseListPanel from "@/components/dashboard/CaseListPanel";
 
 export const dynamic = 'force-dynamic';
 
@@ -47,6 +48,10 @@ export default function Dashboard() {
           <section className="grid gap-6 xl:grid-cols-[1.3fr_0.7fr]">
             <RecentComplaint />
             <ActivityFeed />
+          </section>
+
+          <section>
+            <CaseListPanel />
           </section>
         </div>
       </main>

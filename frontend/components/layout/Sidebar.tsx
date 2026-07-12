@@ -25,6 +25,20 @@ const navigationItems = [
     icon: LayoutDashboard,
   },
   {
+    href: "/complaints",
+    key: "complaintList",
+    namespace: "complaints",
+    icon: FileText,
+    label: "Complaint Lists",
+  },
+  {
+    href: "/cases",
+    key: "caseList",
+    namespace: "common",
+    icon: ShieldCheck,
+    label: "Case Lists",
+  },
+  {
     href: "/complaintRegister",
     key: "registerComplaint",
     namespace: "complaints",
@@ -81,7 +95,7 @@ function SidebarContent() {
             >
               <Icon className="h-5 w-5" />
 
-              {t(item.key, item.namespace)}
+              {"label" in item ? item.label : t(item.key, item.namespace)}
             </Link>
           );
         })}

@@ -202,6 +202,21 @@ def create_case(payload: CaseCreate) -> Dict[str, Any]:
         db.add(case)
         db.commit()
         db.refresh(case)
+        # Create an initial case diary/timeline entry noting that the case was created from a complaint
+        try:
+            diary = CaseDiary(
+                diary_id=str(uuid.uuid4()),
+                case_id=case.case_id,
+                officer_id=None,
+                action_type="case_created",
+                description=f"Case created from complaint {payload.complaint_id}",
+                occurred_at=datetime.utcnow(),
+            )
+            db.add(diary)
+            db.commit()
+        except Exception:
+            # Do not fail the entire request if diary creation fails; log and continue
+            db.rollback()
         
         return {
             "success": True,

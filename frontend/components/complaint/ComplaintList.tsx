@@ -58,62 +58,51 @@ export default function ComplaintList() {
   }
 
   return (
-    <div className="space-y-4">
-      {complaints.map((complaint) => (
-        <div key={complaint.complaint_id} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-            <div>
-              <h2 className="text-xl font-semibold text-slate-900">{complaint.complaint_id}</h2>
-              <p className="mt-1 text-sm text-slate-500">{complaint.status || "Pending"}</p>
-            </div>
-            <div className="text-right text-sm text-slate-500">
-              {complaint.created_at ? new Date(complaint.created_at).toLocaleString() : "No date"}
-            </div>
-          </div>
-          <div className="mt-4 grid gap-4 sm:grid-cols-2">
-            <div>
-              <p className="text-sm font-medium text-slate-700">Complainant</p>
-              <p className="mt-1 text-sm text-slate-600">{complaint.complainant_name || "Not provided"}</p>
-            </div>
-            <div>
-              <p className="text-sm font-medium text-slate-700">Crime type</p>
-              <p className="mt-1 text-sm text-slate-600">{complaint.crime_type || "Not provided"}</p>
-            </div>
-            <div>
-              <p className="text-sm font-medium text-slate-700">Location</p>
-              <p className="mt-1 text-sm text-slate-600">{complaint.location || "Not provided"}</p>
-            </div>
-            <div>
-              <p className="text-sm font-medium text-slate-700">Phone</p>
-              <p className="mt-1 text-sm text-slate-600">{complaint.phone || "Not provided"}</p>
-            </div>
-            <div className="flex items-center gap-3">
-              <Link href={`/complaints/${complaint.complaint_id}`}
-                className="text-indigo-600 hover:underline text-sm font-medium"
-                  >
-                  Details
-              </Link>
-              <a
-                href={`/complaints/${complaint.complaint_id}/legal_sections`}
-                className="text-indigo-600 hover:underline text-sm"
-              >
-                Legal sections
-              </a>
-              <a
-                href={`/complaints/${complaint.complaint_id}/case_diary`}
-                className="text-indigo-600 hover:underline text-sm"
-              >
-                Case diary
-              </a>
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {complaints.map((complaint) => {
+        const status = complaint.status || "Pending";
+        const statusClasses =
+          status.toLowerCase() === "closed"
+            ? "bg-emerald-50 text-emerald-700"
+            : status.toLowerCase() === "rejected"
+            ? "bg-rose-50 text-rose-700"
+            : "bg-indigo-50 text-indigo-700";
+
+        const desc = complaint.description || "Not provided";
+
+        return (
+          <div key={complaint.complaint_id} className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-md hover:shadow-lg transition-shadow">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h3 className="text-lg font-semibold text-slate-900">{complaint.complaint_id}</h3>
+                <p className="mt-1 text-sm text-slate-500">{complaint.complainant_name || "—"}</p>
+              </div>
+
+              <div className="flex flex-col items-end space-y-2">
+                <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ${statusClasses}`}>{status}</span>
+                <time className="text-xs text-slate-400">{complaint.created_at ? new Date(complaint.created_at).toLocaleString() : "No date"}</time>
+              </div>
             </div>
 
+            <div className="mt-3 text-sm text-slate-600">
+              <p className="font-medium text-slate-700">Crime</p>
+              <p className="mt-1">{complaint.crime_type || "Not provided"} • {complaint.location || "Location N/A"}</p>
+            </div>
+
+            <div className="mt-3 text-sm text-slate-600">
+              <p className="font-medium text-slate-700">Description</p>
+              <p className="mt-1 text-sm text-slate-600">{desc.length > 200 ? desc.slice(0, 200) + "..." : desc}</p>
+            </div>
+
+            <div className="mt-4 flex items-center gap-4">
+              <Link href={`/complaints/${complaint.complaint_id}`} className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-700">View details</Link>
+
+              <a href={`/complaints/${complaint.complaint_id}/legal_sections`} className="text-sm text-indigo-600 hover:underline">Legal sections</a>
+              <a href={`/complaints/${complaint.complaint_id}/case_diary`} className="text-sm text-indigo-600 hover:underline">Case diary</a>
+            </div>
           </div>
-          <div className="mt-4">
-            <p className="text-sm font-medium text-slate-700">Description</p>
-            <p className="mt-1 text-sm text-slate-600">{complaint.description || "Not provided"}</p>
-          </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }

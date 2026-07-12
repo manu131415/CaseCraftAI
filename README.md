@@ -304,9 +304,9 @@ Developed as part of an academic software engineering project.
 
 Contributors:
 
-- Vaibhavi Parmar
 - Manushri
 - Harshini
+- Vaibhavi Parmar
 - Garima Lad
 - Vyomini Joshi
 

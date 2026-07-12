@@ -77,15 +77,10 @@ export default function DocumentsAndEvidence({ onDocumentsSubmit }: Props) {
         formData.append("file", fileItem.file);
 
         try {
-          const response = await axios.post(
-            "http://localhost:8000/api/complaints/upload-evidence",
-            formData,
-            {
-              headers: {
-                "Content-Type": "multipart/form-data",
-              },
-            }
-          );
+          const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
+          const response = await axios.post(`${API_BASE}/api/complaints/upload-evidence`, formData, {
+            headers: { "Content-Type": "multipart/form-data" },
+          });
 
           uploadedFiles.push({
             ...fileItem,

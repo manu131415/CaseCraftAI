@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
+import Link from "next/link";
 
 interface ComplaintSummary {
   complaint_id: string;
@@ -24,10 +25,13 @@ export default function ComplaintList() {
   useEffect(() => {
     async function loadComplaints() {
       try {
-        const response = await axios.get("http://localhost:8000/api/complaints");
+        const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
+        const response = await axios.get(`${API_BASE}/api/complaints`);
         setComplaints(response.data.complaints || []);
-      } catch (err) {
-        setError("Unable to load complaints. Please try again later.");
+      } catch (err: any) {
+        console.error("Failed to load complaints:", err);
+        const msg = err?.response?.data?.detail || err?.message || String(err);
+        setError(`Unable to load complaints: ${msg}`);
       } finally {
         setLoading(false);
       }
@@ -83,6 +87,26 @@ export default function ComplaintList() {
               <p className="text-sm font-medium text-slate-700">Phone</p>
               <p className="mt-1 text-sm text-slate-600">{complaint.phone || "Not provided"}</p>
             </div>
+            <div className="flex items-center gap-3">
+              <Link href={`/complaints/${complaint.complaint_id}`}
+                className="text-indigo-600 hover:underline text-sm font-medium"
+                  >
+                  Details
+              </Link>
+              <a
+                href={`/complaints/${complaint.complaint_id}/legal_sections`}
+                className="text-indigo-600 hover:underline text-sm"
+              >
+                Legal sections
+              </a>
+              <a
+                href={`/complaints/${complaint.complaint_id}/case_diary`}
+                className="text-indigo-600 hover:underline text-sm"
+              >
+                Case diary
+              </a>
+            </div>
+
           </div>
           <div className="mt-4">
             <p className="text-sm font-medium text-slate-700">Description</p>

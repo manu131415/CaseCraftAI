@@ -134,15 +134,10 @@ export default function FileUploader({
 
       formData.append("file", item.file);
 
-      const response = await axios.post(
-        "http://localhost:8000/api/complaints/upload",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
+      const response = await axios.post(`${API_BASE}/api/complaints/upload`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
       const extraction = response.data.extraction ?? {};
 

@@ -70,7 +70,8 @@ export default function ComplaintWizard() {
 
   async function handleSubmit() {
     try {
-      await axios.post("http://localhost:8000/api/complaints/submit", form);
+      const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
+      await axios.post(`${API_BASE}/api/complaints/submit`, form);
       setSubmitted(true);
     } catch (error) {
       console.error(error);

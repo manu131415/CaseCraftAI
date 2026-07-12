@@ -18,7 +18,7 @@ router = APIRouter(prefix="/api/case-diary", tags=["case-diary"])
 
 class CaseDiaryCreate(BaseModel):
     case_id: str
-    officer_id: str
+    officer_id: Optional[str] = None
     action_type: str
     description: str
     location: Optional[str] = None
@@ -44,7 +44,7 @@ class CaseDiaryUpdate(BaseModel):
 class CaseDiaryEntry(BaseModel):
     diary_id: str
     case_id: str
-    officer_id: str
+    officer_id: Optional[str] = None
     action_type: Optional[str] = None
     description: Optional[str] = None
     location: Optional[str] = None
@@ -96,10 +96,11 @@ def create_diary_entry(payload: CaseDiaryCreate) -> Dict[str, Any]:
         if not case:
             raise HTTPException(status_code=404, detail="Case not found")
         
-        # Verify officer exists
-        officer = db.query(Officer).filter(Officer.officer_id == payload.officer_id).first()
-        if not officer:
-            raise HTTPException(status_code=404, detail="Officer not found")
+        # Verify officer exists if provided
+        if payload.officer_id:
+            officer = db.query(Officer).filter(Officer.officer_id == payload.officer_id).first()
+            if not officer:
+                raise HTTPException(status_code=404, detail="Officer not found")
         
         # Verify evidence exists if provided
         if payload.related_evidence_id:

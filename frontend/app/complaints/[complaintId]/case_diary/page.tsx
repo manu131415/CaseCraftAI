@@ -120,7 +120,6 @@ export default function CaseDiaryPage() {
             placeholder="Officer ID"
             value={form.officer_id}
             onChange={(event) => setForm((prev) => ({ ...prev, officer_id: event.target.value }))}
-            required
           />
           <input
             className="rounded-xl border border-slate-200 px-3 py-2 text-sm"

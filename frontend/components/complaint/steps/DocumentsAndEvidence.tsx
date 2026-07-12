@@ -21,6 +21,7 @@ export default function DocumentsAndEvidence({ onDocumentsSubmit }: Props) {
   const { t } = useLanguage();
   const [files, setFiles] = useState<DocumentFile[]>([]);
   const [uploading, setUploading] = useState(false);
+  const [uploadedFilesState, setUploadedFilesState] = useState<DocumentFile[]>([]);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const newFiles = acceptedFiles.map((file) => ({
@@ -77,15 +78,10 @@ export default function DocumentsAndEvidence({ onDocumentsSubmit }: Props) {
         formData.append("file", fileItem.file);
 
         try {
-          const response = await axios.post(
-            "http://localhost:8000/api/complaints/upload-evidence",
-            formData,
-            {
-              headers: {
-                "Content-Type": "multipart/form-data",
-              },
-            }
-          );
+          const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
+          const response = await axios.post(`${API_BASE}/api/complaints/upload-evidence`, formData, {
+            headers: { "Content-Type": "multipart/form-data" },
+          });
 
           uploadedFiles.push({
             ...fileItem,
@@ -102,6 +98,8 @@ export default function DocumentsAndEvidence({ onDocumentsSubmit }: Props) {
       }
 
       onDocumentsSubmit(uploadedFiles);
+      // keep a record of uploaded files in this component so they remain visible
+      setUploadedFilesState((prev) => [...prev, ...uploadedFiles]);
       setFiles([]);
       alert(t("documentsEvidence.uploadSuccess", "complaints"));
     } catch (error) {
@@ -172,6 +170,30 @@ export default function DocumentsAndEvidence({ onDocumentsSubmit }: Props) {
                 >
                   <Trash2 className="h-5 w-5" />
                 </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {uploadedFilesState.length > 0 && (
+        <div className="space-y-3 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+          <p className="text-base font-semibold text-slate-800">Uploaded evidence</p>
+          <div className="space-y-2">
+            {uploadedFilesState.map((item) => (
+              <div key={item.id} className="flex items-center justify-between rounded-xl bg-white p-3 shadow-sm">
+                <div className="flex items-center gap-3">
+                  {getIcon(item.file.type)}
+                  <div className="flex-1">
+                    <p className="font-semibold text-slate-900">{item.file.name}</p>
+                    <p className="text-sm text-slate-500">{item.cloudinaryUrl ? "Uploaded" : "Uploaded (no link)"}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  {item.cloudinaryUrl ? (
+                    <a href={item.cloudinaryUrl} target="_blank" rel="noreferrer" className="text-indigo-600 hover:underline">Open</a>
+                  ) : null}
+                </div>
               </div>
             ))}
           </div>

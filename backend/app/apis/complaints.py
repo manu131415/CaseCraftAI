@@ -136,7 +136,14 @@ class ComplaintListResponse(BaseModel):
 
 
 class ComplaintDetailResponse(ComplaintSummary):
-    pass
+    
+    officerNotes: Optional[str] = None
+    notes: Optional[str] = None
+
+    attachments: List[Dict[str, Any]] = []
+    complainants: List[Dict[str, Any]] = []
+    victims: List[Dict[str, Any]] = []
+    suspects: List[Dict[str, Any]] = []
 
 
 class ComplaintUpdateResponse(BaseModel):
@@ -170,12 +177,17 @@ def submit_complaint(payload: ComplaintSubmission) -> Dict[str, Any]:
     try:
         # Extract complainant information from the list
         complainant_data = payload.complainants[0] if payload.complainants else {}
-        
+
+        # Frontend uses `contact` for phone or email; prefer explicit phone/email keys
+        contact_val = complainant_data.get("contact")
+        phone_val = complainant_data.get("phone") or (contact_val if contact_val and "@" not in str(contact_val) else None)
+        email_val = complainant_data.get("email") or (contact_val if contact_val and "@" in str(contact_val) else None)
+
         complaint = Complaint(
             complaint_id=str(uuid.uuid4()),
             complainant_name=complainant_data.get("name"),
-            phone=complainant_data.get("phone"),
-            email=complainant_data.get("email"),
+            phone=phone_val,
+            email=email_val,
             complaint_type=payload.complaintType,
             category=payload.category,
             priority=payload.priority,
@@ -184,6 +196,7 @@ def submit_complaint(payload: ComplaintSubmission) -> Dict[str, Any]:
             incident_time=payload.incidentTime,
             location=payload.location,
             description=payload.description,
+            ai_summary=payload.aiSummary,
             officer_notes=payload.officerNotes,
             # Store complex data as JSON
             complainant_data=json.dumps([c.dict() if hasattr(c, 'dict') else c for c in payload.complainants]) if payload.complainants else json.dumps([]),
@@ -193,7 +206,7 @@ def submit_complaint(payload: ComplaintSubmission) -> Dict[str, Any]:
             status="Pending",
             complainant_father_name=complainant_data.get("father_name"),
             complainant_address=complainant_data.get("address"),
-            incident_datetime=datetime.fromisoformat(payload.incidentDate) if payload.incidentDate else None,
+            incident_datetime=(datetime.fromisoformat(payload.incidentDate) if payload.incidentDate else None),
             incident_location=payload.location,
             address=complainant_data.get("address")
         )
@@ -255,7 +268,12 @@ def get_all_complaints() -> Dict[str, Any]:
     finally:
         db.close()
 
-
+@router.get(
+    "/debug-count",
+    summary="Debug: complaints count",
+    description="Return number of complaints in DB (debug helper)",
+    tags=["complaints"],
+)
 @router.get(
     "/{complaint_id}",
     response_model=ComplaintDetailResponse,
@@ -270,6 +288,13 @@ def get_complaint(complaint_id: str) -> Dict[str, Any]:
         if not complaint:
             raise HTTPException(status_code=404, detail="Complaint not found")
         
+        # parse stored JSON fields to return full structured data
+        def _safe_json_load(s):
+            try:
+                return json.loads(s) if s else []
+            except Exception:
+                return []
+
         return {
             "complaint_id": complaint.complaint_id,
             "complainant_name": complaint.complainant_name,
@@ -278,6 +303,12 @@ def get_complaint(complaint_id: str) -> Dict[str, Any]:
             "crime_type": complaint.crime_type,
             "location": complaint.location,
             "description": complaint.description,
+            "aiSummary": complaint.ai_summary,
+            "officerNotes": complaint.officer_notes,
+            "attachments": _safe_json_load(complaint.attachment_data),
+            "complainants": _safe_json_load(complaint.complainant_data),
+            "victims": _safe_json_load(complaint.victim_data),
+            "suspects": _safe_json_load(complaint.suspect_data),
             "status": complaint.status,
             "created_at": complaint.created_at.isoformat() if complaint.created_at else None,
             "complainant_father_name": complaint.complainant_father_name,
@@ -381,6 +412,18 @@ def delete_complaint(complaint_id: str) -> Dict[str, Any]:
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=500, detail=f"Failed to delete complaint: {str(e)}")
+    finally:
+        db.close()
+
+
+
+def complaints_count() -> Dict[str, Any]:
+    db = SessionLocal()
+    try:
+        count = db.query(Complaint).count()
+        return {"count": count}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to fetch count: {e}")
     finally:
         db.close()
 

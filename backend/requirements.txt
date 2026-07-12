@@ -14,3 +14,6 @@ psycopg2-binary
 openai
 google-generativeai
 alembic
+sentence-transformer
+docxtpl
+python-docx

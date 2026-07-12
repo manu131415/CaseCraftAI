@@ -26,6 +26,9 @@ if config.config_file_name is not None:
 # target_metadata = mymodel.Base.metadata
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
+# Prefer backend/.env for database configuration when running migrations
+load_dotenv(BASE_DIR / "backend" / ".env")
+# fallback to dataset/.env for older setups
 load_dotenv(BASE_DIR / "dataset" / ".env")
 
 DATABASE_URL = os.getenv("DATABASE_URL")

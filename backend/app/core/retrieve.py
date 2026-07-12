@@ -12,8 +12,9 @@ db_url = os.getenv("DATABASE_URL")
 
 model = SentenceTransformer('intfloat/multilingual-e5-large')
 
-OLLAMA_URL = "http://localhost:11434/api/generate"
-OLLAMA_MODEL = "llama3.2:3b"
+GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
+GROQ_MODEL = "openai/gpt-oss-20b"  # faster
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 
 def embed_query(text: str):
@@ -56,7 +57,9 @@ def retrieve_candidates(case_summary: str, top_k_sections=20, top_k_judgments=10
     return sections, judgments
 
 
-def rerank_with_llm(case_summary: str, sections: list, judgments: list):
+import time
+
+def rerank_with_llm(case_summary: str, sections: list, judgments: list, max_retries: int = 3):
     sections_text = "\n".join([
         f"[S{i}] {s['act_code']} Sec {s['section_number']} - {s['title']}: {s['section_text'][:300]}"
         for i, s in enumerate(sections)
@@ -79,29 +82,85 @@ CANDIDATE LANDMARK JUDGMENTS (indices J0 to J{len(judgments)-1} ONLY):
 
 Task: Select only the sections and judgments that are TRULY relevant to this case summary.
 Rank them by relevance. Discard anything not clearly applicable.
-IMPORTANT: Only use "ref" values that exist in the lists above. Do NOT invent indices beyond what is listed.
+IMPORTANT: Only use "ref" values that exist in the lists above. Do NOT invent indices beyond what is listed."""
 
-Respond ONLY with valid JSON, no other text, in this exact format:
-{{
-  "sections": [{{"ref": "S0", "relevance_reason": "one line explanation"}}],
-  "judgments": [{{"ref": "J0", "relevance_reason": "one line explanation"}}]
-}}"""
+    schema = {
+        "type": "object",
+        "properties": {
+            "sections": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "ref": {"type": "string"},
+                        "relevance_reason": {"type": "string"}
+                    },
+                    "required": ["ref", "relevance_reason"]
+                }
+            },
+            "judgments": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "ref": {"type": "string"},
+                        "relevance_reason": {"type": "string"}
+                    },
+                    "required": ["ref", "relevance_reason"]
+                }
+            }
+        },
+        "required": ["sections", "judgments"]
+    }
 
-    response = requests.post(OLLAMA_URL, json={
-        "model": OLLAMA_MODEL,
-        "prompt": prompt,
-        "stream": False,
-        "format": "json"
-    })
-    response.raise_for_status()
+    result = None
+    last_error = None
 
-    raw = response.json()["response"].strip()
-    raw = raw.replace("```json", "").replace("```", "").strip()
+    for attempt in range(max_retries + 1):
+        response = requests.post(
+            GROQ_URL,
+            headers={
+                "Authorization": f"Bearer {GROQ_API_KEY}",
+                "Content-Type": "application/json",
+            },
+            json={
+                "model": GROQ_MODEL,
+                "messages": [{"role": "user", "content": prompt}],
+                "response_format": {
+                    "type": "json_schema",
+                    "json_schema": {"name": "reranking_result", "schema": schema}
+                },
+                "temperature": 0,
+            },
+            timeout=60,
+        )
 
-    try:
-        result = json.loads(raw)
-    except json.JSONDecodeError:
-        print("WARNING: LLM returned invalid JSON, raw output was:\n", raw)
+        if response.status_code == 429:
+            retry_after = int(response.headers.get("Retry-After", 5))
+            print(f"Attempt {attempt + 1}: rate limited, waiting {retry_after}s...")
+            time.sleep(retry_after)
+            last_error = response.text
+            continue
+
+        if response.status_code == 400:
+            print(f"Attempt {attempt + 1}: malformed JSON, retrying...")
+            last_error = response.text
+            continue
+
+        response.raise_for_status()
+        raw = response.json()["choices"][0]["message"]["content"].strip()
+        raw = raw.replace("```json", "").replace("```", "").strip()
+
+        try:
+            result = json.loads(raw)
+            break
+        except json.JSONDecodeError:
+            print(f"Attempt {attempt + 1}: local JSON parse failed, retrying...")
+            last_error = raw
+            continue
+
+    if result is None:
+        print("WARNING: All retries failed. Last error:\n", last_error)
         return [], []
 
     ranked_sections = []

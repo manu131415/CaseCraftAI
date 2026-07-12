@@ -129,15 +129,16 @@ def _cross_references(db, act_code: str, section_number: str) -> list[dict]:
 # ---------- LLM reranking ----------
 
 import time
+
 def _rerank_with_llm(case_summary: str, sections: list, judgments: list, max_retries: int = 3):
-    sections_text = "\n".join([
-        f"[S{i}] {s['act_code']} Sec {s['section_number']} - {s['title']}: {s['section_text'][:300]}"
+    sections_text = "\n".join(
+        f"[S{i}] {s.act_code} Sec {s.section_number} - {s.title}: {(s.section_text or '')[:300]}"
         for i, s in enumerate(sections)
-    ])
-    judgments_text = "\n".join([
-        f"[J{i}] {j['case_title']} ({j['court']}, {j['case_date']}) - IPC {j['ipc_sections']}: {j['summary'][:300]}"
+    )
+    judgments_text = "\n".join(
+        f"[J{i}] {j.case_title} ({j.court}, {j.case_date}) - IPC {j.ipc_sections}: {(j.summary or '')[:300]}"
         for i, j in enumerate(judgments)
-    ])
+    )
 
     prompt = f"""You are a legal assistant helping an Indian police officer identify applicable law.
 
@@ -207,13 +208,11 @@ IMPORTANT: Only use "ref" values that exist in the lists above. Do NOT invent in
 
         if response.status_code == 429:
             retry_after = int(response.headers.get("Retry-After", 5))
-            print(f"Attempt {attempt + 1}: rate limited, waiting {retry_after}s...")
             time.sleep(retry_after)
             last_error = response.text
             continue
 
         if response.status_code == 400:
-            print(f"Attempt {attempt + 1}: malformed JSON, retrying...")
             last_error = response.text
             continue
 
@@ -225,7 +224,6 @@ IMPORTANT: Only use "ref" values that exist in the lists above. Do NOT invent in
             result = json.loads(raw)
             break
         except json.JSONDecodeError:
-            print(f"Attempt {attempt + 1}: local JSON parse failed, retrying...")
             last_error = raw
             continue
 
@@ -238,9 +236,7 @@ IMPORTANT: Only use "ref" values that exist in the lists above. Do NOT invent in
         try:
             idx = int(item["ref"][1:])
             if 0 <= idx < len(sections):
-                ranked_sections.append({**sections[idx], "reason": item["relevance_reason"]})
-            else:
-                print(f"Skipping out-of-range section ref: {item['ref']}")
+                ranked_sections.append((sections[idx], item["relevance_reason"]))
         except (ValueError, KeyError, IndexError):
             print(f"Skipping malformed section item: {item}")
 
@@ -249,9 +245,7 @@ IMPORTANT: Only use "ref" values that exist in the lists above. Do NOT invent in
         try:
             idx = int(item["ref"][1:])
             if 0 <= idx < len(judgments):
-                ranked_judgments.append({**judgments[idx], "reason": item["relevance_reason"]})
-            else:
-                print(f"Skipping out-of-range judgment ref: {item['ref']}")
+                ranked_judgments.append((judgments[idx], item["relevance_reason"]))
         except (ValueError, KeyError, IndexError):
             print(f"Skipping malformed judgment item: {item}")
 

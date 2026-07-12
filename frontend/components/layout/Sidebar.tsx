@@ -27,21 +27,19 @@ const navigationItems = [
   {
     href: "/complaints",
     key: "complaintList",
-    namespace: "complaints",
+    namespace: "common", // <-- change this
     icon: FileText,
-    label: "Complaint Lists",
   },
   {
     href: "/cases",
     key: "caseList",
     namespace: "common",
     icon: ShieldCheck,
-    label: "Case Lists",
   },
   {
     href: "/complaintRegister",
     key: "registerComplaint",
-    namespace: "complaints",
+    namespace: "common", // <-- change this
     icon: FileText,
   },
   {
@@ -58,6 +56,7 @@ function SidebarContent() {
 
   return (
     <aside className="hidden w-72 flex-col border-r border-slate-200 bg-slate-950 px-6 py-8 text-slate-100 lg:sticky lg:top-0 lg:flex lg:h-screen lg:self-start lg:overflow-y-auto">
+      {/* Logo */}
       <div className="flex items-center gap-3">
         <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-600/20 text-blue-300">
           <ShieldCheck className="h-6 w-6" />
@@ -74,14 +73,14 @@ function SidebarContent() {
         </div>
       </div>
 
+      {/* Navigation */}
       <nav className="mt-10 space-y-2">
         {navigationItems.map((item) => {
           const Icon = item.icon;
 
           const isActive =
             pathname === item.href ||
-            (item.href !== "/" &&
-              pathname.startsWith(item.href));
+            (item.href !== "/" && pathname.startsWith(item.href));
 
           return (
             <Link
@@ -94,13 +93,13 @@ function SidebarContent() {
               }`}
             >
               <Icon className="h-5 w-5" />
-
-              {"label" in item ? item.label : t(item.key, item.namespace)}
+              {t(item.key, item.namespace)}
             </Link>
           );
         })}
       </nav>
 
+      {/* Bottom Card */}
       <div className="mt-auto rounded-2xl border border-slate-800 bg-slate-900/80 p-4">
         <p className="text-sm font-semibold text-white">
           {t("secureTitle")}
@@ -127,6 +126,8 @@ export default function Sidebar() {
               <div className="h-12 rounded-xl bg-slate-800 animate-pulse" />
               <div className="h-12 rounded-xl bg-slate-800 animate-pulse" />
               <div className="h-12 rounded-xl bg-slate-800 animate-pulse" />
+              <div className="h-12 rounded-xl bg-slate-800 animate-pulse" />
+              <div className="h-12 rounded-xl bg-slate-800 animate-pulse" />
             </div>
           </div>
         </aside>
@@ -136,4 +137,3 @@ export default function Sidebar() {
     </Suspense>
   );
 }
-

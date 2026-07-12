@@ -27,6 +27,9 @@
   "search": "Search",
   "no_results": "No results found",
   "view_all": "View All",
+  "caseList": "Case List",
+  "complaintList": "Complaint List",
+  "registerComplaint": "Register Complaint",
 
   "nav": {
     "operationsCenter": "Operations Center",

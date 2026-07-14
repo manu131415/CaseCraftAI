@@ -35,7 +35,7 @@ Case summary (complaint.description or manual input)
 | File | Purpose |
 |---|---|
 | `backend/app/apis/legal_section_intelligence.py` | Router: retrieval, reranking, cross-referencing, response assembly |
-| `backend/app/core/embeddings.py` | Lazily-loaded, cached `SentenceTransformer` shared across requests |
+| `backend/app/core/embeddings.py` | Lazily-loaded |
 | `frontend/app/complaints/[complaintId]/legal_sections/page.tsx` | UI: fetches analysis, renders section/judgment cards, editable case-summary fallback |
 
 ## API
@@ -110,17 +110,6 @@ Case summary (complaint.description or manual input)
   ```
 - `legal_sections.embedding` / `landmarks.embedding` must already be populated (this endpoint only *reads* them, it doesn't generate embeddings for those tables)
 
-**Ollama**
-- `ollama serve` running locally on port `11434`
-- Model pulled: `ollama pull llama3.2:3b`
-- First request after Ollama starts is slow (model load into memory) — the request timeout is set to 300s to accommodate this
-
-**Register the router** in `main.py`:
-```python
-from app.apis.legal_section_intelligence import router as legal_section_intelligence_router
-...
-app.include_router(legal_section_intelligence_router)
-```
 
 ## Testing
 
@@ -134,8 +123,5 @@ Frontend: `http://localhost:3000/complaints/{complaint_id}/legal_sections`
 
 ## Known issues / follow-ups
 
-- **`models/complaint.py` schema drift**: the model declares `complaint_type`, `category`, and `priority` columns that don't exist in the live `complaints` table, which breaks any query that loads the full `Complaint` ORM entity. This endpoint works around it by selecting only `complaint_id` and `description` directly rather than loading the full model — but other endpoints touching `Complaint` will still fail until the model and table are reconciled. Run `SELECT column_name FROM information_schema.columns WHERE table_name = 'complaints';` to get the real column list and either migrate the table or trim the model.
 - **`models/_types.py`'s `Vector` type has no query-side comparator** (no `.cosine_distance()`, unlike `pgvector.sqlalchemy.Vector`). Distance queries are built with `literal_column()` and a manually-formatted vector literal (`'[0.1,0.2,...]'::vector`) instead. This is safe from injection since the literal is built entirely from model-generated floats, never user input — but if `models/_types.py` is ever swapped for the real `pgvector.sqlalchemy.Vector`, this can be simplified back to `.cosine_distance()`.
-- **Cross-reference matching** assumes `legal_section_mappings.new_section`/`old_section` contain the target section number as a standalone token within free text (matched via Postgres word-boundary regex `\y...\y`). If a mapping row ever formats sections differently (e.g. `"Sec. 302"` instead of `"302"`), that row won't match — worth spot-checking a few rows if cross-references seem sparse for a given act.
-- **Ollama reranking has no retry/fallback**: if the Ollama call times out or returns malformed JSON, the endpoint currently returns an empty `sections`/`judgments` list rather than falling back to raw similarity-ranked results. Consider adding a fallback path (return top-N by similarity, unranked) if this proves too fragile in practice.
 - **No caching**: every call re-embeds the case summary and re-queries the LLM, even for the same complaint. If this gets called repeatedly (e.g. every time the page loads), consider caching the last result per `complaint_id` (in a `recommendations` table, matching the resource you already have registered in `main.py`) instead of re-running the full pipeline each time.

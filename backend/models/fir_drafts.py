@@ -1,40 +1,65 @@
-from sqlalchemy import Column
-from sqlalchemy import String
-from sqlalchemy import Text
-from sqlalchemy import DateTime
-from sqlalchemy import CheckConstraint
-from sqlalchemy.dialects.postgresql import UUID, JSONB
-from sqlalchemy.sql import func
+"""SQLAlchemy model for the `fir_drafts` table.
+
+Matches the existing database schema exactly:
+
+    id              UUID        PRIMARY KEY DEFAULT gen_random_uuid()
+    complaint_id    UUID        NOT NULL
+    crime_category  TEXT
+    summary         TEXT
+    draft_content   JSONB       NOT NULL DEFAULT '{}'
+    status          TEXT        NOT NULL DEFAULT 'draft'
+                                 CHECK (status IN ('draft','under_review','approved'))
+    officer_notes   TEXT
+    approved_by     TEXT
+    approved_at     TIMESTAMPTZ
+    created_at      TIMESTAMPTZ NOT NULL DEFAULT now()
+    updated_at      TIMESTAMPTZ NOT NULL DEFAULT now()
+
+Indexes: fir_drafts_complaint_idx (complaint_id), fir_drafts_status_idx (status)
+"""
+from sqlalchemy import CheckConstraint, Column, DateTime, Index, String, Text, func
+from sqlalchemy.dialects.postgresql import JSONB, UUID as PG_UUID
 
 from database.db import Base
 
+# NOTE: Base lives here (not alongside SessionLocal in app/db.py) — this only
+# resolves if the repo root is on the Python path when the backend runs. If
+# your backend process's working directory / PYTHONPATH is scoped to
+# `backend/` only, adjust this import to whatever actually reaches
+# frontend/database/db.py from there (e.g. a relative path or a symlink/shared
+# package). This model doesn't need Base's engine — it only uses Base as the
+# declarative registry so the class maps correctly; queries still go through
+# app.db.SessionLocal.
+
+ALLOWED_STATUSES = ("draft", "under_review", "approved")
+
 
 class FirDraft(Base):
-
     __tablename__ = "fir_drafts"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, server_default=func.gen_random_uuid())
-
-    complaint_id = Column(UUID(as_uuid=True), nullable=False)
-
-    crime_category = Column(Text)
-
-    summary = Column(Text)
-
-    draft_content = Column(JSONB, nullable=False, server_default='{}')
-
-    status = Column(String, nullable=False, default="draft")
-
-    officer_notes = Column(Text)
-
-    approved_by = Column(String)
-
-    approved_at = Column(DateTime(timezone=True))
-
-    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
-
-    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
+    id = Column(
+        PG_UUID(as_uuid=True),
+        primary_key=True,
+        server_default=func.gen_random_uuid(),
+    )
+    complaint_id = Column(PG_UUID(as_uuid=True), nullable=False)
+    crime_category = Column(Text, nullable=True)
+    summary = Column(Text, nullable=True)
+    draft_content = Column(JSONB, nullable=False, server_default="{}")
+    status = Column(Text, nullable=False, server_default="draft")
+    officer_notes = Column(Text, nullable=True)
+    approved_by = Column(String, nullable=True)
+    approved_at = Column(DateTime(timezone=True), nullable=True)
+    created_at = Column(DateTime(timezone=True), nullable=False, server_default=func.now())
+    updated_at = Column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+        onupdate=func.now(),
+    )
 
     __table_args__ = (
-        CheckConstraint("status IN ('draft', 'under_review', 'approved')", name="fir_drafts_status_check"),
+        CheckConstraint(f"status IN {ALLOWED_STATUSES}", name="fir_drafts_status_check"),
+        Index("fir_drafts_complaint_idx", "complaint_id"),
+        Index("fir_drafts_status_idx", "status"),
     )

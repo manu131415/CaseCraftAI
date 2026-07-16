@@ -44,7 +44,7 @@ const navigationItems = [
   },
   {
     href: "/doc_gen_index.html",
-    key: "doc_gen_index",
+    key: "Generate Document",
     namespace: "Generate Document",
     icon: FileText,
   },

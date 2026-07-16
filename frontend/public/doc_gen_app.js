@@ -1,4 +1,17 @@
-const BACKEND_URL = "http://127.0.0.1:8000";
+// Determine the backend URL dynamically based on the current host, matching localhost or 127.0.0.1 on port 8000
+const getBackendUrl = () => {
+    if (typeof window !== "undefined" && window.location) {
+        const hostname = window.location.hostname;
+        const protocol = window.location.protocol;
+        
+        if (hostname === "localhost" || hostname === "127.0.0.1") {
+            return `${protocol}//${hostname}:8000`;
+        }
+    }
+    return "http://localhost:8000";
+};
+
+const BACKEND_URL = getBackendUrl();
 
 document.addEventListener("DOMContentLoaded", () => {
     loadCases();

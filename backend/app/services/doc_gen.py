@@ -8,7 +8,7 @@ from psycopg2.extras import RealDictCursor
 from dotenv import load_dotenv
 
 # Load database configuration
-ENV_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env")
+ENV_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), ".env")
 load_dotenv(dotenv_path=ENV_PATH)
 DATABASE_URL = os.getenv("DATABASE_URL")
 
@@ -115,7 +115,13 @@ def log_generated_document(conn, case_id, doc_type, title, file_path, metadata_d
     # Query case's assigned officer
     cursor.execute("SELECT assigned_officer_id FROM cases WHERE case_id = %s;", (case_id,))
     row = cursor.fetchone()
-    generated_by = row['assigned_officer_id'] if row else "SYSTEM"
+    generated_by = row['assigned_officer_id'] if row else None
+    
+    # Ensure generated_by is a valid officer_id to prevent foreign key constraint violations
+    if generated_by:
+        cursor.execute("SELECT officer_id FROM officers WHERE officer_id = %s;", (generated_by,))
+        if not cursor.fetchone():
+            generated_by = None
     
     import json
     metadata_json = json.dumps(metadata_dict, default=str)
@@ -312,7 +318,7 @@ def generate_document_by_type(case_id, doc_type, accused_id=None):
                     legal_status = "Injured Victim"
             
             replacements = {
-                "[POLICE STATION NAME]": police_station.upper(),
+                "[POLICE STATION NAME]": (police_station.upper() if police_station else "CYBER CRIME POLICE STATION AHMEDABAD"),
                 "[_________]/[Year]": f"MED-{fir_no}/{current_year}",
                 "[DD/MM/YYYY]": today_str,
                 "[e.g., Civil Hospital, Asarwa / LG Hospital]": hospital,
@@ -409,7 +415,7 @@ def generate_document_by_type(case_id, doc_type, accused_id=None):
             court_no = case['court_no'] if case['court_no'] else "Court No. 3"
             
             replacements = {
-                "[POLICE STATION]": police_station.upper(),
+                "[POLICE STATION]": (police_station.upper() if police_station else "CYBER CRIME POLICE STATION AHMEDABAD"),
                 "[Accused Name]": accused_full_name,
                 "[__]": court_no,
                 "[DD/MM/YYYY]": today_str,

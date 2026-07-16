@@ -27,6 +27,9 @@
   "search": "खोजें",
   "no_results": "कोई परिणाम नहीं मिला",
   "view_all": "सभी देखें",
+  "caseList": "मामलों की सूची",
+  "complaintList": "शिकायत सूची",
+  "registerComplaint": "शिकायत दर्ज करें",
 
   "nav": {
     "operationsCenter": "संचालन केंद्र",

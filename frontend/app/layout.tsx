@@ -2,7 +2,12 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "./providers/LanguageProvider";
+import { Outfit } from 'next/font/google';
 
+const outfit = Outfit({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

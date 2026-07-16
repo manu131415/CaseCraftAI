@@ -70,7 +70,7 @@ function ActBadge({ act }: { act: string }) {
   return (
     <span
       className={`inline-flex items-center rounded px-1.5 py-0.5 text-[11px] font-semibold tracking-wide ${
-        isNewAct ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-700'
+        isNewAct ? 'bg-blue-900 text-white' : 'bg-slate-200 text-slate-700'
       }`}
     >
       {act}
@@ -82,7 +82,7 @@ function SectionCard({ section, selected, onToggle }: { section: LegalSection; s
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <div className={`rounded-lg border p-4 shadow-sm ${selected ? 'border-indigo-500 bg-indigo-50/40' : 'border-slate-200 bg-white'}`}>
+    <div className={`rounded-lg border-2 p-4 shadow-sm ${selected ? 'border-amber-500 bg-white ring-2 ring-amber-200' : 'border-slate-200 bg-white'}`}>
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-2">
           <ActBadge act={section.act_code} />
@@ -103,7 +103,7 @@ function SectionCard({ section, selected, onToggle }: { section: LegalSection; s
 
       <button
         onClick={() => setExpanded((v) => !v)}
-        className="mt-2 text-xs font-medium text-indigo-600 hover:text-indigo-800"
+        className="mt-2 text-xs font-medium text-blue-900 hover:text-blue-950"
       >
         {expanded ? 'Hide section text' : 'Show section text'}
       </button>
@@ -147,7 +147,7 @@ function JudgmentCard({ judgment, selected, onToggle }: { judgment: LandmarkJudg
       : 'bg-slate-100 text-slate-600';
 
   return (
-    <div className={`rounded-lg border p-4 shadow-sm ${selected ? 'border-indigo-500 bg-indigo-50/40' : 'border-slate-200 bg-white'}`}>
+    <div className={`rounded-lg border-2 p-4 shadow-sm ${selected ? 'border-amber-500 bg-white ring-2 ring-amber-200' : 'border-slate-200 bg-white'}`}>
       <div className="flex items-start justify-between gap-3">
         <div>
           <h3 className="font-semibold text-slate-900">{judgment.case_title}</h3>
@@ -323,10 +323,10 @@ export default function LegalSectionsPage({
   }
 
   return (
-    <div className="p-6">
+    <div className="p-6 bg-blue-950 min-h-screen">
       <div className="mb-6">
-        <h1 className="text-2xl font-semibold text-slate-900">Legal Section Intelligence</h1>
-        <p className="mt-1 text-sm text-slate-500">Complaint {complaintId}</p>
+        <h1 className="text-2xl font-semibold text-amber-400">Legal Section Intelligence</h1>
+        <p className="mt-1 text-sm text-slate-300">Complaint {complaintId}</p>
       </div>
 
       {/* Case summary panel */}
@@ -339,7 +339,7 @@ export default function LegalSectionsPage({
           onChange={(e) => setCaseSummary(e.target.value)}
           rows={3}
           placeholder="Describe the incident (who, what, where, how)…"
-          className="w-full resize-none rounded-md border border-slate-200 p-2.5 text-sm text-slate-800 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
+          className="w-full resize-none rounded-md border border-slate-200 p-2.5 text-sm text-slate-800 focus:border-blue-900 focus:outline-none focus:ring-1 focus:ring-blue-900"
         />
         <div className="mt-2 flex items-center justify-between gap-4">
           {needsManualSummary && (
@@ -350,7 +350,7 @@ export default function LegalSectionsPage({
           <button
             onClick={() => runAnalysis(caseSummary)}
             disabled={loading || !caseSummary.trim()}
-            className="ml-auto rounded-md bg-indigo-600 px-3.5 py-1.5 text-sm font-medium text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
+            className="ml-auto rounded-md bg-blue-900 px-3.5 py-1.5 text-sm font-medium text-white hover:bg-blue-950 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {loading ? 'Analyzing…' : 'Re-analyze'}
           </button>
@@ -385,7 +385,7 @@ export default function LegalSectionsPage({
             <button
               onClick={handleSaveDraft}
               disabled={savingDraft || selectedCount === 0 || !result}
-              className="rounded-md bg-indigo-600 px-3.5 py-1.5 text-sm font-medium text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
+              className="rounded-md bg-blue-900 px-3.5 py-1.5 text-sm font-medium text-white hover:bg-blue-950 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {savingDraft ? 'Saving draft…' : 'Save FIR draft'}
             </button>
@@ -402,7 +402,7 @@ export default function LegalSectionsPage({
 
       {/* Sections */}
       <section className="mb-8">
-        <h2 className="mb-3 text-lg font-semibold text-slate-900">Applicable Sections</h2>
+        <h2 className="mb-3 text-lg font-semibold text-amber-400">Applicable Sections</h2>
         {loading ? (
           <div className="grid gap-3 sm:grid-cols-2">
             {Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)}
@@ -423,7 +423,7 @@ export default function LegalSectionsPage({
             ))}
           </div>
         ) : (
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-slate-300">
             {needsManualSummary ? 'Waiting on a case summary.' : 'No relevant sections found.'}
           </p>
         )}
@@ -431,7 +431,7 @@ export default function LegalSectionsPage({
 
       {/* Judgments */}
       <section>
-        <h2 className="mb-3 text-lg font-semibold text-slate-900">Landmark Judgments</h2>
+        <h2 className="mb-3 text-lg font-semibold text-amber-400">Landmark Judgments</h2>
         {loading ? (
           <div className="grid gap-3 sm:grid-cols-2">
             {Array.from({ length: 2 }).map((_, i) => <SkeletonCard key={i} />)}
@@ -452,7 +452,7 @@ export default function LegalSectionsPage({
             ))}
           </div>
         ) : (
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-slate-300">
             {needsManualSummary ? 'Waiting on a case summary.' : 'No relevant judgments found.'}
           </p>
         )}

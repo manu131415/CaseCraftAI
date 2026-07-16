@@ -32,13 +32,6 @@ html[lang="gu"] {
     "Noto Sans", sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 html {
   font-size: 16px;
   line-height: 1.6;
@@ -51,3 +44,15 @@ body {
   font-size: 1rem;
   line-height: 1.7;
 }
+input,
+textarea,
+select {
+  color: #171717; /* force dark text regardless of theme */
+  background-color: #ffffff;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #9ca3af; /* gray-400, so placeholders stay distinguishable */
+}
+

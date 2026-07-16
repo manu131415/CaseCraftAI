@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException, Query
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
+from typing import Optional
 import os
 import psycopg2
 from psycopg2.extras import RealDictCursor
@@ -11,7 +12,7 @@ router = APIRouter(prefix="/api/documents", tags=["Documents"])
 class GenerateDocumentRequest(BaseModel):
     case_id: str
     document_type: str
-    accused_id: str = None
+    accused_id: Optional[str] = None
 
 @router.post("/generate")
 def generate_document(request: GenerateDocumentRequest):
@@ -54,9 +55,10 @@ def download_document(document_id: str):
         # Resolve full path
         file_path = doc['file_path']
         if not os.path.isabs(file_path):
-            base_dir = r"c:\Users\vyomi\OneDrive\Desktop\CaseCraftAI\backend"
+            base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
             file_path = os.path.join(base_dir, file_path)
             
+        file_path = os.path.normpath(file_path)
         if not os.path.exists(file_path):
             raise HTTPException(status_code=404, detail=f"File not found on server at: {file_path}")
             

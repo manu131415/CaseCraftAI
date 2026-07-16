@@ -43,10 +43,16 @@ const navigationItems = [
     icon: FileText,
   },
   {
-    href: "/aiInsights",
-    key: "aiInsights",
+    href: "/doc_gen_index.html",
+    key: "doc_gen_index",
+    namespace: "Generate Document",
+    icon: FileText,
+  },
+  {
+    href: "/dashboard",
+    key: "dashboard",
     namespace: "common",
-    icon: Sparkles,
+    icon: LayoutDashboard,
   },
 ] as const;
 

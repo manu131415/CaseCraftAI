@@ -1,0 +1,58 @@
+// Utility for translation keys with autocomplete support
+export const translationKeys = {
+  common: {
+    nav: {
+      operationsCenter: 'nav.operationsCenter',
+      dailyCaseOverview: 'nav.dailyCaseOverview',
+      search: 'nav.search',
+      language: 'nav.language',
+      logout: 'nav.logout',
+    },
+    sidebar: {
+      navigation: 'sidebar.navigation',
+      dashboard: 'sidebar.dashboard',
+      complaints: 'sidebar.complaints',
+      caseDetails: 'sidebar.caseDetails',
+      reports: 'sidebar.reports',
+      settings: 'sidebar.settings',
+    },
+    buttons: {
+      save: 'common.save',
+      cancel: 'common.cancel',
+      delete: 'common.delete',
+      edit: 'common.edit',
+      back: 'common.back',
+      next: 'common.next',
+      submit: 'common.submit',
+      close: 'common.close',
+    },
+    status: {
+      loading: 'common.loading',
+      error: 'common.error',
+      success: 'common.success',
+      warning: 'common.warning',
+    },
+  },
+  dashboard: {
+    title: 'title',
+    welcome: 'welcome',
+    recentComplaints: 'recentComplaints',
+    activeInvestigations: 'activeInvestigations',
+    pendingReview: 'pendingReview',
+    resolvedCases: 'resolvedCases',
+  },
+  complaints: {
+    title: 'title',
+    newComplaint: 'newComplaint',
+    complaintDetails: 'complaintDetails',
+    complainant: 'complainant',
+    accused: 'accused',
+    location: 'location',
+    description: 'description',
+    evidence: 'evidence',
+    uploadDocument: 'uploadDocument',
+    attachments: 'attachments',
+    registerComplaint: 'registerComplaint',
+    openDashboard: 'openDashboard',
+  },
+} as const;

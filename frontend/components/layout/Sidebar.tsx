@@ -48,12 +48,7 @@ const navigationItems = [
     namespace: "common",   
     icon: FileText,
   },
-  {
-    href: "/dashboard",
-    key: "dashboard",
-    namespace: "common",
-    icon: LayoutDashboard,
-  },
+  
 ] as const;
 
 function SidebarContent() {

@@ -21,14 +21,14 @@ export default function ReviewSubmission({ form }: Props) {
         <div>
           <p className="text-base font-medium text-slate-500">Category</p>
           <p className="mt-1 font-semibold text-slate-900">
-            {form.category || "Not provided"}
+            {form.crimeCategory || "Not provided"}
           </p>
         </div>
 
         <div>
           <p className="text-base font-medium text-slate-500">Complaint Type</p>
           <p className="mt-1 font-semibold text-slate-900">
-            {form.complaintType || "Not provided"}
+            {form.crimeSubcategory || "Not provided"}
           </p>
         </div>
 

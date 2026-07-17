@@ -16,11 +16,11 @@ export default function ComplaintDetails({ form, setForm }: Props) {
 ) {
   const { name, value } = e.target;
 
-  if (name === "category") {
+  if (name === "crimeCategory") {
     setForm({
       ...form,
-      category: value,
-      complaintType: "",
+      crimeCategory: value,
+      crimeSubcategory: "",
     });
   } else {
     setForm({
@@ -45,7 +45,7 @@ export default function ComplaintDetails({ form, setForm }: Props) {
           <label className="text-base font-medium text-slate-700">Category</label>
           <select
             name="category"
-            value={form.category}
+            value={form.crimeCategory}
             onChange={handleChange}
             className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none ring-0"
           >
@@ -81,16 +81,16 @@ export default function ComplaintDetails({ form, setForm }: Props) {
 
       <select
         name="complaintType"
-        value={form.complaintType}
+        value={form.crimeSubcategory}
         onChange={handleChange}
         className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3"
-        disabled={!form.category}
+        disabled={!form.crimeCategory}
       >
         <option value="">Select Complaint Type</option>
 
-        {form.category &&
+        {form.crimeCategory &&
           crimeTypes[
-            form.category as keyof typeof crimeTypes
+            form.crimeCategory as keyof typeof crimeTypes
           ]?.map((type) => (
             <option key={type} value={type}>
               {type}

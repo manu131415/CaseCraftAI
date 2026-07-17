@@ -15,8 +15,8 @@ import NavigationButtons from "./NavigationButtons";
 import { ComplaintData } from "./types";
 
 const initialForm: ComplaintData = {
-  complaintType: "",
-  category: "",
+  crimeCategory: "",
+  crimeSubcategory: "",
   priority: "Medium",
   incidentDate: "",
   incidentTime: "",

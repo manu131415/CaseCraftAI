@@ -72,8 +72,8 @@ router = APIRouter(
 
 class ComplaintSubmission(BaseModel):
 
-    complaintType: str = ""
-    category: str = ""
+    crimeCategory: str = ""
+    crimeSubcategory: str = ""
     priority: str = "Medium"
     incidentDate: str = ""
     incidentTime: str = ""
@@ -91,7 +91,8 @@ class ComplaintUpdate(BaseModel):
     complainant_name: Optional[str] = None
     phone: Optional[str] = None
     email: Optional[str] = None
-    crime_type: Optional[str] = None
+    crime_category: Optional[str] = None
+    crime_subcategory: Optional[str] = None
     location: Optional[str] = None
     description: Optional[str] = None
     status: Optional[str] = None
@@ -107,7 +108,8 @@ class ComplaintSummary(BaseModel):
     complainant_name: Optional[str] = None
     phone: Optional[str] = None
     email: Optional[str] = None
-    crime_type: Optional[str] = None
+    crime_category: Optional[str] = None
+    crime_subcategory: Optional[str] = None
     location: Optional[str] = None
     description: Optional[str] = None
     status: Optional[str] = None
@@ -187,17 +189,17 @@ def submit_complaint(payload: ComplaintSubmission) -> Dict[str, Any]:
             complaint_id=str(uuid.uuid4()),
             complainant_name=complainant_data.get("name"),
             phone=phone_val,
-            email=email_val,
-            complaint_type=payload.complaintType,
-            category=payload.category,
+            email=email_val,       
+            crime_category=payload.crimeCategory,
+            crime_subcategory=payload.crimeSubcategory,
             priority=payload.priority,
-            crime_type=payload.complaintType,
             incident_date=payload.incidentDate,
             incident_time=payload.incidentTime,
             location=payload.location,
             description=payload.description,
             ai_summary=payload.aiSummary,
             officer_notes=payload.officerNotes,
+
             # Store complex data as JSON
             complainant_data=json.dumps([c.dict() if hasattr(c, 'dict') else c for c in payload.complainants]) if payload.complainants else json.dumps([]),
             victim_data=json.dumps([v.dict() if hasattr(v, 'dict') else v for v in payload.victims]) if payload.victims else json.dumps([]),
@@ -249,7 +251,8 @@ def get_all_complaints() -> Dict[str, Any]:
                     "complainant_name": c.complainant_name,
                     "phone": c.phone,
                     "email": c.email,
-                    "crime_type": c.crime_type,
+                    "crime_category": c.crime_category,
+                    "crime_subcategory": c.crime_subcategory,
                     "location": c.location,
                     "description": c.description,
                     "status": c.status,
@@ -300,7 +303,8 @@ def get_complaint(complaint_id: str) -> Dict[str, Any]:
             "complainant_name": complaint.complainant_name,
             "phone": complaint.phone,
             "email": complaint.email,
-            "crime_type": complaint.crime_type,
+            "crime_category": complaint.crime_category,
+            "crime_subcategory": complaint.crime_subcategory,
             "location": complaint.location,
             "description": complaint.description,
             "aiSummary": complaint.ai_summary,
@@ -346,8 +350,10 @@ def update_complaint(complaint_id: str, payload: ComplaintUpdate) -> Dict[str, A
             complaint.phone = payload.phone
         if payload.email is not None:
             complaint.email = payload.email
-        if payload.crime_type is not None:
-            complaint.crime_type = payload.crime_type
+        if payload.crime_category is not None:
+            complaint.crime_category = payload.crime_category
+        if payload.crime_subcategory is not None:
+            complaint.crime_subcategory = payload.crime_subcategory
         if payload.location is not None:
             complaint.location = payload.location
         if payload.description is not None:

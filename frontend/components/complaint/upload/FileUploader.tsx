@@ -152,11 +152,11 @@ export default function FileUploader({
 
       // ---------- Merge simple fields ----------
 
-      if (!mergedExtraction.complaintType)
-        mergedExtraction.complaintType = extraction.complaintType;
+      if (!mergedExtraction.crimeCategory)
+        mergedExtraction.crimeCategory = extraction.complaintType;
 
-      if (!mergedExtraction.category)
-        mergedExtraction.category = extraction.category;
+      if (!mergedExtraction.crimeSubcategory)
+        mergedExtraction.crimeSubcategory = extraction.category;
 
       if (!mergedExtraction.priority)
         mergedExtraction.priority = extraction.priority;

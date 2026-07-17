@@ -52,9 +52,9 @@ Complaint Type
 
 <input
 
-name="complaintType"
+name="Category"
 
-value={form.complaintType}
+value={form.crimeCategory}
 
 onChange={handleChange}
 
@@ -78,7 +78,7 @@ Category
 
 name="category"
 
-value={form.category}
+value={form.crimeSubcategory}
 
 onChange={handleChange}
 

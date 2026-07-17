@@ -44,7 +44,7 @@ export default function ComplaintDetails({ form, setForm }: Props) {
         <div>
           <label className="text-base font-medium text-slate-700">Category</label>
           <select
-            name="category"
+            name="crimeCategory"
             value={form.crimeCategory}
             onChange={handleChange}
             className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none ring-0"
@@ -76,11 +76,11 @@ export default function ComplaintDetails({ form, setForm }: Props) {
 
     <div>
       <label className="text-base font-medium text-slate-700">
-        Complaint Type
+              Crime sub-category
       </label>
 
       <select
-        name="complaintType"
+        name="crimeSubcategory"
         value={form.crimeSubcategory}
         onChange={handleChange}
         className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3"

@@ -13,6 +13,7 @@ class Complaint(Base):
     __tablename__ = "complaints"
 
     complaint_id = Column(String, primary_key=True)
+    complaint_number = Column(String, unique=True, nullable=False)
     complainant_name = Column(String)
     phone = Column(String)
     email = Column(String)

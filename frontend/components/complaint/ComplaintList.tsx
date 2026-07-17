@@ -6,10 +6,12 @@ import Link from "next/link";
 
 interface ComplaintSummary {
   complaint_id: string;
+  complaint_number: string;
   complainant_name?: string;
   phone?: string;
   email?: string;
-  crime_type?: string;
+  crime_category?: string;
+  crime_subcategory?: string;
   location?: string;
   description?: string;
   status?: string;
@@ -95,7 +97,7 @@ export default function ComplaintList({ initialComplaints }: { initialComplaints
           <div key={complaint.complaint_id} className={`relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-md hover:shadow-lg transition-shadow ${caseMarker}`}>
             <div className="flex items-start justify-between gap-4">
               <div>
-                <h3 className="text-lg font-semibold text-slate-900">{complaint.complaint_id}</h3>
+                <h3 className="text-lg font-semibold text-slate-900">{complaint.complaint_number}</h3>
                 <p className="mt-1 text-sm text-slate-500">{complaint.complainant_name || "—"}</p>
               </div>
 
@@ -107,7 +109,9 @@ export default function ComplaintList({ initialComplaints }: { initialComplaints
 
             <div className="mt-3 text-sm text-slate-600">
               <p className="font-medium text-slate-700">Crime</p>
-              <p className="mt-1">{complaint.crime_type || "Not provided"} • {complaint.location || "Location N/A"}</p>
+              <p className="mt-1">{complaint.crime_category || "Not provided"}</p>
+              <p className="text-slate-500">{complaint.crime_subcategory || "Not provided"}</p>
+              <p className="text-slate-500">{complaint.location || "Location N/A"}</p>
             </div>
 
             <div className="mt-3 text-sm text-slate-600">

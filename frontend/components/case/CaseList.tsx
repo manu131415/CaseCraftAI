@@ -220,7 +220,7 @@ export default function CaseList({
                     </Link>
 
                     <Link
-                      href={`/complaints/${caseItem.complaint_id}/documents`}
+                      href={`/cases/${caseItem.case_id}/documents`}
                       className="rounded-lg bg-indigo-600 px-3 py-2 text-sm text-white hover:bg-indigo-700"
                     >
                       Documents

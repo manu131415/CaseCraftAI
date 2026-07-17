@@ -1,8 +1,4 @@
-from sqlalchemy import Column
-from sqlalchemy import String
-from sqlalchemy import Text
-from sqlalchemy import DateTime
-from sqlalchemy import ForeignKey
+from sqlalchemy import Column, String, DateTime, Text, Integer, ForeignKey
 from sqlalchemy.sql import func
 
 from database.db import Base
@@ -12,28 +8,39 @@ class Document(Base):
 
     __tablename__ = "documents"
 
-    document_id = Column(String, primary_key=True)
+    document_id = Column(Integer, primary_key=True, index=True)
 
-    case_id = Column(
+    complaint_id = Column(
         String,
-        ForeignKey("cases.case_id")
+        ForeignKey("complaints.complaint_id"),
+        nullable=False,
     )
 
-    document_type = Column(String)
+    document_type = Column(String, nullable=False)
 
-    title = Column(String)
+    title = Column(String, nullable=False)
 
-    file_path = Column(String)
-
-    status = Column(String, default="Draft")
-
-    generated_by = Column(
+    status = Column(
         String,
-        ForeignKey("officers.officer_id")
+        default="Draft"
     )
 
-    generated_at = Column(DateTime(timezone=True), server_default=func.now())
+    version = Column(
+        Integer,
+        default=1
+    )
 
-    version = Column(String)
+    content = Column(Text)
 
-    document_metadata = Column(Text)
+    generated_by = Column(String)
+
+    created_at = Column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+    )
+
+    updated_at = Column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
+    )

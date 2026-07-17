@@ -1,6 +1,7 @@
 "use client";
 
 import { ComplaintData } from "../types";
+import { crimeTypes } from "../info/crimeTypes";
 
 interface Props {
   form: ComplaintData;
@@ -9,33 +10,37 @@ interface Props {
 
 export default function ComplaintDetails({ form, setForm }: Props) {
   function handleChange(
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) {
-    setForm({ ...form, [e.target.name]: e.target.value });
+  e: React.ChangeEvent<
+    HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+  >
+) {
+  const { name, value } = e.target;
+
+  if (name === "category") {
+    setForm({
+      ...form,
+      category: value,
+      complaintType: "",
+    });
+  } else {
+    setForm({
+      ...form,
+      [name]: value,
+    });
   }
+}
 
   return (
-    <div className="space-y-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-      <div>
-        <p className="text-base font-medium text-blue-600">Step 1</p>
-        <h2 className="mt-1 text-2xl font-semibold text-slate-900">Complaint information</h2>
-        <p className="mt-2 text-base text-slate-500">
-          Enter the core facts of the complaint so it can be triaged properly.
-        </p>
-      </div>
+        <div className="space-y-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <div>
+            <p className="text-base font-medium text-blue-600">Step 1</p>
+            <h2 className="mt-1 text-2xl font-semibold text-slate-900">Complaint information</h2>
+            <p className="mt-2 text-base text-slate-500">
+              Enter the core facts of the complaint so it can be triaged properly.
+            </p>
+          </div>
 
-      <div>
-        <label className="text-base font-medium text-slate-700">Complaint type</label>
-        <input
-          name="complaintType"
-          value={form.complaintType}
-          onChange={handleChange}
-          className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none ring-0"
-          placeholder="e.g. Theft, Assault, Harassment"
-        />
-      </div>
-
-      <div className="grid gap-6 md:grid-cols-2">
+    <div className="grid gap-6 md:grid-cols-2">
         <div>
           <label className="text-base font-medium text-slate-700">Category</label>
           <select
@@ -45,11 +50,12 @@ export default function ComplaintDetails({ form, setForm }: Props) {
             className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none ring-0"
           >
             <option value="">Select category</option>
-            <option value="Theft">Theft</option>
-            <option value="Fraud">Fraud</option>
-            <option value="Cyber Crime">Cyber Crime</option>
-            <option value="Accident">Accident</option>
-            <option value="Other">Other</option>
+
+              {Object.keys(crimeTypes).map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
           </select>
         </div>
         <div>
@@ -67,6 +73,33 @@ export default function ComplaintDetails({ form, setForm }: Props) {
           </select>
         </div>
       </div>
+
+    <div>
+      <label className="text-base font-medium text-slate-700">
+        Complaint Type
+      </label>
+
+      <select
+        name="complaintType"
+        value={form.complaintType}
+        onChange={handleChange}
+        className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3"
+        disabled={!form.category}
+      >
+        <option value="">Select Complaint Type</option>
+
+        {form.category &&
+          crimeTypes[
+            form.category as keyof typeof crimeTypes
+          ]?.map((type) => (
+            <option key={type} value={type}>
+              {type}
+            </option>
+          ))}
+      </select>
+    </div>
+
+      
 
       <div className="grid gap-6 md:grid-cols-2">
         <div>

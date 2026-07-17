@@ -9,10 +9,12 @@ import Sidebar from "@/components/layout/Sidebar";
 
 interface ComplaintDetail {
   complaint_id: string;
+  complaint_number:string,
   complainant_name?: string;
   phone?: string;
-  email?: string;
-  crime_type?: string;
+  email?: string;  
+  crime_category?: string;
+  crime_subcategory?: string;
   location?: string;
   description?: string;
   status?: string;
@@ -167,7 +169,7 @@ export default function ComplaintPage() {
           <div className="space-y-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-semibold text-slate-900">Complaint {complaint.complaint_id}</h1>
+                <h1 className="text-2xl font-semibold text-slate-900">Complaint {complaint.complaint_number}</h1>
                 <p className="mt-1 text-sm text-slate-500">{complaint.status || "Pending"}</p>
               </div>
               <div className="text-right text-sm text-slate-500">{complaint.created_at ? new Date(complaint.created_at).toLocaleString() : "No date"}</div>
@@ -184,8 +186,11 @@ export default function ComplaintPage() {
                   <p className="mt-1 text-sm text-slate-600">{complaint.phone || "-"} {complaint.email ? `• ${complaint.email}` : ""}</p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-slate-700">Crime type</p>
-                  <p className="mt-1 text-sm text-slate-600">{complaint.crime_type || "Not provided"}</p>
+                  <p className="text-sm font-medium text-slate-700">Crime category</p>
+                  <p className="mt-1 text-sm text-slate-600">{complaint.crime_category || "Not provided"}</p>
+
+                  <p className="text-sm font-medium text-slate-700">Crime sub-category</p>
+                  <p className="mt-1 text-sm text-slate-600">{complaint.crime_subcategory || "Not provided"}</p>
                 </div>
                 <div>
                   <p className="text-sm font-medium text-slate-700">Location</p>

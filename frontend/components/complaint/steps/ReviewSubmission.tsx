@@ -19,20 +19,31 @@ export default function ReviewSubmission({ form }: Props) {
 
       <div className="grid gap-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 md:grid-cols-2">
         <div>
-        <p className="text-base font-medium text-slate-500">Complaint type</p>
-          <p className="mt-1 font-semibold text-slate-900">{form.complaintType || "Not provided"}</p>
+          <p className="text-base font-medium text-slate-500">Category</p>
+          <p className="mt-1 font-semibold text-slate-900">
+            {form.crimeCategory || "Not provided"}
+          </p>
         </div>
+
         <div>
-        <p className="text-base font-medium text-slate-500">Category</p>
-          <p className="mt-1 font-semibold text-slate-900">{form.category || "Not provided"}</p>
+          <p className="text-base font-medium text-slate-500">Complaint Type</p>
+          <p className="mt-1 font-semibold text-slate-900">
+            {form.crimeSubcategory || "Not provided"}
+          </p>
         </div>
+
         <div>
-        <p className="text-base font-medium text-slate-500">Priority</p>
-          <p className="mt-1 font-semibold text-slate-900">{form.priority || "Not provided"}</p>
+          <p className="text-base font-medium text-slate-500">Priority</p>
+          <p className="mt-1 font-semibold text-slate-900">
+            {form.priority || "Not provided"}
+          </p>
         </div>
+
         <div>
-        <p className="text-base font-medium text-slate-500">Location</p>
-          <p className="mt-1 font-semibold text-slate-900">{form.location || "Not provided"}</p>
+          <p className="text-base font-medium text-slate-500">Location</p>
+          <p className="mt-1 font-semibold text-slate-900">
+            {form.location || "Not provided"}
+          </p>
         </div>
       </div>
 

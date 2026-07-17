@@ -26,7 +26,21 @@ interface ComplaintSummary {
   incident_datetime?: string;
 }
 
-export default function ComplaintList({ initialComplaints }: { initialComplaints?: ComplaintSummary[] }) {
+export default function ComplaintList({
+  initialComplaints,
+  search = "",
+  crimeCategory = "",
+  crimeSubcategory = "",
+  status = "",
+  caseStatus = "",
+}: {
+  initialComplaints?: ComplaintSummary[];
+  search?: string;
+  crimeCategory?: string;
+  crimeSubcategory?: string;
+  status?: string;
+  caseStatus?: string;
+}) {
   const [complaints, setComplaints] = useState<ComplaintSummary[]>(initialComplaints || []);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -67,6 +81,12 @@ export default function ComplaintList({ initialComplaints }: { initialComplaints
     loadData();
   }, []);
 
+  useEffect(() => {
+  if (initialComplaints) {
+    setComplaints(initialComplaints);
+  }
+}, [initialComplaints]);
+
   if (loading) {
     return <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">Loading complaints...</div>;
   }
@@ -83,6 +103,47 @@ export default function ComplaintList({ initialComplaints }: { initialComplaints
       </div>
     );
   }
+
+  const filteredComplaints = complaints.filter((complaint) => {
+  const hasCase = caseComplaintIds.has(complaint.complaint_id);
+
+  const matchesSearch =
+    search === "" ||
+    complaint.complaint_number
+      ?.toLowerCase()
+      .includes(search.toLowerCase()) ||
+    complaint.complainant_name
+      ?.toLowerCase()
+      .includes(search.toLowerCase()) ||
+    complaint.description
+      ?.toLowerCase()
+      .includes(search.toLowerCase());
+
+  const matchesCategory =
+    crimeCategory === "" ||
+    complaint.crime_category === crimeCategory;
+
+  const matchesSubcategory =
+    crimeSubcategory === "" ||
+    complaint.crime_subcategory === crimeSubcategory;
+
+  const matchesStatus =
+    status === "" ||
+    complaint.status === status;
+
+  const matchesCase =
+    caseStatus === "" ||
+    (caseStatus === "Created" && hasCase) ||
+    (caseStatus === "Not Created" && !hasCase);
+
+  return (
+    matchesSearch &&
+    matchesCategory &&
+    matchesSubcategory &&
+    matchesStatus &&
+    matchesCase
+  );
+});
 
  return (
   <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
@@ -102,90 +163,101 @@ export default function ComplaintList({ initialComplaints }: { initialComplaints
       </thead>
 
       <tbody className="divide-y divide-slate-200">
-        {complaints.map((complaint) => {
-          const status = complaint.status || "Pending";
+  {filteredComplaints.length === 0 ? (
+    <tr>
+      <td
+        colSpan={9}
+        className="px-6 py-8 text-center text-slate-500"
+      >
+        No complaints match the selected filters.
+      </td>
+    </tr>
+  ) : (
+    filteredComplaints.map((complaint) => {
+      const status = complaint.status || "Pending";
 
-          const statusClasses =
-            status.toLowerCase() === "closed"
-              ? "bg-emerald-100 text-emerald-700"
-              : status.toLowerCase() === "rejected"
-              ? "bg-rose-100 text-rose-700"
-              : "bg-indigo-100 text-indigo-700";
+      const statusClasses =
+        status.toLowerCase() === "closed"
+          ? "bg-emerald-100 text-emerald-700"
+          : status.toLowerCase() === "rejected"
+          ? "bg-rose-100 text-rose-700"
+          : "bg-indigo-100 text-indigo-700";
 
-          const hasCase = caseComplaintIds.has(complaint.complaint_id);
+      const hasCase = caseComplaintIds.has(complaint.complaint_id);
 
-          return (
-            <tr
-              key={complaint.complaint_id}
-              className="hover:bg-slate-50 transition-colors"
-            >
-              <td className="px-6 py-4 font-semibold text-slate-900">
-                {complaint.complaint_number}
-              </td>
+      return (
+  <tr
+    key={complaint.complaint_id}
+    className="hover:bg-slate-50 transition-colors"
+  >
+    <td className="px-6 py-4 font-semibold text-slate-900">
+      {complaint.complaint_number}
+    </td>
 
-              <td className="px-6 py-4">
-                {complaint.crime_category || "-"}
-              </td>
+    <td className="px-6 py-4">
+      {complaint.crime_category || "-"}
+    </td>
 
-              <td className="px-6 py-4">
-                {complaint.crime_subcategory || "-"}
-              </td>
+    <td className="px-6 py-4">
+      {complaint.crime_subcategory || "-"}
+    </td>
 
-              <td className="px-6 py-4">
-                {complaint.complainant_name || "-"}
-              </td>
+    <td className="px-6 py-4">
+      {complaint.complainant_name || "-"}
+    </td>
 
-              <td className="px-6 py-4">
-                {complaint.location || "-"}
-              </td>
+    <td className="px-6 py-4">
+      {complaint.location || "-"}
+    </td>
 
-              <td className="px-6 py-4">
-                <span
-                  className={`rounded-full px-3 py-1 text-xs font-semibold ${statusClasses}`}
-                >
-                  {status}
-                </span>
-              </td>
+    <td className="px-6 py-4">
+      <span
+        className={`rounded-full px-3 py-1 text-xs font-semibold ${statusClasses}`}
+      >
+        {status}
+      </span>
+    </td>
 
-              <td className="px-6 py-4">
-                {hasCase ? (
-                  <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
-                    Created
-                  </span>
-                ) : (
-                  <span className="rounded-full bg-orange-100 px-3 py-1 text-xs font-semibold text-orange-700">
-                    Not Created
-                  </span>
-                )}
-              </td>
+    <td className="px-6 py-4">
+      {hasCase ? (
+        <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+          Created
+        </span>
+      ) : (
+        <span className="rounded-full bg-orange-100 px-3 py-1 text-xs font-semibold text-orange-700">
+          Not Created
+        </span>
+      )}
+    </td>
 
-              <td className="px-6 py-4 whitespace-nowrap">
-                {complaint.created_at
-                  ? new Date(complaint.created_at).toLocaleDateString()
-                  : "-"}
-              </td>
+    <td className="px-6 py-4 whitespace-nowrap">
+      {complaint.created_at
+        ? new Date(complaint.created_at).toLocaleDateString()
+        : "-"}
+    </td>
 
-              <td className="px-6 py-4">
-                <Link
-                  href={`/complaints/${complaint.complaint_id}`}
-                  className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
-                >
-                  View
-                </Link>
+    <td className="px-6 py-4">
+      <Link
+        href={`/complaints/${complaint.complaint_id}`}
+        className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
+      >
+        View
+      </Link>
 
-                {hasCase && (
-                  <Link
-                    href="/cases"
-                    className="ml-2 rounded-lg border border-emerald-600 px-4 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-50"
-                  >
-                    Case
-                  </Link>
-                )}
-              </td>
-            </tr>
-          );
-        })}
-      </tbody>
+      {hasCase && (
+        <Link
+          href="/cases"
+          className="ml-2 rounded-lg border border-emerald-600 px-4 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-50"
+        >
+          Case
+        </Link>
+      )}
+    </td>
+  </tr>
+);
+    })
+  )}
+</tbody>
     </table>
   </div>
 );

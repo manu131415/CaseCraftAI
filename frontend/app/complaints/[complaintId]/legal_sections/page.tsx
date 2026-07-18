@@ -424,7 +424,7 @@ export default function LegalSectionsPage({
           </div>
         ) : (
           <p className="text-sm text-slate-300">
-            {needsManualSummary ? 'Waiting on a case summary.' : 'No relevant sections found.'}
+            {needsManualSummary ? 'Waiting on a case summary.' : 'No BNS/BNSS/BSA section matches. This case may fall under a special/local act.'}
           </p>
         )}
       </section>

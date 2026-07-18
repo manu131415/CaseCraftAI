@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "./providers/LanguageProvider";
 import { Outfit } from 'next/font/google';
+import './legal_section.css';
 
 const outfit = Outfit({
   subsets: ['latin'],

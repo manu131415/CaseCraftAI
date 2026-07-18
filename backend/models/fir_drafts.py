@@ -3,7 +3,7 @@
 Matches the existing database schema exactly:
 
     id              UUID        PRIMARY KEY DEFAULT gen_random_uuid()
-    complaint_id    UUID        NOT NULL
+    complaint_id    TEXT        NOT NULL
     crime_category  TEXT
     summary         TEXT
     draft_content   JSONB       NOT NULL DEFAULT '{}'
@@ -16,6 +16,11 @@ Matches the existing database schema exactly:
     updated_at      TIMESTAMPTZ NOT NULL DEFAULT now()
 
 Indexes: fir_drafts_complaint_idx (complaint_id), fir_drafts_status_idx (status)
+
+NOTE: complaint_id is TEXT, not UUID — it stores whatever id complaints.id
+uses (e.g. 'COMP001'), matching the existing /legal-sections/analyze route,
+which already accepts non-UUID complaint ids. See
+migrate_fir_drafts_complaint_id.sql for the corresponding DB migration.
 """
 from sqlalchemy import CheckConstraint, Column, DateTime, Index, String, Text, func
 from sqlalchemy.dialects.postgresql import JSONB, UUID as PG_UUID
@@ -42,7 +47,7 @@ class FirDraft(Base):
         primary_key=True,
         server_default=func.gen_random_uuid(),
     )
-    complaint_id = Column(PG_UUID(as_uuid=True), nullable=False)
+    complaint_id = Column(Text, nullable=False)
     crime_category = Column(Text, nullable=True)
     summary = Column(Text, nullable=True)
     draft_content = Column(JSONB, nullable=False, server_default="{}")

@@ -17,6 +17,10 @@ GET /api/fir-drafts?complaint_id=....
 
 Uses the project's synchronous `SessionLocal` (regular sessionmaker), not
 an async session.
+
+NOTE: complaint_id is a plain string (e.g. "COMP001"), matching complaints.id
+— it is NOT a UUID. Only draft_id (the fir_drafts primary key) is a UUID.
+See migrate_fir_drafts_complaint_id.sql for the DB-side fix this depends on.
 """
 from datetime import datetime, timezone
 from typing import Generator, Optional
@@ -82,7 +86,7 @@ def create_fir_draft(
     "Save FIR draft" click from the UI is stored as its own record.
     """
     if Complaint is not None:
-        complaint = db.get(Complaint, str(payload.complaint_id))
+        complaint = db.get(Complaint, payload.complaint_id)
         if complaint is None:
             raise HTTPException(status_code=404, detail="Complaint not found")
 
@@ -100,7 +104,7 @@ def create_fir_draft(
 
 @router.get("", response_model=list[FirDraftResponse])
 def list_fir_drafts(
-    complaint_id: Optional[UUID] = Query(default=None),
+    complaint_id: Optional[str] = Query(default=None),
     status: Optional[str] = Query(default=None),
     limit: int = Query(default=50, le=200),
     offset: int = Query(default=0, ge=0),
@@ -166,7 +170,7 @@ def download_fir_draft(draft_id: UUID, db: Session = Depends(get_db)) -> Streami
 
     complaint = None
     if Complaint is not None:
-        complaint = db.get(Complaint, str(draft.complaint_id))
+        complaint = db.get(Complaint, draft.complaint_id)
 
     buffer = build_fir_docx(draft, complaint)
     filename = f"fir_draft_{draft.id}.docx"

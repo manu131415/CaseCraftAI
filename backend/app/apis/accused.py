@@ -6,7 +6,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
 from database.db import SessionLocal
-from models.accused import Accused
+from models.suspect import Suspects
 from models.case import Case
 
 

@@ -4,7 +4,7 @@ from .officer import Officer
 from .evidence import Evidence
 from .document import Document
 from .case_diary import CaseDiary
-from .accused import Accused
+from .suspect import Suspects
 from .victim import Victim
 from .witness import Witness
 from .medical_report import MedicalReport

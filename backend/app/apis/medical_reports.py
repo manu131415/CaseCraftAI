@@ -8,7 +8,7 @@ from pydantic import BaseModel
 from database.db import SessionLocal
 from models.medical_report import MedicalReport
 from models.case import Case
-from models.accused import Accused
+from models.suspect import Suspects
 from models.victim import Victim
 
 

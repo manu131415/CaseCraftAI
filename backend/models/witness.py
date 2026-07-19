@@ -1,9 +1,8 @@
 from sqlalchemy import Column
+from sqlalchemy import Integer
 from sqlalchemy import String
 from sqlalchemy import Text
 from sqlalchemy import ForeignKey
-from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.sql import func
 
 from database.db import Base
 
@@ -12,12 +11,29 @@ class Witness(Base):
 
     __tablename__ = "witnesses"
 
-    witness_id = Column(UUID(as_uuid=True), primary_key=True, server_default=func.gen_random_uuid())
+    # =====================================================
+    # PRIMARY KEY
+    # =====================================================
 
-    case_id = Column(
-        String,
-        ForeignKey("cases.case_id")
+    witness_id = Column(
+        Integer,
+        primary_key=True,
+        autoincrement=True
     )
+
+    # =====================================================
+    # FOREIGN KEY
+    # =====================================================
+
+    complaint_id = Column(
+        String,
+        ForeignKey("complaints.complaint_id"),
+        nullable=False
+    )
+
+    # =====================================================
+    # PERSONAL DETAILS
+    # =====================================================
 
     full_name = Column(String(255))
 
@@ -26,3 +42,11 @@ class Witness(Base):
     address = Column(Text)
 
     statement = Column(Text)
+
+    # =====================================================
+    # PHOTO
+    # =====================================================
+
+    photo_url = Column(Text)
+
+    photo_name = Column(Text)

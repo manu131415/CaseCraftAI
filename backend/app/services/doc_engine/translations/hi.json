@@ -1,0 +1,20 @@
+{
+    "document_title": "पूरक आरोप पत्र",
+    "police_station": "पुलिस स्टेशन",
+    "district": "जिला",
+    "case_number": "केस संख्या",
+    "fir_number": "एफआईआर संख्या",
+    "fir_date": "एफआईआर दिनांक",
+    "investigating_officer": "जांच अधिकारी",
+    "accused": "आरोपी",
+    "victim": "पीड़ित",
+    "witness": "गवाह",
+    "evidence": "साक्ष्य",
+    "court": "न्यायालय",
+    "generated_on": "निर्मित दिनांक",
+    "signature": "हस्ताक्षर",
+    
+
+    "government": "गुजरात सरकार",
+    "police_department": "अहमदाबाद शहर पुलिस"
+}

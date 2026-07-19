@@ -14,6 +14,7 @@ import {
 interface ComplaintSummary {
   complaint_id: string;
   complaint_number: string;
+  complaint_title?: string;
   complainant_name?: string;
   phone?: string;
   email?: string;
@@ -22,6 +23,7 @@ interface ComplaintSummary {
   location?: string;
   description?: string;
   status?: string;
+  is_draft?: boolean;
   created_at?: string;
   incident_datetime?: string;
 }
@@ -175,13 +177,15 @@ export default function ComplaintList({
   ) : (
     filteredComplaints.map((complaint) => {
       const status = complaint.status || "Pending";
+      const isDraft = complaint.is_draft === true;
 
-      const statusClasses =
-        status.toLowerCase() === "closed"
-          ? "bg-emerald-100 text-emerald-700"
-          : status.toLowerCase() === "rejected"
-          ? "bg-rose-100 text-rose-700"
-          : "bg-indigo-100 text-indigo-700";
+      const statusClasses = isDraft
+        ? "bg-orange-100 text-orange-700"
+        : status.toLowerCase() === "closed"
+        ? "bg-emerald-100 text-emerald-700"
+        : status.toLowerCase() === "rejected"
+        ? "bg-rose-100 text-rose-700"
+        : "bg-indigo-100 text-indigo-700";
 
       const hasCase = caseComplaintIds.has(complaint.complaint_id);
 
@@ -214,7 +218,7 @@ export default function ComplaintList({
       <span
         className={`rounded-full px-3 py-1 text-xs font-semibold ${statusClasses}`}
       >
-        {status}
+        {isDraft ? "Draft" : status}
       </span>
     </td>
 
@@ -237,21 +241,32 @@ export default function ComplaintList({
     </td>
 
     <td className="px-6 py-4">
-      <Link
-        href={`/complaints/${complaint.complaint_id}`}
-        className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
-      >
-        View
-      </Link>
-
-      {hasCase && (
+      <div className="flex gap-2">
         <Link
-          href="/cases"
-          className="ml-2 rounded-lg border border-emerald-600 px-4 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-50"
+          href={`/complaints/${complaint.complaint_id}`}
+          className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
         >
-          Case
+          View
         </Link>
-      )}
+
+        {isDraft && (
+          <Link
+            href={`/complaints/${complaint.complaint_id}/submit`}
+            className="rounded-lg bg-orange-600 px-4 py-2 text-sm font-medium text-white hover:bg-orange-700"
+          >
+            Submit
+          </Link>
+        )}
+
+        {hasCase && (
+          <Link
+            href="/cases"
+            className="rounded-lg border border-emerald-600 px-4 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-50"
+          >
+            Case
+          </Link>
+        )}
+      </div>
     </td>
   </tr>
 );

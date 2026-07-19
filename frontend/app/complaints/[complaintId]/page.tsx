@@ -18,6 +18,7 @@ interface ComplaintDetail {
   location?: string;
   description?: string;
   status?: string;
+  is_draft?: boolean;
   created_at?: string;
   incident_datetime?: string;
   notes?: string;
@@ -169,7 +170,14 @@ export default function ComplaintPage() {
           <div className="space-y-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-semibold text-slate-900">Complaint {complaint.complaint_number}</h1>
+                <div className="flex items-center gap-3">
+                  <h1 className="text-2xl font-semibold text-slate-900">Complaint {complaint.complaint_number}</h1>
+                  {complaint.is_draft && (
+                    <span className="inline-block bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-sm font-medium">
+                      Draft
+                    </span>
+                  )}
+                </div>
                 <p className="mt-1 text-sm text-slate-500">{complaint.status || "Pending"}</p>
               </div>
               <div className="text-right text-sm text-slate-500">{complaint.created_at ? new Date(complaint.created_at).toLocaleString() : "No date"}</div>
@@ -305,7 +313,11 @@ export default function ComplaintPage() {
               <div className="mt-6 flex gap-3">
                 <Link href="/complaints" className="inline-flex items-center rounded-md border px-3 py-1.5 text-sm font-medium">Back to list</Link>
 
-                {caseExists ? (
+                {complaint.is_draft ? (
+                  <Link href={`/complaints/${complaint.complaint_id}/submit`} className="inline-flex items-center rounded-md bg-orange-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-orange-700">
+                    Submit Draft
+                  </Link>
+                ) : caseExists ? (
                   <Link href="/cases" className="inline-flex items-center rounded-md border px-3 py-1.5 text-sm font-medium">View case</Link>
                 ) : (
                   <button disabled={creating} onClick={handleCreateCase} className="inline-flex items-center rounded-md bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-emerald-700">

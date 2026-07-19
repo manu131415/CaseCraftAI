@@ -39,7 +39,7 @@ export default function NavigationButtons({
             onClick={onSaveDraft}
             className="rounded-full border border-orange-400 bg-orange-50 px-5 py-3 text-base font-medium text-orange-700 transition hover:bg-orange-100"
           >
-            {t("navigation.saveDraft", "Save Draft")}
+            {t("navigation.saveDraft", "complaints")}
           </button>
         )}
 

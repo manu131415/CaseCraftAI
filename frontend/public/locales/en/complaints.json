@@ -42,6 +42,7 @@
 
     "submitFailed": "Submission failed. Please verify the backend is running."
   },
+  
   "steps": {
     "complaint": "Complaint",
     "victims": "Victims",
@@ -56,6 +57,7 @@
     "submitComplaint": "Submit Complaint",
     "step": "Step",
     "of": "of",
+    "saveDraft": "Save Draft",
     "tip": "Tip: Use the quick buttons to jump to the relevant section instantly."
   },
   "documentsEvidence": {

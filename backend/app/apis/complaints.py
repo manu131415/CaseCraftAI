@@ -571,6 +571,95 @@ def save_complaint_draft(payload: ComplaintSubmission) -> Dict[str, Any]:
         db.close()
 
 
+@router.post(
+    "/submit-draft/{complaint_id}",
+    response_model=ComplaintSubmissionResponse,
+    summary="Submit a saved draft",
+    description="Convert a draft complaint to submitted status.",
+    tags=["complaints"],
+)
+def submit_draft_complaint(complaint_id: str, payload: ComplaintSubmission) -> Dict[str, Any]:
+    """Submit a draft complaint."""
+    db = SessionLocal()
+    try:
+        # Get existing complaint
+        complaint = db.query(Complaint).filter(
+            Complaint.complaint_id == complaint_id
+        ).first()
+        
+        if not complaint:
+            raise HTTPException(status_code=404, detail="Complaint not found")
+        
+        # Update complaint with new data
+        complaint_data = payload.complaint
+        complaint.complaint_title = complaint_data.complaintTitle
+        complaint.crime_category = complaint_data.crimeCategory
+        complaint.crime_subcategory = complaint_data.crimeSubcategory
+        complaint.priority = complaint_data.priority
+        complaint.complaint_mode = complaint_data.complaintMode
+        complaint.incident_date = complaint_data.incidentDate
+        complaint.incident_time = complaint_data.incidentTime
+        complaint.location = complaint_data.location
+        complaint.landmark = complaint_data.landmark
+        complaint.emergency = complaint_data.emergency
+        complaint.description = complaint_data.description
+        complaint.ai_summary = complaint_data.aiSummary
+        complaint.officer_notes = complaint_data.officerNotes
+        complaint.complainant_name = complaint_data.complainantName
+        complaint.complainant_father_name = complaint_data.complainantFatherName
+        complaint.complainant_age = complaint_data.complainantAge
+        complaint.complainant_gender = complaint_data.complainantGender
+        complaint.phone = complaint_data.complainantPhone
+        complaint.email = complaint_data.complainantEmail
+        complaint.complainant_address = complaint_data.complainantAddress
+        complaint.complainant_aadhaar = complaint_data.complainantAadhaar
+        complaint.complainant_relationship = complaint_data.complainantRelationship
+        complaint.complainant_occupation = complaint_data.complainantOccupation
+        complaint.complainant_nationality = complaint_data.complainantNationality
+        complaint.complainant_photo_url = complaint_data.complainantPhotoUrl
+        complaint.complainant_photo_name = complaint_data.complainantPhotoName
+        complaint.status = "Submitted"
+        complaint.is_draft = False
+        
+        # Delete existing victims/suspects for this complaint
+        db.query(Victim).filter(Victim.complaint_id == complaint_id).delete()
+        db.query(Suspects).filter(Suspects.complaint_id == complaint_id).delete()
+        
+        # Create new victim records
+        if payload.victims:
+            _create_victim_records(db, complaint.complaint_id, payload.victims)
+        
+        # Create new suspect records
+        if payload.suspects:
+            _create_suspect_records(db, complaint.complaint_id, payload.suspects)
+        
+        db.commit()
+        db.refresh(complaint)
+        
+        return {
+            "success": True,
+            "message": "Draft submitted successfully",
+            "data": {
+                "complaint_id": complaint.complaint_id,
+                "complaint_number": complaint.complaint_number,
+                "status": complaint.status,
+                "is_draft": complaint.is_draft,
+                "created_at": complaint.created_at.isoformat() if complaint.created_at else None
+            }
+        }
+    
+    except HTTPException:
+        db.rollback()
+        raise
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to submit draft: {str(e)}"
+        )
+    finally:
+        db.close()
+
 
 @router.get(
     "",
@@ -590,6 +679,7 @@ def get_all_complaints() -> Dict[str, Any]:
                 {
                     "complaint_id": c.complaint_id,
                     "complaint_number": c.complaint_number,
+                    "complaint_title": c.complaint_title,
                     "complainant_name": c.complainant_name,
                     "phone": c.phone,
                     "email": c.email,

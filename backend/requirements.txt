@@ -18,5 +18,5 @@ docxtpl
 python-docx
 passlib
 bcrypt==4.0.1
-"python-jose[cryptography]"
-'pydantic[email]'
+python-jose[cryptography]
+pydantic[email]

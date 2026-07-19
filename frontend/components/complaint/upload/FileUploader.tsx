@@ -228,7 +228,7 @@ export default function FileUploader({
           : prev.suspects,
 
       attachments: [
-        ...prev.attachments,
+        ...(prev.attachments || []),
         ...attachments,
       ],
     }));

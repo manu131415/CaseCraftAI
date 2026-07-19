@@ -40,6 +40,12 @@ export interface ComplaintData {
 
   complainantPhotoUrl?: string;
   complainantPhotoName?: string;
+  // Optional aggregated fields used by the file extraction flow
+  aiSummary?: string;
+  attachments?: AttachmentMeta[];
+  complainants?: VictimEntry[];
+  victims?: VictimEntry[];
+  suspects?: SuspectEntry[];
 }
 
 export interface VictimEntry {
@@ -128,6 +134,33 @@ export interface EvidenceEntry {
   fileUrl?: string;
   fileName?: string;
 }
+export interface AttachmentMeta {
+  id: string;
+  fileName: string;
+  fileType: string;
+  documentUrl?: string;
+  extractedText?: string;
+  summary?: string;
+  extraction?: {
+    sections?: {
+      narrative_text?: string;
+      incident_details?: {
+        description?: string;
+      };
+      complainant_details?: {
+        name?: string;
+      };
+      accused_details?: Array<{ name?: string }>;
+    };
+    entities?: {
+      locations?: string[];
+      phone_numbers?: string[];
+      people?: Array<{ name?: string }>;
+    };
+    key_facts?: string[];
+    full_text?: string;
+  };
+}
 
 export interface DocumentEntry {
   documentType: string;
@@ -138,4 +171,10 @@ export interface DocumentEntry {
 
   fileUrl?: string;
   fileName?: string;
+}
+
+export interface UploadedFile {
+  id: number;
+  file: File;
+  type?: string;
 }

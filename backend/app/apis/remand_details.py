@@ -8,7 +8,7 @@ from pydantic import BaseModel
 from database.db import SessionLocal
 from models.remand_detail import RemandDetail
 from models.case import Case
-from models.accused import Accused
+from models.suspect import Suspects
 
 
 router = APIRouter(prefix="/api/remand-details", tags=["remand-details"])

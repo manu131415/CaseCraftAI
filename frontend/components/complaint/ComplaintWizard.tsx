@@ -3,229 +3,372 @@
 import { useState } from "react";
 import axios from "axios";
 import { CheckCircle2 } from "lucide-react";
+
 import { useLanguage } from "@/app/providers/LanguageProvider";
+
 import Stepper from "./Stepper";
 import ComplaintDetails from "./steps/ComplaintDetails";
+import ComplainantDetails from "./steps/ComplainantDetails";
 import VictimDetails from "./steps/VictimDetails";
 import SuspectDetails from "./steps/SuspectDetails";
-import ComplainantDetails from "./steps/ComplainantDetails";
-import ReviewSubmission from "./steps/ReviewSubmission";
 import DocumentsAndEvidence from "./steps/DocumentsAndEvidence";
+import ReviewSubmission from "./steps/ReviewSubmission";
 import NavigationButtons from "./NavigationButtons";
-import { ComplaintData } from "./types";
+
+import {
+  ComplaintData,
+  VictimEntry,
+  SuspectEntry,
+} from "./types";
 
 const initialForm: ComplaintData = {
+  // Complaint
+  complaintTitle: "",
+
   crimeCategory: "",
   crimeSubcategory: "",
+
   priority: "Medium",
+  complaintMode: "Walk-In",
+
   incidentDate: "",
   incidentTime: "",
+
   location: "",
+  landmark: "",
+
+  emergency: "No",
+
   description: "",
-  aiSummary: "",
   officerNotes: "",
-  complainants: [
-    {
-      name: "",
-      contact: "",
-      relationship: "",
-      statement: "",
-    },
-  ],
-  victims: [
-    {
-      type: "",
-      name: "",
-      contact: "",
-      statement: "",
-    },
-  ],
-  suspects: [
-    {
-      type: "",
-      name: "",
-      contact: "",
-      description: "",
-      status: "",
-    },
-  ],
-  attachments: [],
+
+  // Complainant
+  complainantName: "",
+  complainantFatherName: "",
+
+  complainantAge: "",
+  complainantGender: "",
+
+  complainantPhone: "",
+  complainantEmail: "",
+
+  complainantAddress: "",
+
+  complainantAadhaar: "",
+
+  complainantRelationship: "",
+
+  complainantOccupation: "",
+  complainantNationality: "",
+
+  complainantPhotoUrl: "",
+  complainantPhotoName: "",
 };
 
 export default function ComplaintWizard() {
   const { t } = useLanguage();
+
   const [step, setStep] = useState(1);
-  const [form, setForm] = useState<ComplaintData>(initialForm);
+
   const [submitted, setSubmitted] = useState(false);
 
-  const totalSteps = 6; // 1: Complaint, 2: Victims, 3: Suspects, 4: Complainants, 5: Documents, 6: Review
+  const [form, setForm] =
+    useState<ComplaintData>(initialForm);
+
+  const [victims, setVictims] =
+    useState<VictimEntry[]>([
+      {
+        fullName: "",
+        age: "",
+        gender: "",
+
+        phone: "",
+
+        address: "",
+
+        injuries: "",
+
+        photoUrl: "",
+        photoName: "",
+      },
+    ]);
+
+  const [suspects, setSuspects] =
+    useState<SuspectEntry[]>([
+      {
+        fullName: "",
+
+        alias: "",
+
+        fatherName: "",
+
+        age: "",
+        dob: "",
+
+        gender: "",
+
+        permanentAddress: "",
+        presentAddress: "",
+
+        identificationMarks: "",
+
+        faceShape: "",
+        complexion: "",
+
+        eyeColor: "",
+        eyeStructure: "",
+
+        hairType: "",
+        hairColor: "",
+
+        unknownIdentity: false,
+
+        photoUrl: "",
+        photoName: "",
+      },
+    ]);
+
+  const [attachments, setAttachments] = useState<any[]>([]);
+
+  const totalSteps = 6;
 
   function handleNext() {
-    if (step < totalSteps) setStep(step + 1);
+    if (step < totalSteps) {
+      setStep(step + 1);
+    }
   }
 
   function handleBack() {
-    if (step > 1) setStep(step - 1);
+    if (step > 1) {
+      setStep(step - 1);
+    }
   }
 
   async function handleSubmit() {
     try {
-      const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
-      await axios.post(`${API_BASE}/api/complaints/submit`, form);
+      const API_BASE =
+        process.env.NEXT_PUBLIC_API_BASE_URL ??
+        "http://localhost:8000";
+
+      await axios.post(
+        `${API_BASE}/api/complaints/submit`,
+        {
+          complaint: form,
+          victims,
+          suspects,
+          attachments,
+        }
+      );
+
       setSubmitted(true);
-    } catch (error) {
-      console.error(error);
-      alert("Submission failed. Please verify the backend is running.");
+
+    } catch (err) {
+      console.error(err);
+      alert("Failed to register complaint.");
     }
   }
 
-  function addVictim() {
-    setForm((prev) => ({
-      ...prev,
-      victims: [
-        ...prev.victims,
-        { type: "", name: "", contact: "", statement: "" },
-      ],
-    }));
-    setStep(2);
-  }
+  async function handleSaveDraft() {
+    try {
+      const API_BASE =
+        process.env.NEXT_PUBLIC_API_BASE_URL ??
+        "http://localhost:8000";
 
-  function addSuspect() {
-    setForm((prev) => ({
-      ...prev,
-      suspects: [
-        ...prev.suspects,
-        { type: "", name: "", contact: "", description: "", status: "" },
-      ],
-    }));
-    setStep(3);
-  }
+      const response = await axios.post(
+        `${API_BASE}/api/complaints/save-draft`,
+        {
+          complaint: form,
+          victims,
+          suspects,
+          attachments,
+        }
+      );
 
-  function addComplainant() {
-    setForm((prev) => ({
-      ...prev,
-      complainants: [
-        ...prev.complainants,
-        { name: "", contact: "", relationship: "", statement: "" },
-      ],
-    }));
-    setStep(4);
-  }
+      alert(`Draft saved successfully! Complaint ID: ${response.data.data.complaint_id}`);
 
-  function setVictims(victims: ComplaintData["victims"]) {
-    setForm((prev) => ({ ...prev, victims }));
+    } catch (err) {
+      console.error(err);
+      alert("Failed to save complaint as draft.");
+    }
   }
-
-  function setSuspects(suspects: ComplaintData["suspects"]) {
-    setForm((prev) => ({ ...prev, suspects }));
-  }
-
-  function setComplainants(complainants: ComplaintData["complainants"]) {
-    setForm((prev) => ({ ...prev, complainants }));
-  }
-
-  if (submitted) {
+    if (submitted) {
     return (
       <div className="mx-auto flex max-w-4xl flex-col items-center justify-center rounded-[32px] border border-emerald-200 bg-white p-10 text-center shadow-xl">
         <div className="rounded-full bg-emerald-100 p-4 text-emerald-600">
           <CheckCircle2 className="h-10 w-10" />
         </div>
-        <h1 className="mt-6 text-3xl font-semibold text-slate-900">Complaint registered successfully</h1>
+
+        <h1 className="mt-6 text-3xl font-semibold text-slate-900">
+          Complaint Registered Successfully
+        </h1>
+
         <p className="mt-3 max-w-xl text-base text-slate-600">
-          The complaint has been saved to the registry and is ready for review by the assigned team.
+          The complaint has been saved successfully and is ready for further
+          investigation.
         </p>
+
         <button
           onClick={() => {
             setSubmitted(false);
             setStep(1);
             setForm(initialForm);
+
+            setVictims([
+              {
+                fullName: "",
+                age: "",
+                gender: "",
+                phone: "",
+                address: "",
+                injuries: "",
+                photoUrl: "",
+                photoName: "",
+              },
+            ]);
+
+            setSuspects([
+              {
+                fullName: "",
+                alias: "",
+                fatherName: "",
+
+                age: "",
+                dob: "",
+
+                gender: "",
+
+                permanentAddress: "",
+                presentAddress: "",
+
+                identificationMarks: "",
+
+                faceShape: "",
+                complexion: "",
+
+                eyeColor: "",
+                eyeStructure: "",
+
+                hairType: "",
+                hairColor: "",
+
+                unknownIdentity: false,
+
+                photoUrl: "",
+                photoName: "",
+              },
+            ]);
+
+            setAttachments([]);
           }}
-          className="mt-8 rounded-full bg-blue-600 px-5 py-3 text-base font-medium text-white transition hover:bg-blue-700"
+          className="mt-8 rounded-full bg-blue-600 px-6 py-3 text-white hover:bg-blue-700"
         >
-          Register another complaint
+          Register Another Complaint
         </button>
       </div>
     );
   }
 
   return (
-    <div className="w-full max-w-full rounded-[32px] border border-slate-200 bg-white/90 p-6 text-base shadow-[0_25px_80px_rgba(15,23,42,0.08)] backdrop-blur sm:p-8 lg:p-10">
+    <div className="w-full max-w-full rounded-[32px] border border-slate-200 bg-white p-8 shadow-lg">
+
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <div className="max-w-3xl">
-          <p className="text-base font-semibold uppercase tracking-[0.3em] text-blue-600">Complaint register</p>
-          <h1 className="mt-2 text-3xl font-semibold text-slate-900">Register a new complaint</h1>
-          <p className="mt-3 text-base text-slate-600">
-            Follow the guided steps below to capture evidence, complainant information, and case notes in one place.
+
+        <div>
+
+          <p className="text-blue-600 font-semibold uppercase tracking-[0.25em]">
+            Complaint Registration
           </p>
+
+          <h1 className="mt-2 text-3xl font-bold">
+            Register New Complaint
+          </h1>
+
+          <p className="mt-3 text-slate-600">
+            Fill in all the required information regarding the complaint,
+            complainant, victims and suspects.
+          </p>
+
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          <button
-            type="button"
-            onClick={addVictim}
-            className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-base text-slate-700 transition hover:border-blue-200 hover:text-blue-700"
-          >
-            Add victim
-          </button>
-          <button
-            type="button"
-            onClick={addSuspect}
-            className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-base text-slate-700 transition hover:border-blue-200 hover:text-blue-700"
-          >
-            Add suspect
-          </button>
-          <button
-            type="button"
-            onClick={addComplainant}
-            className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-base text-slate-700 transition hover:border-blue-200 hover:text-blue-700"
-          >
-            Add complainant
-          </button>
-          <button
-            type="button"
-            onClick={() => setStep(1)}
-            className="rounded-full border border-blue-600 bg-blue-600 px-4 py-2 text-base font-semibold text-white transition hover:bg-blue-700"
-          >
-            Complaint details
-          </button>
-        </div>
-      </div>
-
-      <div className="mt-6 flex items-center justify-between gap-4">
-        <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-base text-slate-600">
-          {t("navigation.step", "complaints")} {step} {t("navigation.of", "complaints")} {totalSteps}
-        </div>
-        <div className="text-base text-slate-500">
-          {t("navigation.tip", "complaints")}
-        </div>
       </div>
 
       <div className="mt-8">
+
         <Stepper currentStep={step} />
+
       </div>
 
       <div className="mt-10">
-        {step === 1 && <ComplaintDetails form={form} setForm={setForm} />}
-        {step === 2 && <VictimDetails victims={form.victims} setVictims={setVictims} />}
-        {step === 3 && <SuspectDetails suspects={form.suspects} setSuspects={setSuspects} />}
-        {step === 4 && <ComplainantDetails complainants={form.complainants} setComplainants={setComplainants} />}
+
+        {step === 1 && (
+
+          <ComplaintDetails
+            form={form}
+            setForm={setForm}
+          />
+
+        )}
+
+        {step === 2 && (
+
+          <ComplainantDetails
+            form={form}
+            setForm={setForm}
+          />
+
+        )}
+
+        {step === 3 && (
+
+          <VictimDetails
+            victims={victims}
+            setVictims={setVictims}
+          />
+
+        )}
+
+        {step === 4 && (
+
+          <SuspectDetails
+            suspects={suspects}
+            setSuspects={setSuspects}
+          />
+
+        )}
+
         {step === 5 && (
+
           <DocumentsAndEvidence
             onDocumentsSubmit={(uploadedFiles) => {
-              const newAttachments = uploadedFiles.map((file) => ({
+
+              const files = uploadedFiles.map((file) => ({
                 id: file.id,
                 fileName: file.file.name,
                 fileType: file.file.type,
                 documentUrl: file.cloudinaryUrl,
               }));
-              setForm((prev) => ({
+
+              setAttachments((prev) => [
                 ...prev,
-                attachments: [...prev.attachments, ...newAttachments],
-              }));
+                ...files,
+              ]);
+
             }}
           />
+
         )}
-        {step === 6 && <ReviewSubmission form={form} />}
+
+        {step === 6 && (
+
+          <ReviewSubmission
+            form={form}
+            victims={victims}
+            suspects={suspects}
+            attachments={attachments}
+          />
+
+        )}
+
       </div>
 
       <NavigationButtons
@@ -234,7 +377,9 @@ export default function ComplaintWizard() {
         onBack={handleBack}
         onNext={handleNext}
         onSubmit={handleSubmit}
+        onSaveDraft={handleSaveDraft}
       />
+
     </div>
   );
 }

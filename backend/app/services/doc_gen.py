@@ -187,6 +187,7 @@ def generate_document_by_type(case_id, doc_type, accused_id=None):
             cursor.execute("SELECT * FROM accused WHERE case_id = %s ORDER BY created_at ASC;", (case_id,))
             accused_list = cursor.fetchall()
             
+        accuseds = accused_list
         accused = accused_list[0] if accused_list else None
         
         # 4. Fetch Evidence
@@ -240,6 +241,24 @@ def generate_document_by_type(case_id, doc_type, accused_id=None):
         fir_date = format_date(case['fir_date']) if case['fir_date'] else today_str
         police_station = case['police_station'] if case['police_station'] else officer_station
         district = case['district'].capitalize() if case['district'] else "Ahmedabad City"
+
+        context = {
+            "case": case,
+            "officer": officer or {},
+            "accused": accused or {},
+            "accuseds": accuseds,
+            "victims": victims,
+            "witnesses": witnesses,
+            "evidences": evidences,
+            "sections": sections,
+            "today": today_str,
+            "current_year": current_year,
+            "district": district,
+            "police_station": police_station,
+            "officer_full": officer_full,
+            "accused_full_name": accused_full_name,
+            "sections_str": sections_str,
+        }
         
         replacements = {}
         output_file = ""

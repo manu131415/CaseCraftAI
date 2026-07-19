@@ -21,6 +21,7 @@ router = APIRouter(prefix="/api/cases", tags=["cases"])
 
 class CaseCreate(BaseModel):
     complaint_id: str
+    complaint_number:str
     assigned_officer_id: Optional[str] = None
     case_number: Optional[str] = None
     title: Optional[str] = None
@@ -67,6 +68,7 @@ class CaseUpdate(BaseModel):
 class CaseSummary(BaseModel):
     case_id: str
     complaint_id: Optional[str] = None
+    complaint_number:Optional[str] = None
     assigned_officer_id: Optional[str] = None
     case_number: Optional[str] = None
     title: Optional[str] = None
@@ -178,6 +180,7 @@ def create_case(payload: CaseCreate) -> Dict[str, Any]:
         case = Case(
             case_id=str(uuid.uuid4()),
             complaint_id=payload.complaint_id,
+            complaint_number=payload.complaint_number,
             assigned_officer_id=payload.assigned_officer_id,
             case_number=payload.case_number,
             title=payload.title,
@@ -209,7 +212,7 @@ def create_case(payload: CaseCreate) -> Dict[str, Any]:
                 case_id=case.case_id,
                 officer_id=None,
                 action_type="case_created",
-                description=f"Case created from complaint {payload.complaint_id}",
+                description=f"Case created from complaint {payload.complaint_number}",
                 occurred_at=datetime.utcnow(),
             )
             db.add(diary)
@@ -246,12 +249,20 @@ def create_case(payload: CaseCreate) -> Dict[str, Any]:
 def get_all_cases() -> Dict[str, Any]:
     db = SessionLocal()
     try:
-        cases = db.query(Case).all()
+        cases = (
+    db.query(Case, Complaint)
+    .join(
+        Complaint,
+        Case.complaint_id == Complaint.complaint_id
+    )
+    .all()
+)
         return {
             "cases": [
                 {
                     "case_id": c.case_id,
-                    "complaint_id": c.complaint_id,
+                    "complaint_id": complaint.complaint_id,
+                    "complaint_number":complaint.complaint_number,
                     "assigned_officer_id": c.assigned_officer_id,
                     "case_number": c.case_number,
                     "title": c.title,
@@ -275,7 +286,7 @@ def get_all_cases() -> Dict[str, Any]:
                     "court_no": c.court_no,
                     "current_stage": c.current_stage
                 }
-                for c in cases
+                for c,complaint in cases
             ]
         }
     except Exception as e:
@@ -301,6 +312,7 @@ def get_case_by_complaint_id(complaint_id: str) -> Dict[str, Any]:
         return {
             "case_id": case.case_id,
             "complaint_id": case.complaint_id,
+            "complaint_number":case.complaint_number,
             "assigned_officer_id": case.assigned_officer_id,
             "case_number": case.case_number,
             "title": case.title,
@@ -349,6 +361,7 @@ def get_case(case_id: str) -> Dict[str, Any]:
         return {
             "case_id": case.case_id,
             "complaint_id": case.complaint_id,
+            "complaint_number":case.complaint_number,
             "assigned_officer_id": case.assigned_officer_id,
             "case_number": case.case_number,
             "title": case.title,

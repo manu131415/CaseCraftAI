@@ -1,0 +1,20 @@
+{
+    "document_title": "Supplementary Chargesheet",
+    "police_station": "Police Station",
+    "district": "District",
+    "case_number": "Case Number",
+    "fir_number": "FIR Number",
+    "fir_date": "FIR Date",
+    "investigating_officer": "Investigating Officer",
+    "accused": "Accused",
+    "victim": "Victim",
+    "witness": "Witness",
+    "evidence": "Evidence",
+    "court": "Court",
+    "generated_on": "Generated On",
+    "signature": "Signature",
+
+
+    "government" : "Government of Gujarat",
+    "police_department": "Ahmedabad City Police"
+}

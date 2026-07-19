@@ -1,10 +1,9 @@
 from sqlalchemy import Column
+from sqlalchemy import Integer
 from sqlalchemy import String
 from sqlalchemy import Text
 from sqlalchemy import DateTime
-from sqlalchemy import Integer
 from sqlalchemy import ForeignKey
-from sqlalchemy import DateTime
 from sqlalchemy.sql import func
 
 from database.db import Base
@@ -14,22 +13,47 @@ class Evidence(Base):
 
     __tablename__ = "evidences"
 
-    evidence_id = Column(String, primary_key=True)
+    # =====================================================
+    # PRIMARY KEY
+    # =====================================================
+
+    evidence_id = Column(
+        Integer,
+        primary_key=True,
+        autoincrement=True
+    )
+
+    # =====================================================
+    # FOREIGN KEY
+    # =====================================================
 
     complaint_id = Column(
         String,
-        ForeignKey("complaints.complaint_id")
+        ForeignKey("complaints.complaint_id"),
+        nullable=False
     )
 
-    evidence_type = Column(String)
+    # =====================================================
+    # FILE DETAILS
+    # =====================================================
 
-    file_path = Column(String)
+    evidence_type = Column(String(100))
+
+    file_name = Column(String(255))
+
+    file_type = Column(String(100))
+
+    file_path = Column(Text)
 
     description = Column(Text)
 
+    # =====================================================
+    # OPTIONAL INVESTIGATION DETAILS
+    # =====================================================
+
     serial_number = Column(String(200))
 
-    quantity = Column(Integer, default=1)
+    quantity = Column(Integer)
 
     item_condition = Column(Text)
 
@@ -42,3 +66,12 @@ class Evidence(Base):
     seal_number = Column(String(100))
 
     storage_location = Column(Text)
+
+    # =====================================================
+    # CREATED
+    # =====================================================
+
+    created_at = Column(
+        DateTime(timezone=True),
+        server_default=func.now()
+    )

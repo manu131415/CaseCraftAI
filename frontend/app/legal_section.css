@@ -1,0 +1,250 @@
+/* ==========================================================================
+   Legal Section Intelligence — visual enhancement layer
+   --------------------------------------------------------------------------
+   This is a PLAIN global stylesheet, not a CSS module. It layers polish on
+   top of the Tailwind utility classes already present in
+   legal_sections/page.tsx, so page.tsx itself never needs to change.
+
+   HOW TO USE:
+   Import this once near the top of your root layout, e.g. app/layout.tsx:
+
+     import './legal-sections.css';   // or wherever you place this file
+
+   That's it — every page that renders these Tailwind classes picks up the
+   enhancements automatically.
+   ========================================================================== */
+
+/* ---- Design tokens ------------------------------------------------------ */
+:root {
+  --leg-ink: #0b1735;
+  --leg-ink-deep: #060d24;
+  --leg-gold: #fbbf24;
+  --leg-gold-soft: #fde68a;
+  --leg-card-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px -12px rgba(15, 23, 42, 0.18);
+  --leg-card-shadow-hover: 0 4px 10px rgba(15, 23, 42, 0.06), 0 20px 40px -16px rgba(15, 23, 42, 0.28);
+  --leg-transition: 180ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ---- Page backdrop -------------------------------------------------------
+   Give the deep navy shell some depth instead of a flat fill. Targets the
+   root container's Tailwind classes directly. */
+.bg-blue-950.min-h-screen {
+  background:
+    radial-gradient(1200px 500px at 10% -10%, rgba(251, 191, 36, 0.08), transparent 60%),
+    radial-gradient(900px 500px at 100% 0%, rgba(59, 130, 246, 0.12), transparent 55%),
+    linear-gradient(180deg, var(--leg-ink-deep) 0%, var(--leg-ink) 100%);
+  position: relative;
+}
+
+/* Faint top hairline for structure */
+.bg-blue-950.min-h-screen::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(251, 191, 36, 0.35), transparent);
+}
+
+/* ---- Header title --------------------------------------------------------
+   Give the amber H1 a subtle gradient + glow instead of flat color. */
+h1.text-amber-400 {
+  background: linear-gradient(90deg, var(--leg-gold-soft), var(--leg-gold) 55%, #f59e0b);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 30px rgba(251, 191, 36, 0.25);
+  letter-spacing: -0.01em;
+}
+
+/* Section headers get a small accent bar */
+h2.text-amber-400 {
+  position: relative;
+  padding-left: 14px;
+  color: var(--leg-gold);
+}
+h2.text-amber-400::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 3px;
+  bottom: 3px;
+  width: 4px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, var(--leg-gold), #f59e0b);
+  box-shadow: 0 0 12px rgba(251, 191, 36, 0.5);
+}
+
+/* ---- White panels (case summary, selected items bar) --------------------
+   Soften edges, add a nicer shadow, subtle border tint. */
+.rounded-lg.border.border-slate-200.bg-white {
+  border-color: rgba(15, 23, 42, 0.08);
+  box-shadow: var(--leg-card-shadow);
+  transition: box-shadow var(--leg-transition), transform var(--leg-transition);
+  backdrop-filter: saturate(1.05);
+}
+
+textarea.w-full.resize-none {
+  transition: border-color var(--leg-transition), box-shadow var(--leg-transition);
+}
+textarea.w-full.resize-none:focus {
+  box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.12);
+}
+
+/* ---- Buttons -------------------------------------------------------------- */
+button.bg-blue-900 {
+  background: linear-gradient(180deg, #1e3a8a, #17296b);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08) inset, 0 6px 14px -6px rgba(23, 41, 107, 0.55);
+  transition: transform var(--leg-transition), box-shadow var(--leg-transition), filter var(--leg-transition);
+}
+button.bg-blue-900:not(:disabled):hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1) inset, 0 10px 20px -8px rgba(23, 41, 107, 0.6);
+}
+button.bg-blue-900:not(:disabled):active {
+  transform: translateY(0);
+}
+
+button.bg-emerald-600 {
+  background: linear-gradient(180deg, #10b981, #059669);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.12) inset, 0 6px 14px -6px rgba(5, 150, 105, 0.5);
+  transition: transform var(--leg-transition), box-shadow var(--leg-transition), filter var(--leg-transition);
+}
+button.bg-emerald-600:not(:disabled):hover {
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+}
+
+button:disabled {
+  filter: grayscale(0.15);
+}
+
+/* ---- Section / Judgment cards --------------------------------------------
+   These share `.rounded-lg.border-2.p-4.shadow-sm`. Add lift-on-hover and a
+   nicer selected state glow. */
+.rounded-lg.border-2.p-4.shadow-sm {
+  transition:
+    transform var(--leg-transition),
+    box-shadow var(--leg-transition),
+    border-color var(--leg-transition);
+  box-shadow: var(--leg-card-shadow);
+}
+.rounded-lg.border-2.p-4.shadow-sm:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--leg-card-shadow-hover);
+}
+
+/* Selected cards (amber ring state) get a warm glow */
+.rounded-lg.border-2.border-amber-500 {
+  box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.25), var(--leg-card-shadow-hover);
+}
+
+/* ---- Badges ---------------------------------------------------------------- */
+/* Similarity + Act badges: small shine and rounded polish */
+span.inline-flex.items-center.rounded-full,
+span.inline-flex.items-center.rounded,
+span.inline-flex.items-center.gap-1\.5.rounded-md,
+span.rounded-md {
+  transition: transform var(--leg-transition);
+}
+span.inline-flex.items-center.rounded-full:hover {
+  transform: translateY(-1px);
+}
+
+/* Act badge — new-act variant (BNS/BNSS/BSA) gets a richer navy gradient */
+span.bg-blue-900.text-white {
+  background: linear-gradient(135deg, #1e3a8a, #0f2258);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.25);
+}
+
+/* ---- Checkboxes ------------------------------------------------------------ */
+label.inline-flex.items-center.gap-2.rounded-full.border input[type='checkbox'] {
+  width: 15px;
+  height: 15px;
+  accent-color: #1e3a8a;
+  cursor: pointer;
+}
+label.inline-flex.items-center.gap-2.rounded-full.border {
+  transition: border-color var(--leg-transition), background-color var(--leg-transition);
+}
+label.inline-flex.items-center.gap-2.rounded-full.border:hover {
+  border-color: #94a3b8;
+  background-color: #f8fafc;
+}
+
+/* ---- Skeleton loaders -------------------------------------------------------
+   Replace the flat pulse with a soft shimmer sweep for a more premium feel. */
+.animate-pulse.rounded-lg.border.border-slate-200.bg-white {
+  animation: none;
+  position: relative;
+  overflow: hidden;
+}
+.animate-pulse.rounded-lg.border.border-slate-200.bg-white::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(148, 163, 184, 0.18),
+    transparent
+  );
+  animation: leg-shimmer 1.4s ease-in-out infinite;
+}
+@keyframes leg-shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* ---- Status banners (error / success) -------------------------------------- */
+.rounded-lg.border.border-rose-200.bg-rose-50,
+.rounded-lg.border.border-emerald-200.bg-emerald-50 {
+  box-shadow: var(--leg-card-shadow);
+  animation: leg-fade-in 220ms ease-out both;
+}
+
+@keyframes leg-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---- Misc polish ------------------------------------------------------------ */
+/* Case-summary "no stored summary" hint gets a tiny left accent */
+p.text-xs.text-amber-700 {
+  padding-left: 8px;
+  border-left: 2px solid #f59e0b;
+}
+
+/* Empty-state copy inside dark sections reads a bit softer */
+p.text-sm.text-slate-300 {
+  color: rgba(203, 213, 225, 0.75);
+  font-style: italic;
+}
+
+/* Custom scrollbar for a more crafted feel across the page */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(251, 191, 36, 0.35) transparent;
+}
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-thumb {
+  background: rgba(251, 191, 36, 0.35);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(251, 191, 36, 0.55);
+  background-clip: padding-box;
+}

@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
-import Navbar from "@/components/layout/Navbar";
-import Sidebar from "@/components/layout/Sidebar";
+import Navbar from "@/components/layout/io/Navbar";
+import Sidebar from "@/components/layout/io/Sidebar";
 
 interface CaseSummary {
   case_id: string;

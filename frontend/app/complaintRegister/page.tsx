@@ -1,5 +1,5 @@
-import Navbar from "@/components/layout/Navbar";
-import Sidebar from "@/components/layout/Sidebar";
+import Navbar from "@/components/layout/io/Navbar";
+import Sidebar from "@/components/layout/io/Sidebar";
 import ComplaintWizard from "@/components/complaint/ComplaintWizard";
 
 export default function ComplaintPage() {

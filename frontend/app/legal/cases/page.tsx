@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import Navbar from "@/components/layout/io/Navbar";
-import Sidebar from "@/components/layout/io/Sidebar";
-import CaseList from "@/components/case/CaseList";
+import Navbar from "@/components/layout/legal/Navbar";
+import Sidebar from "@/components/layout/legal/Sidebar";
+import CaseList from "@/components/case/legal/CaseList";
 
 export default function CasesPage() {
   const [search, setSearch] = useState("");

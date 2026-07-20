@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import Navbar from "@/components/layout/io/Navbar";
+import Navbar from "@/components/layout/shared/Navbar";
 import Sidebar from "@/components/layout/io/Sidebar";
 
 interface ComplaintDetail {

@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Search, BookOpen, AlertCircle, X, ScrollText, ArrowLeftRight } from "lucide-react";
 import Sidebar from "@/components/layout/legal/Sidebar";
-import Navbar from "@/components/layout/legal/Navbar";
+import Navbar from "@/components/layout/shared/Navbar";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "";
 const MIN_QUERY_LENGTH = 2;

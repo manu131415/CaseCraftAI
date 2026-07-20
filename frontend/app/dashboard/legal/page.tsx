@@ -1,7 +1,6 @@
 import Sidebar from "@/components/layout/legal/Sidebar";
-import Navbar from "@/components/layout/legal/Navbar";
+import Navbar from "@/components/layout/shared/Navbar";
 import DashboardCard from "@/components/dashboard/DashboardCard";
-import RecentComplaint from "@/components/dashboard/RecentComplaint";
 import ActivityFeed from "@/components/dashboard/ActivityFeed";
 import CaseListPanel from "@/components/dashboard/CaseListPanel";
 
@@ -27,9 +26,9 @@ export default function Dashboard() {
             <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
               <div>
                 <p className="text-sm font-semibold uppercase tracking-[0.3em] text-blue-100">CaseCraftAI</p>
-                <h1 className="mt-2 text-3xl font-semibold">Command center for complaint operations</h1>
+                <h1 className="mt-2 text-3xl font-semibold">Legal Advisor Page</h1>
                 <p className="mt-3 max-w-2xl text-sm text-blue-50/90">
-                  Monitor incoming complaints, review flagged evidence, and keep your field team aligned from one place.
+                  Cases awaiting legal review, flagged evidence, and legal team updates can be monitored here.
                 </p>
               </div>
               <div className="rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-sm backdrop-blur">
@@ -46,7 +45,6 @@ export default function Dashboard() {
           </section>
 
           <section className="grid gap-6 xl:grid-cols-[1.3fr_0.7fr]">
-            <RecentComplaint />
             <ActivityFeed />
           </section>
 

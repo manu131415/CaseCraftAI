@@ -20,8 +20,7 @@ from app.apis.legal_section_intelligence import router as legal_section_intellig
 from app.apis.documents import router as documents_router
 from app.apis.auth import router as auth_router
 from app.apis.doc_gen import router as doc_router
-
-
+from app.apis.officers import router as officers_router
 
 app = FastAPI(title="CaseCraftAI", description="Case management API for complaints, cases, and investigation diary workflows.")
 
@@ -57,6 +56,7 @@ app.include_router(legal_section_intelligence_router)
 app.include_router(documents_router)
 app.include_router(auth_router, prefix="/auth", tags=["auth"])
 app.include_router(doc_router)
+app.include_router(officers_router)
 
 @app.get(
     "/health",

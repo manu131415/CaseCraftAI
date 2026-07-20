@@ -1,16 +1,15 @@
 import Sidebar from "@/components/layout/sho/Sidebar";
-import Navbar from "@/components/layout/sho/Navbar";
+import Navbar from "@/components/layout/shared/Navbar";
 import DashboardCard from "@/components/dashboard/DashboardCard";
 import RecentComplaint from "@/components/dashboard/RecentComplaint";
 import ActivityFeed from "@/components/dashboard/ActivityFeed";
-import CaseListPanel from "@/components/dashboard/CaseListPanel";
 
 export const dynamic = 'force-dynamic';
 
 const stats = [
-  { title: "Today’s complaints", value: "124", subtitle: "+18% vs yesterday", accent: "bg-blue-600" },
-  { title: "Pending review", value: "36", subtitle: "6 require escalation", accent: "bg-amber-500" },
-  { title: "Closed cases", value: "88", subtitle: "12 cleared today", accent: "bg-emerald-500" },
+  { title: "Today’s complaints", value: "109", subtitle: "+18% vs yesterday", accent: "bg-blue-600" },
+  { title: "Pending review", value: "33", subtitle: "6 require escalation", accent: "bg-amber-500" },
+  { title: "Closed cases", value: "67", subtitle: "12 cleared today", accent: "bg-emerald-500" },
   { title: "High risk", value: "12", subtitle: "2 flagged for urgent action", accent: "bg-rose-500" },
 ];
 
@@ -27,7 +26,7 @@ export default function Dashboard() {
             <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
               <div>
                 <p className="text-sm font-semibold uppercase tracking-[0.3em] text-blue-100">CaseCraftAI</p>
-                <h1 className="mt-2 text-3xl font-semibold">Command center for complaint operations</h1>
+                <h1 className="mt-2 text-3xl font-semibold">Station Officer Page</h1>
                 <p className="mt-3 max-w-2xl text-sm text-blue-50/90">
                   Monitor incoming complaints, review flagged evidence, and keep your field team aligned from one place.
                 </p>
@@ -50,9 +49,6 @@ export default function Dashboard() {
             <ActivityFeed />
           </section>
 
-          <section>
-            <CaseListPanel />
-          </section>
         </div>
       </main>
     </div>

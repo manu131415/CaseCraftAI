@@ -1,5 +1,5 @@
 import Sidebar from "@/components/layout/io/Sidebar";
-import Navbar from "@/components/layout/io/Navbar";
+import Navbar from "@/components/layout/shared/Navbar";
 import DashboardCard from "@/components/dashboard/DashboardCard";
 import RecentComplaint from "@/components/dashboard/RecentComplaint";
 import ActivityFeed from "@/components/dashboard/ActivityFeed";

@@ -3,10 +3,9 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  FileText,
   LayoutDashboard,
   ShieldCheck,
-  Sparkles,
+  Users,
 } from "lucide-react";
 import { useLanguage } from "@/app/providers/LanguageProvider";
 import { Suspense } from "react";
@@ -14,39 +13,27 @@ import { Suspense } from "react";
 const navigationItems = [
   {
     href: "/",
-    key: "overview",
+    key: "Overview",
     namespace: "common",
     icon: LayoutDashboard,
   },
   {
-    href: "/dashboard",
-    key: "dashboard",
+    href: "/dashboard/sho",
+    key: "Dashboard",
     namespace: "common",
     icon: LayoutDashboard,
   },
   {
-    href: "/complaints",
-    key: "complaintList",
-    namespace: "common", // <-- change this
-    icon: FileText,
-  },
-  {
-    href: "/cases",
-    key: "caseList",
+    href: "/sho/cases",
+    key: "Case List",
     namespace: "common",
     icon: ShieldCheck,
   },
   {
-    href: "/complaintRegister",
-    key: "registerComplaint",
-    namespace: "common", // <-- change this
-    icon: FileText,
-  },
-  {
-    href: "/doc_gen_index.html",
-    key: "Generate Document",
-    namespace: "common",   
-    icon: FileText,
+    href: "/sho/officers",
+    key: "Officers",
+    namespace: "common",
+    icon: Users,
   },
   
 ] as const;

@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import Navbar from "@/components/layout/shared/Navbar";
-import Sidebar from "@/components/layout/legal/Sidebar";
-import CaseList from "@/components/case/legal/CaseList";
+import Sidebar from "@/components/layout/sho/Sidebar";
+import CaseList from "@/components/case/sho/CaseList";
 
 export default function CasesPage() {
   const [search, setSearch] = useState("");

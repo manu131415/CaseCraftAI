@@ -58,7 +58,7 @@ export default function TimelinePage() {
             case_id: caseRecord.case_id,
             officer_id: "",
             action_type: "Case created",
-            description: `Case ${caseRecord.case_id} was created for this complaint`,
+            description: `Case ${caseRecord.case_number || caseRecord.case_id} was created for this complaint`,
             occurred_at: caseRecord.created_at || caseRecord.createdAt || null,
           });
 

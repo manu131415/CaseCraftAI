@@ -3,16 +3,17 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import Navbar from "@/components/layout/shared/Navbar";
 import Sidebar from "@/components/layout/io/Sidebar";
 
 interface ComplaintDetail {
   complaint_id: string;
-  complaint_number:string,
+  complaint_number: string;
+  complaint_title?: string;
   complainant_name?: string;
   phone?: string;
-  email?: string;  
+  email?: string;
   crime_category?: string;
   crime_subcategory?: string;
   location?: string;
@@ -37,18 +38,45 @@ interface ComplaintDetail {
   complainants?: Array<any>;
   victims?: Array<any>;
   suspects?: Array<any>;
+  documents?: Array<any>;
 }
 
 export default function ComplaintPage() {
   const params = useParams();
-  const router = useRouter();
   const complaintId = ((params as Record<string, string | string[] | undefined>)?.complaintId as string | undefined) ?? "";
   const [complaint, setComplaint] = useState<ComplaintDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [creating, setCreating] = useState(false);
   const [caseExists, setCaseExists] = useState(false);
   const [caseId, setCaseId] = useState<string | null>(null);
+  const [creatingCase, setCreatingCase] = useState(false);
+  const [caseActionError, setCaseActionError] = useState<string | null>(null);
+
+  const handleCreateCase = async () => {
+    if (!complaintId || !complaint) return;
+
+    setCreatingCase(true);
+    setCaseActionError(null);
+
+    try {
+      const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
+      const res = await axios.post(`${API_BASE}/api/cases`, {
+        complaint_id: complaint.complaint_id || complaintId,
+        complaint_number: complaint.complaint_number,
+        title: complaint.complaint_title || `Case for ${complaint.complaint_number}`,
+        priority: complaint.status || "Medium",
+      });
+
+      const newCaseId = res?.data?.data?.case_id || null;
+      setCaseExists(true);
+      setCaseId(newCaseId);
+    } catch (err: any) {
+      console.error(err);
+      setCaseActionError(err?.response?.data?.detail || err?.message || "Unable to create case");
+    } finally {
+      setCreatingCase(false);
+    }
+  };
 
   useEffect(() => {
     if (!complaintId) {
@@ -66,7 +94,8 @@ export default function ComplaintPage() {
 
         if (cRes.status === "fulfilled") {
           const data = (cRes.value as any).data;
-          setComplaint(data.complaint || data || null);
+          const complaintData = data?.complaint || data;
+          setComplaint(complaintData || null);
         }
 
         if (caseRes.status === "fulfilled") {
@@ -94,34 +123,6 @@ export default function ComplaintPage() {
       console.log("Loaded complaint:", complaint);
     }
   }, [complaint]);
-
-  async function handleCreateCase() {
-    if (!complaintId) return;
-    setCreating(true);
-    try {
-      const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
-      const payload = {
-        complaint_id: complaintId,
-        title: `Case for complaint ${complaintId}`,
-        description: complaint?.description || undefined,
-      };
-
-      const res = await axios.post(`${API_BASE}/api/cases`, payload);
-      const data = res.data?.data;
-      if (data?.case_id) {
-        // navigate to cases dashboard
-        router.push(`/cases`);
-      } else {
-        // fallback
-        setError("Case created but no id returned.");
-      }
-    } catch (err: any) {
-      console.error(err);
-      setError(err?.response?.data?.detail || err?.message || String(err));
-    } finally {
-      setCreating(false);
-    }
-  }
 
   if (loading) return (
     <div className="min-h-screen bg-slate-100">
@@ -171,7 +172,9 @@ export default function ComplaintPage() {
             <div className="flex items-center justify-between">
               <div>
                 <div className="flex items-center gap-3">
-                  <h1 className="text-2xl font-semibold text-slate-900">Complaint {complaint.complaint_number}</h1>
+                  <h1 className="text-2xl font-semibold text-slate-900">
+                    {complaint.complaint_title || `Complaint ${complaint.complaint_number}`}
+                  </h1>
                   {complaint.is_draft && (
                     <span className="inline-block bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-sm font-medium">
                       Draft
@@ -185,6 +188,10 @@ export default function ComplaintPage() {
 
             <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow">
               <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <p className="text-sm font-medium text-slate-700">Complaint number</p>
+                  <p className="mt-1 text-sm text-slate-600">{complaint.complaint_number || "Not provided"}</p>
+                </div>
                 <div>
                   <p className="text-sm font-medium text-slate-700">Complainant</p>
                   <p className="mt-1 text-sm text-slate-600">{complaint.complainant_name || "Not provided"}</p>
@@ -278,10 +285,12 @@ export default function ComplaintPage() {
                   <p className="text-sm font-medium text-slate-700">Victims</p>
                   <div className="mt-2 space-y-3">
                     {complaint.victims.map((v: any, idx: number) => (
-                      <div key={idx} className="rounded-xl bg-slate-50 p-3">
-                        <p className="font-semibold">{v.name || `Victim ${idx + 1}`}</p>
-                        <p className="text-sm text-slate-600">Type: {v.type || "—"}</p>
-                        {v.statement && <p className="text-sm text-slate-600">Statement: {v.statement}</p>}
+                      <div key={v.victim_id || idx} className="rounded-xl bg-slate-50 p-3">
+                        <p className="font-semibold">{v.fullName || `Victim ${idx + 1}`}</p>
+                        <p className="text-sm text-slate-600">Age: {v.age || "—"}</p>
+                        <p className="text-sm text-slate-600">Gender: {v.gender || "—"}</p>
+                        <p className="text-sm text-slate-600">Address: {v.address || "—"}</p>
+                        {v.injuries && <p className="text-sm text-slate-600">Injuries: {v.injuries}</p>}
                       </div>
                     ))}
                   </div>
@@ -293,10 +302,11 @@ export default function ComplaintPage() {
                   <p className="text-sm font-medium text-slate-700">Suspects</p>
                   <div className="mt-2 space-y-3">
                     {complaint.suspects.map((s: any, idx: number) => (
-                      <div key={idx} className="rounded-xl bg-slate-50 p-3">
-                        <p className="font-semibold">{s.name || `Suspect ${idx + 1}`}</p>
-                        <p className="text-sm text-slate-600">Type: {s.type || "—"}</p>
-                        <p className="text-sm text-slate-600">Status: {s.status || "—"}</p>
+                      <div key={s.suspect_id || idx} className="rounded-xl bg-slate-50 p-3">
+                        <p className="font-semibold">{s.fullName || `Suspect ${idx + 1}`}</p>
+                        <p className="text-sm text-slate-600">Alias: {s.alias || "—"}</p>
+                        <p className="text-sm text-slate-600">Gender: {s.gender || "—"}</p>
+                        <p className="text-sm text-slate-600">Address: {s.presentAddress || s.permanentAddress || "—"}</p>
                       </div>
                     ))}
                   </div>
@@ -320,11 +330,20 @@ export default function ComplaintPage() {
                 ) : caseExists ? (
                   <Link href="/cases" className="inline-flex items-center rounded-md border px-3 py-1.5 text-sm font-medium">View case</Link>
                 ) : (
-                  <button disabled={creating} onClick={handleCreateCase} className="inline-flex items-center rounded-md bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-emerald-700">
-                    {creating ? "Creating..." : "Create case"}
+                  <button
+                    type="button"
+                    onClick={handleCreateCase}
+                    disabled={creatingCase}
+                    className="inline-flex items-center rounded-md bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-60"
+                  >
+                    {creatingCase ? "Creating case..." : "Create case"}
                   </button>
                 )}
               </div>
+
+              {caseActionError ? (
+                <p className="mt-3 text-sm text-rose-600">{caseActionError}</p>
+              ) : null}
             </div>
           </div>
         </main>

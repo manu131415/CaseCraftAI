@@ -6,8 +6,10 @@ import {
   createCaseDiary,
   getCaseByComplaint,
   loadDiaryEntriesForComplaint,
+  uploadToCloudinary,
   type CreateDiaryPayload,
   type DiaryEntry,
+  type Attachment,
 } from "@/lib/api/caseDiary";
 
 const emptyForm = {
@@ -28,6 +30,8 @@ export default function CaseDiaryPage() {
   const [error, setError] = useState<string | null>(null);
   const [form, setForm] = useState(emptyForm);
   const [hasCase, setHasCase] = useState(true);
+  const [attachments, setAttachments] = useState<Attachment[]>([]);
+  const [uploadingFiles, setUploadingFiles] = useState(false);
 
   const loadDiary = async () => {
     if (!complaintId) {
@@ -78,22 +82,84 @@ export default function CaseDiaryPage() {
 
       const payload: CreateDiaryPayload = {
         case_id: caseRecord.case_id,
-        officer_id: form.officer_id,
+        officer_id: form.officer_id || undefined,
         action_type: form.action_type,
         description: form.description,
         location: form.location || undefined,
         occurred_at: form.occurred_at || undefined,
+        attachments: attachments.length > 0 ? attachments : undefined,
       };
 
       await createCaseDiary(payload);
       setForm(emptyForm);
+      setAttachments([]);
       await loadDiary();
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      setError("Unable to create the diary entry. Please try again.");
+      const message = err?.response?.data?.detail || err?.message || "Unable to create the diary entry. Please try again.";
+      setError(message);
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (!files) return;
+
+    setUploadingFiles(true);
+    setError(null);
+
+    try {
+      const newAttachments: Attachment[] = [];
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        
+        // Check if Cloudinary config exists
+        if (!process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME) {
+          // Fallback: use local file name for now (would need backend support for actual storage)
+          newAttachments.push({
+            filename: file.name,
+            file_url: URL.createObjectURL(file),
+            file_type: file.type.startsWith('image/') ? 'photo' : 'file',
+            uploaded_at: new Date().toISOString(),
+          });
+        } else {
+          // Upload to Cloudinary
+          try {
+            const url = await uploadToCloudinary(file);
+            newAttachments.push({
+              filename: file.name,
+              file_url: url,
+              file_type: file.type.startsWith('image/') ? 'photo' : 'file',
+              uploaded_at: new Date().toISOString(),
+            });
+          } catch (uploadErr) {
+            console.error('File upload failed:', uploadErr);
+            // Fall back to local URL
+            newAttachments.push({
+              filename: file.name,
+              file_url: URL.createObjectURL(file),
+              file_type: file.type.startsWith('image/') ? 'photo' : 'file',
+              uploaded_at: new Date().toISOString(),
+            });
+          }
+        }
+      }
+
+      setAttachments((prev) => [...prev, ...newAttachments]);
+      event.target.value = '';
+    } catch (err) {
+      console.error('Error handling files:', err);
+      setError('Failed to upload files. Please try again.');
+    } finally {
+      setUploadingFiles(false);
+    }
+  };
+
+  const removeAttachment = (index: number) => {
+    setAttachments((prev) => prev.filter((_, i) => i !== index));
   };
 
   return (
@@ -110,20 +176,20 @@ export default function CaseDiaryPage() {
         <form className="mt-4 grid gap-4 md:grid-cols-2" onSubmit={handleSubmit}>
           <input
             className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
-            placeholder="Action type"
+            placeholder="Action type (e.g., Investigation, Interview, Evidence collection)"
             value={form.action_type}
             onChange={(event) => setForm((prev) => ({ ...prev, action_type: event.target.value }))}
             required
           />
           <input
             className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
-            placeholder="Officer ID"
+            placeholder="Officer ID (optional)"
             value={form.officer_id}
             onChange={(event) => setForm((prev) => ({ ...prev, officer_id: event.target.value }))}
           />
           <input
             className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
-            placeholder="Location"
+            placeholder="Location (optional)"
             value={form.location}
             onChange={(event) => setForm((prev) => ({ ...prev, location: event.target.value }))}
           />
@@ -141,13 +207,81 @@ export default function CaseDiaryPage() {
             onChange={(event) => setForm((prev) => ({ ...prev, description: event.target.value }))}
             required
           />
+          
+          {/* File upload section */}
+          <div className="md:col-span-2">
+            <label className="block text-sm font-medium text-slate-700 mb-2">Attachments (Photos & Files)</label>
+            <div className="flex items-center justify-center w-full">
+              <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-slate-300 border-dashed rounded-lg cursor-pointer hover:bg-slate-50">
+                <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                  <svg className="w-8 h-8 text-slate-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                  <p className="text-sm text-slate-600">
+                    <span className="font-semibold">Click to upload</span> or drag and drop
+                  </p>
+                  <p className="text-xs text-slate-500">Photos, PDFs, Documents (Max 10MB)</p>
+                </div>
+                <input
+                  type="file"
+                  multiple
+                  accept="image/*,.pdf,.doc,.docx,.txt,.jpg,.jpeg,.png"
+                  onChange={handleFileUpload}
+                  disabled={uploadingFiles}
+                  className="hidden"
+                />
+              </label>
+            </div>
+          </div>
+
+          {/* Display uploaded attachments */}
+          {attachments.length > 0 && (
+            <div className="md:col-span-2">
+              <p className="text-sm font-medium text-slate-700 mb-2">Uploaded Files ({attachments.length})</p>
+              <div className="space-y-2">
+                {attachments.map((attachment, index) => (
+                  <div key={index} className="flex items-center justify-between bg-slate-50 rounded-lg p-3">
+                    <div className="flex items-center gap-2 flex-1 min-w-0">
+                      {attachment.file_type === 'photo' ? (
+                        <svg className="w-5 h-5 text-blue-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" />
+                        </svg>
+                      ) : (
+                        <svg className="w-5 h-5 text-red-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" />
+                        </svg>
+                      )}
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium text-slate-900 truncate">{attachment.filename}</p>
+                        <p className="text-xs text-slate-500">{attachment.file_type}</p>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => removeAttachment(index)}
+                      className="ml-2 text-red-600 hover:text-red-700 text-sm"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {error && (
+            <div className="md:col-span-2 rounded-lg bg-red-50 p-3 text-sm text-red-700">
+              {error}
+            </div>
+          )}
+
           <div className="md:col-span-2">
             <button
               type="submit"
-              disabled={submitting}
+              disabled={submitting || uploadingFiles}
               className="rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:opacity-50"
             >
-              {submitting ? "Saving..." : "Create diary entry"}
+              {submitting ? "Saving..." : uploadingFiles ? "Uploading..." : "Create diary entry"}
             </button>
           </div>
         </form>
@@ -177,8 +311,38 @@ export default function CaseDiaryPage() {
                 <p className="mt-2 text-sm text-slate-700">{entry.description}</p>
                 <div className="mt-3 flex flex-wrap gap-4 text-xs text-slate-500">
                   <span>Location: {entry.location || "—"}</span>
+                  <span>Officer: {entry.officer_id || "—"}</span>
                   <span>Created: {entry.created_at ? new Date(entry.created_at).toLocaleString() : "—"}</span>
                 </div>
+                
+                {/* Display attachments if any */}
+                {entry.attachments && entry.attachments.length > 0 && (
+                  <div className="mt-3 border-t border-slate-200 pt-3">
+                    <p className="text-xs font-semibold text-slate-700 mb-2">Attachments ({entry.attachments.length})</p>
+                    <div className="flex flex-wrap gap-2">
+                      {entry.attachments.map((attachment, idx) => (
+                        <a
+                          key={idx}
+                          href={attachment.file_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 rounded-lg bg-blue-50 px-2 py-1 text-xs text-blue-700 hover:bg-blue-100"
+                        >
+                          {attachment.file_type === 'photo' ? (
+                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                              <path d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" />
+                            </svg>
+                          ) : (
+                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                              <path d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.657 6.243A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H7a1 1 0 01-1-1v-6z" />
+                            </svg>
+                          )}
+                          {attachment.filename}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
           </div>

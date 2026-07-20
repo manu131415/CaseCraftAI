@@ -27,6 +27,7 @@ class CaseDiaryCreate(BaseModel):
     related_document_id: Optional[str] = None
     remarks: Optional[str] = None
     next_action: Optional[str] = None
+    attachments: Optional[List[Dict[str, str]]] = None
 
 
 class CaseDiaryUpdate(BaseModel):
@@ -54,6 +55,7 @@ class CaseDiaryEntry(BaseModel):
     related_document_id: Optional[str] = None
     remarks: Optional[str] = None
     next_action: Optional[str] = None
+    attachments: Optional[List[Dict[str, str]]] = None
 
 
 class DiaryCreateData(BaseModel):
@@ -96,11 +98,18 @@ def create_diary_entry(payload: CaseDiaryCreate) -> Dict[str, Any]:
         if not case:
             raise HTTPException(status_code=404, detail="Case not found")
         
-        # Verify officer exists if provided
+        # Officer is optional; only verify if a valid UUID is provided
         if payload.officer_id:
-            officer = db.query(Officer).filter(Officer.officer_id == payload.officer_id).first()
-            if not officer:
-                raise HTTPException(status_code=404, detail="Officer not found")
+            try:
+                # Try to verify officer exists only if it looks like a valid UUID
+                uuid.UUID(payload.officer_id)
+                officer = db.query(Officer).filter(Officer.officer_id == payload.officer_id).first()
+                if not officer:
+                    # Officer ID provided but not found - don't fail, just leave it as is
+                    pass
+            except ValueError:
+                # Not a UUID format, just store it as a string (e.g., officer name)
+                pass
         
         # Verify evidence exists if provided
         if payload.related_evidence_id:
@@ -125,7 +134,8 @@ def create_diary_entry(payload: CaseDiaryCreate) -> Dict[str, Any]:
             related_evidence_id=payload.related_evidence_id,
             related_document_id=payload.related_document_id,
             remarks=payload.remarks,
-            next_action=payload.next_action
+            next_action=payload.next_action,
+            attachments=payload.attachments or []
         )
         
         db.add(diary_entry)

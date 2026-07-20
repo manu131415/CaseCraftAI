@@ -8,7 +8,6 @@ interface Props {
   onBack: () => void;
   onNext: () => void;
   onSubmit: () => void;
-  onSaveDraft?: () => void;
 }
 
 export default function NavigationButtons({
@@ -17,7 +16,6 @@ export default function NavigationButtons({
   onBack,
   onNext,
   onSubmit,
-  onSaveDraft,
 }: Props) {
   const { t } = useLanguage();
 
@@ -33,16 +31,6 @@ export default function NavigationButtons({
       </button>
 
       <div className="flex gap-3">
-        {onSaveDraft && (
-          <button
-            type="button"
-            onClick={onSaveDraft}
-            className="rounded-full border border-orange-400 bg-orange-50 px-5 py-3 text-base font-medium text-orange-700 transition hover:bg-orange-100"
-          >
-            {t("navigation.saveDraft", "complaints")}
-          </button>
-        )}
-
         {currentStep === totalSteps ? (
           <button
             type="button"

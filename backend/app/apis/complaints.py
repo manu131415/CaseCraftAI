@@ -26,6 +26,9 @@ from models.victim import Victim
 from models.suspect import Suspects
 from models.evidence import Evidence
 from models.document import Document
+from models.case import Case
+from models.case_diary import CaseDiary
+from models.officer import Officer
 
 # ===========================
 # SERVICE IMPORTS
@@ -379,6 +382,64 @@ def _format_document(document: Document) -> Dict[str, Any]:
     }
 
 
+def _generate_case_number(complaint_number: str) -> str:
+    """Create a deterministic case number for a newly created case."""
+    year = datetime.now().year
+    suffix = complaint_number.split("-")[-1] if complaint_number else str(uuid.uuid4())[:6].upper()
+    return f"CASE-{year}-{suffix}"
+
+
+def _get_assigned_officer_id(db) -> Optional[str]:
+    """Pick the first available officer for auto-assignment."""
+    officer = db.query(Officer).order_by(Officer.name).first()
+    return officer.officer_id if officer else None
+
+
+def _create_case_and_timeline_artifacts(
+    db,
+    complaint: Complaint,
+    complaint_number: str,
+    assigned_officer_id: Optional[str] = None,
+) -> Case:
+    """Create a case and the initial complaint/case timeline events."""
+    officer_id = assigned_officer_id or _get_assigned_officer_id(db)
+    case = Case(
+        case_id=str(uuid.uuid4()),
+        complaint_id=complaint.complaint_id,
+        assigned_officer_id=officer_id,
+        case_number=_generate_case_number(complaint_number),
+        title=complaint.complaint_title or f"Case for {complaint_number}",
+        status="Open",
+        priority=complaint.priority or "Medium",
+        description=complaint.description or "",
+    )
+    db.add(case)
+    db.flush()
+
+    timeline_entries = [
+        CaseDiary(
+            diary_id=str(uuid.uuid4()),
+            case_id=case.case_id,
+            officer_id=officer_id,
+            action_type="complaint_registered",
+            description=f"Complaint {complaint_number} was registered in the system.",
+            occurred_at=datetime.utcnow(),
+        ),
+        CaseDiary(
+            diary_id=str(uuid.uuid4()),
+            case_id=case.case_id,
+            officer_id=officer_id,
+            action_type="case_created",
+            description=f"Case {case.case_number} was created from complaint {complaint_number}.",
+            occurred_at=datetime.utcnow(),
+        ),
+    ]
+    for entry in timeline_entries:
+        db.add(entry)
+    db.flush()
+    return case
+
+
 # API ENDPOINTS
 # ============================================================
 
@@ -459,6 +520,12 @@ def submit_complaint(payload: ComplaintSubmission) -> Dict[str, Any]:
                     description="",
                 )
                 db.add(evidence)
+
+        _create_case_and_timeline_artifacts(
+            db,
+            complaint,
+            complaint_number,
+        )
         
         db.commit()
         db.refresh(complaint)
@@ -755,9 +822,21 @@ def get_complaint(complaint_id: str) -> Dict[str, Any]:
         ).all()
         
         # Format response
+        attachments = [
+            {
+                "id": str(document.document_id),
+                "fileName": document.title or document.document_type,
+                "fileType": document.document_type,
+                "documentUrl": None,
+                "cloudinaryUrl": None,
+            }
+            for document in documents
+        ]
+
         return {
             "complaint_id": complaint.complaint_id,
             "complaint_number": complaint.complaint_number,
+            "complaint_title": complaint.complaint_title,
             "complainant_name": complaint.complainant_name,
             "phone": complaint.phone,
             "email": complaint.email,
@@ -768,6 +847,7 @@ def get_complaint(complaint_id: str) -> Dict[str, Any]:
             "status": complaint.status,
             "is_draft": complaint.is_draft,
             "created_at": complaint.created_at.isoformat() if complaint.created_at else None,
+            "incident_datetime": complaint.incident_date or None,
             "complainant_father_name": complaint.complainant_father_name,
             "complainant_address": complaint.complainant_address,
             "officerNotes": complaint.officer_notes,
@@ -775,6 +855,7 @@ def get_complaint(complaint_id: str) -> Dict[str, Any]:
             "victims": [_format_victim(v) for v in victims],
             "suspects": [_format_suspect(s) for s in suspects],
             "documents": [_format_document(d) for d in documents],
+            "attachments": attachments,
         }
     
     except HTTPException:

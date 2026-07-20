@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   User,
   MapPin,
@@ -47,6 +48,8 @@ export default function ComplaintList({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [caseComplaintIds, setCaseComplaintIds] = useState<Set<string>>(new Set());
+  const pathname = usePathname();
+  const isCaseCreationAllowed = !!pathname && (pathname.includes("/sho") || pathname.includes("/io") || pathname.includes("/dashboard") || pathname.includes("/complaints"));
 
   useEffect(() => {
     async function loadData() {
@@ -256,6 +259,27 @@ export default function ComplaintList({
           >
             Submit
           </Link>
+        )}
+
+        {isCaseCreationAllowed && !hasCase && (
+          <button
+            onClick={async () => {
+              try {
+                await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000"}/api/cases`, {
+                  complaint_id: complaint.complaint_id,
+                  complaint_number: complaint.complaint_number,
+                  title: complaint.complaint_title || `Case for ${complaint.complaint_number}`,
+                  priority: complaint.status || "Medium",
+                });
+                window.location.reload();
+              } catch (err) {
+                console.error("Failed to create case", err);
+              }
+            }}
+            className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700"
+          >
+            Create case
+          </button>
         )}
 
         {hasCase && (

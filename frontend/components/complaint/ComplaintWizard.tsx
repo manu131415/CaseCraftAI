@@ -168,30 +168,7 @@ export default function ComplaintWizard() {
     }
   }
 
-  async function handleSaveDraft() {
-    try {
-      const API_BASE =
-        process.env.NEXT_PUBLIC_API_BASE_URL ??
-        "http://localhost:8000";
-
-      const response = await axios.post(
-        `${API_BASE}/api/complaints/save-draft`,
-        {
-          complaint: form,
-          victims,
-          suspects,
-          attachments,
-        }
-      );
-
-      alert(`Draft saved successfully! Complaint ID: ${response.data.data.complaint_id}`);
-
-    } catch (err) {
-      console.error(err);
-      alert("Failed to save complaint as draft.");
-    }
-  }
-    if (submitted) {
+  if (submitted) {
     return (
       <div className="mx-auto flex max-w-4xl flex-col items-center justify-center rounded-[32px] border border-emerald-200 bg-white p-10 text-center shadow-xl">
         <div className="rounded-full bg-emerald-100 p-4 text-emerald-600">
@@ -377,7 +354,6 @@ export default function ComplaintWizard() {
         onBack={handleBack}
         onNext={handleNext}
         onSubmit={handleSubmit}
-        onSaveDraft={handleSaveDraft}
       />
 
     </div>

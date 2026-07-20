@@ -19,6 +19,25 @@ from models.case_diary import CaseDiary
 router = APIRouter(prefix="/api/cases", tags=["cases"])
 
 
+def _resolve_complaint_reference(db, complaint_reference: str) -> Optional[Complaint]:
+    """Resolve a complaint by either its UUID or its complaint number."""
+    if not complaint_reference:
+        return None
+
+    complaint = db.query(Complaint).filter(Complaint.complaint_id == complaint_reference).first()
+    if complaint:
+        return complaint
+
+    return db.query(Complaint).filter(Complaint.complaint_number == complaint_reference).first()
+
+
+def _get_case_for_complaint(db, complaint_reference: str) -> Optional[Case]:
+    complaint = _resolve_complaint_reference(db, complaint_reference)
+    if not complaint:
+        return None
+    return db.query(Case).filter(Case.complaint_id == complaint.complaint_id).first()
+
+
 class CaseCreate(BaseModel):
     complaint_id: str
     complaint_number:str
@@ -166,10 +185,22 @@ class SearchResponse(BaseModel):
 def create_case(payload: CaseCreate) -> Dict[str, Any]:
     db = SessionLocal()
     try:
-        # Verify complaint exists
-        complaint = db.query(Complaint).filter(Complaint.complaint_id == payload.complaint_id).first()
+        complaint_reference = payload.complaint_id or payload.complaint_number
+        complaint = _resolve_complaint_reference(db, complaint_reference)
         if not complaint:
             raise HTTPException(status_code=404, detail="Complaint not found")
+
+        existing_case = _get_case_for_complaint(db, complaint.complaint_id)
+        if existing_case:
+            return {
+                "success": True,
+                "message": "Case already exists for this complaint",
+                "data": {
+                    "case_id": existing_case.case_id,
+                    "status": existing_case.status,
+                    "created_at": existing_case.created_at.isoformat() if existing_case.created_at else None,
+                },
+            }
         
         # Verify officer exists if provided
         if payload.assigned_officer_id:
@@ -179,8 +210,7 @@ def create_case(payload: CaseCreate) -> Dict[str, Any]:
         
         case = Case(
             case_id=str(uuid.uuid4()),
-            complaint_id=payload.complaint_id,
-            complaint_number=payload.complaint_number,
+            complaint_id=complaint.complaint_id,
             assigned_officer_id=payload.assigned_officer_id,
             case_number=payload.case_number,
             title=payload.title,
@@ -212,7 +242,7 @@ def create_case(payload: CaseCreate) -> Dict[str, Any]:
                 case_id=case.case_id,
                 officer_id=None,
                 action_type="case_created",
-                description=f"Case created from complaint {payload.complaint_number}",
+                description=f"Case created from complaint {case.complaint_number or payload.complaint_number}",
                 occurred_at=datetime.utcnow(),
             )
             db.add(diary)
@@ -305,14 +335,16 @@ def get_all_cases() -> Dict[str, Any]:
 def get_case_by_complaint_id(complaint_id: str) -> Dict[str, Any]:
     db = SessionLocal()
     try:
-        case = db.query(Case).filter(Case.complaint_id == complaint_id).first()
+        case = _get_case_for_complaint(db, complaint_id)
         if not case:
             raise HTTPException(status_code=404, detail="Case not found")
+
+        complaint = _resolve_complaint_reference(db, complaint_id)
         
         return {
             "case_id": case.case_id,
             "complaint_id": case.complaint_id,
-            "complaint_number":case.complaint_number,
+            "complaint_number": complaint.complaint_number if complaint else None,
             "assigned_officer_id": case.assigned_officer_id,
             "case_number": case.case_number,
             "title": case.title,
@@ -357,11 +389,13 @@ def get_case(case_id: str) -> Dict[str, Any]:
         case = db.query(Case).filter(Case.case_id == case_id).first()
         if not case:
             raise HTTPException(status_code=404, detail="Case not found")
+
+        complaint = _resolve_complaint_reference(db, case.complaint_id)
         
         return {
             "case_id": case.case_id,
             "complaint_id": case.complaint_id,
-            "complaint_number":case.complaint_number,
+            "complaint_number": complaint.complaint_number if complaint else None,
             "assigned_officer_id": case.assigned_officer_id,
             "case_number": case.case_number,
             "title": case.title,

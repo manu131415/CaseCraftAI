@@ -459,6 +459,14 @@ def submit_complaint(payload: ComplaintSubmission) -> Dict[str, Any]:
         # Generate complaint number
         complaint_number = _get_next_complaint_number(db)
         
+        # Convert empty complainant_age to None, or to integer if valid
+        complainant_age = None
+        if complaint_data.complainantAge and complaint_data.complainantAge.strip():
+            try:
+                complainant_age = int(complaint_data.complainantAge)
+            except (ValueError, TypeError):
+                complainant_age = None
+        
         # Create complaint record
         complaint = Complaint(
             complaint_id=str(uuid.uuid4()),
@@ -480,7 +488,7 @@ def submit_complaint(payload: ComplaintSubmission) -> Dict[str, Any]:
             # Complainant details
             complainant_name=complaint_data.complainantName,
             complainant_father_name=complaint_data.complainantFatherName,
-            complainant_age=complaint_data.complainantAge,
+            complainant_age=complainant_age,
             complainant_gender=complaint_data.complainantGender,
             phone=complaint_data.complainantPhone,
             email=complaint_data.complainantEmail,

@@ -11,17 +11,37 @@ interface ComplaintDetail {
   complaint_id: string;
   complaint_number: string;
   complaint_title?: string;
+  complaint_mode?: string;
+  priority?: string;
+  emergency?: string;
+  
   complainant_name?: string;
+  complainant_father_name?: string;
+  complainant_age?: string;
+  complainant_gender?: string;
+  complainant_address?: string;
+  complainant_aadhaar?: string;
+  complainant_relationship?: string;
+  complainant_occupation?: string;
+  complainant_nationality?: string;
+  complainant_photo_url?: string;
+  complainant_photo_name?: string;
+  
   phone?: string;
   email?: string;
   crime_category?: string;
   crime_subcategory?: string;
   location?: string;
+  landmark?: string;
   description?: string;
   status?: string;
   is_draft?: boolean;
   created_at?: string;
   incident_datetime?: string;
+  incident_date?: string;
+  incident_time?: string;
+  ai_summary?: string;
+  officer_notes?: string;
   notes?: string;
   aiSummary?: string;
   officerNotes?: string;
@@ -186,61 +206,159 @@ export default function ComplaintPage() {
               <div className="text-right text-sm text-slate-500">{complaint.created_at ? new Date(complaint.created_at).toLocaleString() : "No date"}</div>
             </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow">
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div>
-                  <p className="text-sm font-medium text-slate-700">Complaint number</p>
-                  <p className="mt-1 text-sm text-slate-600">{complaint.complaint_number || "Not provided"}</p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-slate-700">Complainant</p>
-                  <p className="mt-1 text-sm text-slate-600">{complaint.complainant_name || "Not provided"}</p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-slate-700">Contact</p>
-                  <p className="mt-1 text-sm text-slate-600">{complaint.phone || "-"} {complaint.email ? `• ${complaint.email}` : ""}</p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-slate-700">Crime category</p>
-                  <p className="mt-1 text-sm text-slate-600">{complaint.crime_category || "Not provided"}</p>
-
-                  <p className="text-sm font-medium text-slate-700">Crime sub-category</p>
-                  <p className="mt-1 text-sm text-slate-600">{complaint.crime_subcategory || "Not provided"}</p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-slate-700">Location</p>
-                  <p className="mt-1 text-sm text-slate-600">{complaint.location || "Not provided"}</p>
+            <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow space-y-6">
+              {/* Complaint Information Section */}
+              <div>
+                <h2 className="text-lg font-semibold text-slate-900 mb-4">Complaint Information</h2>
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  <div>
+                    <p className="text-sm font-medium text-slate-700">Complaint Number</p>
+                    <p className="mt-1 text-sm text-slate-600">{complaint.complaint_number || "Not provided"}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-slate-700">Complaint Mode</p>
+                    <p className="mt-1 text-sm text-slate-600">{complaint.complaint_mode || "Not provided"}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-slate-700">Priority</p>
+                    <p className="mt-1 text-sm text-slate-600">{complaint.priority || "Not provided"}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-slate-700">Emergency</p>
+                    <p className="mt-1 text-sm text-slate-600">{complaint.emergency || "No"}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-slate-700">Crime Category</p>
+                    <p className="mt-1 text-sm text-slate-600">{complaint.crime_category || "Not provided"}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-slate-700">Crime Sub-Category</p>
+                    <p className="mt-1 text-sm text-slate-600">{complaint.crime_subcategory || "Not provided"}</p>
+                  </div>
                 </div>
               </div>
 
-              <div className="mt-4">
-                <p className="text-sm font-medium text-slate-700">Incident date/time</p>
-                <p className="mt-1 text-sm text-slate-600">{complaint.incident_datetime ? new Date(complaint.incident_datetime).toLocaleString() : "Not provided"}</p>
+              {/* Incident Details Section */}
+              <div>
+                <h2 className="text-lg font-semibold text-slate-900 mb-4">Incident Details</h2>
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  <div>
+                    <p className="text-sm font-medium text-slate-700">Incident Date</p>
+                    <p className="mt-1 text-sm text-slate-600">{complaint.incident_date ? new Date(complaint.incident_date).toLocaleDateString() : "Not provided"}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-slate-700">Incident Time</p>
+                    <p className="mt-1 text-sm text-slate-600">{complaint.incident_time || "Not provided"}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-slate-700">Location</p>
+                    <p className="mt-1 text-sm text-slate-600">{complaint.location || "Not provided"}</p>
+                  </div>
+                  {complaint.landmark && (
+                    <div>
+                      <p className="text-sm font-medium text-slate-700">Landmark</p>
+                      <p className="mt-1 text-sm text-slate-600">{complaint.landmark}</p>
+                    </div>
+                  )}
+                </div>
               </div>
 
-              <div className="mt-4">
-                <p className="text-sm font-medium text-slate-700">Description</p>
-                <p className="mt-1 text-sm text-slate-600 whitespace-pre-wrap">{complaint.description || "Not provided"}</p>
+              {/* Complainant Details Section */}
+              <div>
+                <h2 className="text-lg font-semibold text-slate-900 mb-4">Complainant Details</h2>
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  <div>
+                    <p className="text-sm font-medium text-slate-700">Full Name</p>
+                    <p className="mt-1 text-sm text-slate-600">{complaint.complainant_name || "Not provided"}</p>
+                  </div>
+                  {complaint.complainant_father_name && (
+                    <div>
+                      <p className="text-sm font-medium text-slate-700">Father's Name</p>
+                      <p className="mt-1 text-sm text-slate-600">{complaint.complainant_father_name}</p>
+                    </div>
+                  )}
+                  {complaint.complainant_age && (
+                    <div>
+                      <p className="text-sm font-medium text-slate-700">Age</p>
+                      <p className="mt-1 text-sm text-slate-600">{complaint.complainant_age}</p>
+                    </div>
+                  )}
+                  {complaint.complainant_gender && (
+                    <div>
+                      <p className="text-sm font-medium text-slate-700">Gender</p>
+                      <p className="mt-1 text-sm text-slate-600">{complaint.complainant_gender}</p>
+                    </div>
+                  )}
+                  <div>
+                    <p className="text-sm font-medium text-slate-700">Phone</p>
+                    <p className="mt-1 text-sm text-slate-600">{complaint.phone || "-"}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-slate-700">Email</p>
+                    <p className="mt-1 text-sm text-slate-600">{complaint.email || "-"}</p>
+                  </div>
+                  {complaint.complainant_occupation && (
+                    <div>
+                      <p className="text-sm font-medium text-slate-700">Occupation</p>
+                      <p className="mt-1 text-sm text-slate-600">{complaint.complainant_occupation}</p>
+                    </div>
+                  )}
+                  {complaint.complainant_nationality && (
+                    <div>
+                      <p className="text-sm font-medium text-slate-700">Nationality</p>
+                      <p className="mt-1 text-sm text-slate-600">{complaint.complainant_nationality}</p>
+                    </div>
+                  )}
+                  {complaint.complainant_relationship && (
+                    <div>
+                      <p className="text-sm font-medium text-slate-700">Relationship to Case</p>
+                      <p className="mt-1 text-sm text-slate-600">{complaint.complainant_relationship}</p>
+                    </div>
+                  )}
+                  {complaint.complainant_aadhaar && (
+                    <div>
+                      <p className="text-sm font-medium text-slate-700">Aadhaar Number</p>
+                      <p className="mt-1 text-sm text-slate-600">{complaint.complainant_aadhaar}</p>
+                    </div>
+                  )}
+                </div>
+                {complaint.complainant_address && (
+                  <div className="mt-4">
+                    <p className="text-sm font-medium text-slate-700">Address</p>
+                    <p className="mt-1 text-sm text-slate-600 whitespace-pre-wrap">{complaint.complainant_address}</p>
+                  </div>
+                )}
+                {complaint.complainant_photo_url && (
+                  <div className="mt-4">
+                    <p className="text-sm font-medium text-slate-700 mb-2">Photo</p>
+                    <img src={complaint.complainant_photo_url} alt="Complainant photo" className="max-h-48 rounded-lg" />
+                  </div>
+                )}
               </div>
 
-              {complaint.aiSummary && (
-                <div className="mt-4">
-                  <p className="text-sm font-medium text-slate-700">AI Summary</p>
-                  <p className="mt-1 text-sm text-slate-600 whitespace-pre-wrap">{complaint.aiSummary}</p>
+              <div>
+                <h2 className="text-lg font-semibold text-slate-900 mb-4">Incident Description</h2>
+                <p className="text-sm text-slate-600 whitespace-pre-wrap">{complaint.description || "Not provided"}</p>
+              </div>
+
+              {(complaint.ai_summary || complaint.aiSummary) && (
+                <div>
+                  <h2 className="text-lg font-semibold text-slate-900 mb-4">AI Summary</h2>
+                  <p className="text-sm text-slate-600 whitespace-pre-wrap">{complaint.ai_summary || complaint.aiSummary}</p>
                 </div>
               )}
 
-              {complaint.officerNotes && (
-                <div className="mt-4">
-                  <p className="text-sm font-medium text-slate-700">Officer notes</p>
-                  <p className="mt-1 text-sm text-slate-600 whitespace-pre-wrap">{complaint.officerNotes}</p>
+              {(complaint.officer_notes || complaint.officerNotes) && (
+                <div>
+                  <h2 className="text-lg font-semibold text-slate-900 mb-4">Officer Notes</h2>
+                  <p className="text-sm text-slate-600 whitespace-pre-wrap">{complaint.officer_notes || complaint.officerNotes}</p>
                 </div>
               )}
 
               {complaint.attachments && complaint.attachments.length > 0 && (
-                <div className="mt-4">
-                  <p className="text-sm font-medium text-slate-700">Attachments</p>
-                  <div className="mt-2 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                <div>
+                  <h2 className="text-lg font-semibold text-slate-900 mb-4">Attachments & Evidence</h2>
+                  <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                     {complaint.attachments.map((att) => {
                       const url = att.documentUrl || att.cloudinaryUrl || (att as any).url || (att as any).document_url;
                       const isImage = (att.fileType || "").startsWith("image") || (url && /\.(jpg|jpeg|png|gif|webp)$/i.test(url));
@@ -266,14 +384,14 @@ export default function ComplaintPage() {
               )}
 
               {complaint.complainants && complaint.complainants.length > 0 && (
-                <div className="mt-6">
-                  <p className="text-sm font-medium text-slate-700">Complainants</p>
-                  <div className="mt-2 space-y-3">
+                <div>
+                  <h2 className="text-lg font-semibold text-slate-900 mb-4">Complainants</h2>
+                  <div className="space-y-3">
                     {complaint.complainants.map((c: any, idx: number) => (
-                      <div key={idx} className="rounded-xl bg-slate-50 p-3">
-                        <p className="font-semibold">{c.name || `Complainant ${idx + 1}`}</p>
+                      <div key={idx} className="rounded-xl bg-slate-50 p-4 border border-slate-200">
+                        <p className="font-semibold text-slate-900">{c.name || `Complainant ${idx + 1}`}</p>
                         <p className="text-sm text-slate-600">Contact: {c.contact || "—"}</p>
-                        {c.statement && <p className="text-sm text-slate-600">Statement: {c.statement}</p>}
+                        {c.statement && <p className="text-sm text-slate-600 mt-2">Statement: {c.statement}</p>}
                       </div>
                     ))}
                   </div>
@@ -281,16 +399,18 @@ export default function ComplaintPage() {
               )}
 
               {complaint.victims && complaint.victims.length > 0 && (
-                <div className="mt-6">
-                  <p className="text-sm font-medium text-slate-700">Victims</p>
-                  <div className="mt-2 space-y-3">
+                <div>
+                  <h2 className="text-lg font-semibold text-slate-900 mb-4">Victims</h2>
+                  <div className="space-y-3">
                     {complaint.victims.map((v: any, idx: number) => (
-                      <div key={v.victim_id || idx} className="rounded-xl bg-slate-50 p-3">
-                        <p className="font-semibold">{v.fullName || `Victim ${idx + 1}`}</p>
-                        <p className="text-sm text-slate-600">Age: {v.age || "—"}</p>
-                        <p className="text-sm text-slate-600">Gender: {v.gender || "—"}</p>
-                        <p className="text-sm text-slate-600">Address: {v.address || "—"}</p>
-                        {v.injuries && <p className="text-sm text-slate-600">Injuries: {v.injuries}</p>}
+                      <div key={v.victim_id || idx} className="rounded-xl bg-slate-50 p-4 border border-slate-200">
+                        <p className="font-semibold text-slate-900">{v.fullName || `Victim ${idx + 1}`}</p>
+                        <div className="grid gap-2 sm:grid-cols-2 mt-2 text-sm text-slate-600">
+                          <p>Age: {v.age || "—"}</p>
+                          <p>Gender: {v.gender || "—"}</p>
+                          <p className="sm:col-span-2">Address: {v.address || "—"}</p>
+                          {v.injuries && <p className="sm:col-span-2">Injuries: {v.injuries}</p>}
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -298,15 +418,17 @@ export default function ComplaintPage() {
               )}
 
               {complaint.suspects && complaint.suspects.length > 0 && (
-                <div className="mt-6">
-                  <p className="text-sm font-medium text-slate-700">Suspects</p>
-                  <div className="mt-2 space-y-3">
+                <div>
+                  <h2 className="text-lg font-semibold text-slate-900 mb-4">Suspects</h2>
+                  <div className="space-y-3">
                     {complaint.suspects.map((s: any, idx: number) => (
-                      <div key={s.suspect_id || idx} className="rounded-xl bg-slate-50 p-3">
-                        <p className="font-semibold">{s.fullName || `Suspect ${idx + 1}`}</p>
-                        <p className="text-sm text-slate-600">Alias: {s.alias || "—"}</p>
-                        <p className="text-sm text-slate-600">Gender: {s.gender || "—"}</p>
-                        <p className="text-sm text-slate-600">Address: {s.presentAddress || s.permanentAddress || "—"}</p>
+                      <div key={s.suspect_id || idx} className="rounded-xl bg-slate-50 p-4 border border-slate-200">
+                        <p className="font-semibold text-slate-900">{s.fullName || `Suspect ${idx + 1}`}</p>
+                        <div className="grid gap-2 sm:grid-cols-2 mt-2 text-sm text-slate-600">
+                          <p>Alias: {s.alias || "—"}</p>
+                          <p>Gender: {s.gender || "—"}</p>
+                          <p className="sm:col-span-2">Address: {s.presentAddress || s.permanentAddress || "—"}</p>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -314,36 +436,37 @@ export default function ComplaintPage() {
               )}
 
               {complaint.notes && (
-                <div className="mt-4">
-                  <p className="text-sm font-medium text-slate-700">Notes</p>
-                  <p className="mt-1 text-sm text-slate-600 whitespace-pre-wrap">{complaint.notes}</p>
+                <div>
+                  <h2 className="text-lg font-semibold text-slate-900 mb-4">Additional Notes</h2>
+                  <p className="text-sm text-slate-600 whitespace-pre-wrap">{complaint.notes}</p>
                 </div>
               )}
 
-              <div className="mt-6 flex gap-3">
-                <Link href="/complaints" className="inline-flex items-center rounded-md border px-3 py-1.5 text-sm font-medium">Back to list</Link>
+              {/* Action Buttons */}
+              <div className="mt-6 flex gap-3 rounded-2xl border border-slate-200 bg-white p-6 shadow">
+                <Link href="/complaints" className="inline-flex items-center rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">Back to list</Link>
 
                 {complaint.is_draft ? (
-                  <Link href={`/complaints/${complaint.complaint_id}/submit`} className="inline-flex items-center rounded-md bg-orange-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-orange-700">
+                  <Link href={`/complaints/${complaint.complaint_id}/submit`} className="inline-flex items-center rounded-md bg-orange-600 px-4 py-2 text-sm font-medium text-white hover:bg-orange-700">
                     Submit Draft
                   </Link>
                 ) : caseExists ? (
-                  <Link href="/cases" className="inline-flex items-center rounded-md border px-3 py-1.5 text-sm font-medium">View case</Link>
+                  <Link href={`/cases/${caseId}`} className="inline-flex items-center rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">View case</Link>
                 ) : (
                   <button
                     type="button"
                     onClick={handleCreateCase}
                     disabled={creatingCase}
-                    className="inline-flex items-center rounded-md bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-60"
+                    className="inline-flex items-center rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-60"
                   >
                     {creatingCase ? "Creating case..." : "Create case"}
                   </button>
                 )}
-              </div>
 
-              {caseActionError ? (
-                <p className="mt-3 text-sm text-rose-600">{caseActionError}</p>
-              ) : null}
+                {caseActionError ? (
+                  <p className="text-sm text-rose-600 ml-auto">{caseActionError}</p>
+                ) : null}
+              </div>
             </div>
           </div>
         </main>

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import axios from "axios";
 import {
   createCaseDiary,
   getCaseByComplaint,
@@ -115,37 +116,38 @@ export default function CaseDiaryPage() {
 
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        
-        // Check if Cloudinary config exists
-        if (!process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME) {
-          // Fallback: use local file name for now (would need backend support for actual storage)
-          newAttachments.push({
-            filename: file.name,
-            file_url: URL.createObjectURL(file),
-            file_type: file.type.startsWith('image/') ? 'photo' : 'file',
-            uploaded_at: new Date().toISOString(),
-          });
-        } else {
-          // Upload to Cloudinary
+        let fileUrl = '';
+
+        // Try to upload to Cloudinary if configured
+        const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+        if (cloudName) {
           try {
-            const url = await uploadToCloudinary(file);
-            newAttachments.push({
-              filename: file.name,
-              file_url: url,
-              file_type: file.type.startsWith('image/') ? 'photo' : 'file',
-              uploaded_at: new Date().toISOString(),
-            });
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('upload_preset', 'unsigned_preset');
+            formData.append('folder', 'casecraft/diary');
+
+            const uploadRes = await axios.post(
+              `https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`,
+              formData
+            );
+            fileUrl = uploadRes.data.secure_url;
           } catch (uploadErr) {
-            console.error('File upload failed:', uploadErr);
+            console.error('Cloudinary upload failed:', uploadErr);
             // Fall back to local URL
-            newAttachments.push({
-              filename: file.name,
-              file_url: URL.createObjectURL(file),
-              file_type: file.type.startsWith('image/') ? 'photo' : 'file',
-              uploaded_at: new Date().toISOString(),
-            });
+            fileUrl = URL.createObjectURL(file);
           }
+        } else {
+          // No Cloudinary config, use local URL
+          fileUrl = URL.createObjectURL(file);
         }
+
+        newAttachments.push({
+          filename: file.name,
+          file_url: fileUrl,
+          file_type: file.type.startsWith('image/') ? 'photo' : 'file',
+          uploaded_at: new Date().toISOString(),
+        });
       }
 
       setAttachments((prev) => [...prev, ...newAttachments]);

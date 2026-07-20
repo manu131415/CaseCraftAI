@@ -3,6 +3,7 @@ from sqlalchemy import String
 from sqlalchemy import Text
 from sqlalchemy import DateTime
 from sqlalchemy import Boolean
+from sqlalchemy import Integer
 from sqlalchemy.sql import func
 
 from database.db import Base
@@ -51,7 +52,7 @@ class Complaint(Base):
 
     complainant_father_name = Column(String(255))
 
-    complainant_age = Column(String(10))
+    complainant_age = Column(Integer, nullable=True)
 
     complainant_gender = Column(String(20))
 

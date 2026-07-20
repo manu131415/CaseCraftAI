@@ -72,20 +72,18 @@ export default function DocumentsAndEvidence({ onDocumentsSubmit }: Props) {
 
     try {
       const uploadedFiles: DocumentFile[] = [];
+      const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
 
       for (const fileItem of files) {
         const formData = new FormData();
         formData.append("file", fileItem.file);
 
         try {
-          const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
-          const response = await axios.post(`${API_BASE}/api/complaints/upload-evidence`, formData, {
-            headers: { "Content-Type": "multipart/form-data" },
-          });
+          const response = await axios.post(`${API_BASE}/api/upload`, formData);
 
           uploadedFiles.push({
             ...fileItem,
-            cloudinaryUrl: response.data.cloudinaryUrl,
+            cloudinaryUrl: response.data.url || response.data.secure_url,
             uploading: false,
           });
         } catch (error) {

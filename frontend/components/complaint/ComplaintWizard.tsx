@@ -162,9 +162,14 @@ export default function ComplaintWizard() {
 
       setSubmitted(true);
 
-    } catch (err) {
-      console.error(err);
-      alert("Failed to register complaint.");
+    } catch (err: any) {
+      console.error("Complaint submission error:", err);
+      const errorMessage = 
+        err?.response?.data?.detail || 
+        err?.response?.data?.message ||
+        err?.message ||
+        "Failed to register complaint.";
+      alert(`Failed to register complaint: ${errorMessage}`);
     }
   }
 

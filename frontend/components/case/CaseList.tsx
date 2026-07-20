@@ -199,6 +199,13 @@ export default function CaseList({
                   <td className="px-6 py-4 space-x-2">
 
                     <Link
+                      href={`/cases/${caseItem.case_id}`}
+                      className="rounded-lg bg-blue-600 px-3 py-2 text-sm text-white hover:bg-blue-700"
+                    >
+                      View
+                    </Link>
+
+                    <Link
                       href={`/complaints/${caseItem.complaint_id}/legal_sections`}
                       className="rounded-lg border border-slate-300 px-3 py-2 text-sm hover:bg-slate-100"
                     >

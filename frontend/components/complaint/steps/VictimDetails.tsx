@@ -1,8 +1,9 @@
 "use client";
 
-import { ChangeEvent, useRef } from "react";
+import { ChangeEvent, useRef, useState } from "react";
 import { Camera } from "lucide-react";
 import { VictimEntry } from "../types";
+import { uploadPhotoToCloudinary } from "@/lib/api/complaints";
 
 interface Props {
   victims: VictimEntry[];
@@ -14,6 +15,7 @@ export default function VictimDetails({
   setVictims,
 }: Props) {
   const fileInputRefs = useRef<Array<HTMLInputElement | null>>([]);
+  const [uploadingPhotoIndex, setUploadingPhotoIndex] = useState<number | null>(null);
 
   function handleFieldChange(
     index: number,
@@ -27,30 +29,33 @@ export default function VictimDetails({
     setVictims(updated);
   }
 
-  function handlePhotoUpload(
+  async function handlePhotoUpload(
     index: number,
     event: ChangeEvent<HTMLInputElement>
   ) {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-
-    reader.onload = () => {
+    setUploadingPhotoIndex(index);
+    try {
+      const cloudinaryUrl = await uploadPhotoToCloudinary(file);
       const updated = victims.map((victim, i) =>
         i === index
           ? {
               ...victim,
-              photoUrl: reader.result as string,
+              photoUrl: cloudinaryUrl,
               photoName: file.name,
             }
           : victim
       );
 
       setVictims(updated);
-    };
-
-    reader.readAsDataURL(file);
+    } catch (err) {
+      console.error("Photo upload failed:", err);
+      alert("Failed to upload photo. Please try again.");
+    } finally {
+      setUploadingPhotoIndex(null);
+    }
   }
 
   function removeVictim(index: number) {
@@ -267,10 +272,11 @@ export default function VictimDetails({
                 onClick={() =>
                   fileInputRefs.current[index]?.click()
                 }
-                className="flex items-center gap-2 rounded-full border px-4 py-2"
+                disabled={uploadingPhotoIndex === index}
+                className="flex items-center gap-2 rounded-full border px-4 py-2 hover:bg-slate-50 disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 <Camera size={18} />
-                Upload Photo
+                {uploadingPhotoIndex === index ? "Uploading..." : "Upload Photo"}
               </button>
 
             </div>
@@ -283,6 +289,7 @@ export default function VictimDetails({
               accept="image/*"
               className="hidden"
               onChange={(e) => handlePhotoUpload(index, e)}
+              disabled={uploadingPhotoIndex === index}
             />
 
             {victim.photoUrl && (

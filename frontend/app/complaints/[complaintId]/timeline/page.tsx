@@ -122,6 +122,39 @@ export default function TimelinePage() {
                   </div>
                   <p className="mt-2 text-sm text-slate-700">{entry.description}</p>
                   <p className="mt-3 text-xs text-slate-500">Location: {entry.location || "—"}</p>
+                  
+                  {/* Display attachments if any */}
+                  {entry.attachments && entry.attachments.length > 0 && (
+                    <div className="mt-3 border-t border-slate-200 pt-3">
+                      <p className="text-xs font-semibold text-slate-700 mb-2">Attachments ({entry.attachments.length})</p>
+                      <div className="flex flex-wrap gap-2">
+                        {entry.attachments.map((attachment, idx) => {
+                          const isImage = attachment.file_type === 'photo' || (attachment.file_url && /\.(jpg|jpeg|png|gif|webp)$/i.test(attachment.file_url));
+                          
+                          return (
+                            <a
+                              key={idx}
+                              href={attachment.file_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 rounded-lg bg-blue-50 px-2 py-1 text-xs text-blue-700 hover:bg-blue-100"
+                            >
+                              {isImage ? (
+                                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                  <path d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" />
+                                </svg>
+                              ) : (
+                                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                  <path d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.657 6.243A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H7a1 1 0 01-1-1v-6z" />
+                                </svg>
+                              )}
+                              {attachment.filename}
+                            </a>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}

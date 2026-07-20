@@ -1,8 +1,9 @@
 "use client";
 
-import { ChangeEvent, useRef } from "react";
+import { ChangeEvent, useRef, useState } from "react";
 import { Camera } from "lucide-react";
 import { ComplaintData } from "../types";
+import { uploadPhotoToCloudinary } from "@/lib/api/complaints";
 
 interface Props {
   form: ComplaintData;
@@ -14,6 +15,7 @@ export default function ComplainantDetails({
   setForm,
 }: Props) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
 
   function handleChange(
     e: React.ChangeEvent<
@@ -28,24 +30,27 @@ export default function ComplainantDetails({
     });
   }
 
-  function handlePhotoUpload(
+  async function handlePhotoUpload(
     event: ChangeEvent<HTMLInputElement>
   ) {
     const file = event.target.files?.[0];
 
     if (!file) return;
 
-    const reader = new FileReader();
-
-    reader.onload = () => {
+    setUploadingPhoto(true);
+    try {
+      const cloudinaryUrl = await uploadPhotoToCloudinary(file);
       setForm({
         ...form,
-        complainantPhotoUrl: reader.result as string,
+        complainantPhotoUrl: cloudinaryUrl,
         complainantPhotoName: file.name,
       });
-    };
-
-    reader.readAsDataURL(file);
+    } catch (err) {
+      console.error("Photo upload failed:", err);
+      alert("Failed to upload photo. Please try again.");
+    } finally {
+      setUploadingPhoto(false);
+    }
   }
 
   return (
@@ -277,10 +282,11 @@ export default function ComplainantDetails({
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="flex items-center gap-2 rounded-full border px-4 py-2 hover:bg-slate-50"
+            disabled={uploadingPhoto}
+            className="flex items-center gap-2 rounded-full border px-4 py-2 hover:bg-slate-50 disabled:opacity-60 disabled:cursor-not-allowed"
           >
             <Camera size={18} />
-            Upload Photo
+            {uploadingPhoto ? "Uploading..." : "Upload Photo"}
           </button>
 
         </div>
@@ -291,6 +297,7 @@ export default function ComplainantDetails({
           accept="image/*"
           className="hidden"
           onChange={handlePhotoUpload}
+          disabled={uploadingPhoto}
         />
 
         {form.complainantPhotoUrl && (
@@ -310,7 +317,7 @@ export default function ComplainantDetails({
               </p>
 
               <p className="text-sm text-slate-500">
-                Photo uploaded successfully
+                Photo uploaded to Cloudinary
               </p>
 
             </div>

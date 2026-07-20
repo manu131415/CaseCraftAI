@@ -98,18 +98,20 @@ def create_diary_entry(payload: CaseDiaryCreate) -> Dict[str, Any]:
         if not case:
             raise HTTPException(status_code=404, detail="Case not found")
         
-        # Officer is optional; only verify if a valid UUID is provided
+        # Officer is optional; verify if a valid UUID is provided
+        verified_officer_id = None
         if payload.officer_id:
             try:
                 # Try to verify officer exists only if it looks like a valid UUID
                 uuid.UUID(payload.officer_id)
                 officer = db.query(Officer).filter(Officer.officer_id == payload.officer_id).first()
-                if not officer:
-                    # Officer ID provided but not found - don't fail, just leave it as is
-                    pass
+                if officer:
+                    verified_officer_id = payload.officer_id
+                # If officer not found, leave verified_officer_id as None (NULL in DB)
             except ValueError:
-                # Not a UUID format, just store it as a string (e.g., officer name)
-                pass
+                # Not a UUID format - could be a name or badge number
+                # Try to find officer by other fields or just store as NULL
+                verified_officer_id = None
         
         # Verify evidence exists if provided
         if payload.related_evidence_id:
@@ -126,7 +128,7 @@ def create_diary_entry(payload: CaseDiaryCreate) -> Dict[str, Any]:
         diary_entry = CaseDiary(
             diary_id=str(uuid.uuid4()),
             case_id=payload.case_id,
-            officer_id=payload.officer_id,
+            officer_id=verified_officer_id,  # Use verified ID (or None)
             action_type=payload.action_type,
             description=payload.description,
             location=payload.location,
@@ -139,6 +141,21 @@ def create_diary_entry(payload: CaseDiaryCreate) -> Dict[str, Any]:
         )
         
         db.add(diary_entry)
+        db.flush()
+        
+        # Create evidence records from attachments
+        if payload.attachments:
+            for attachment in payload.attachments:
+                evidence = Evidence(
+                    complaint_id=case.complaint_id,
+                    evidence_type=attachment.get('file_type', 'document'),
+                    file_name=attachment.get('filename', 'attachment'),
+                    file_type=attachment.get('file_type', 'document'),
+                    file_path=attachment.get('file_url', ''),
+                    description=f"Attached to diary entry: {payload.action_type}"
+                )
+                db.add(evidence)
+        
         db.commit()
         db.refresh(diary_entry)
         

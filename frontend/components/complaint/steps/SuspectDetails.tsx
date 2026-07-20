@@ -1,8 +1,9 @@
 "use client";
 
-import { ChangeEvent, useRef } from "react";
+import { ChangeEvent, useRef, useState } from "react";
 import { Camera } from "lucide-react";
 import { SuspectEntry } from "../types";
+import { uploadPhotoToCloudinary } from "@/lib/api/complaints";
 
 interface Props {
   suspects: SuspectEntry[];
@@ -14,6 +15,7 @@ export default function SuspectDetails({
   setSuspects,
 }: Props) {
   const fileInputRefs = useRef<Array<HTMLInputElement | null>>([]);
+  const [uploadingPhotoIndex, setUploadingPhotoIndex] = useState<number | null>(null);
 
   function handleFieldChange(
     index: number,
@@ -27,7 +29,7 @@ export default function SuspectDetails({
     setSuspects(updated);
   }
 
-  function handlePhotoUpload(
+  async function handlePhotoUpload(
     index: number,
     event: ChangeEvent<HTMLInputElement>
   ) {
@@ -35,23 +37,26 @@ export default function SuspectDetails({
 
     if (!file) return;
 
-    const reader = new FileReader();
-
-    reader.onload = () => {
+    setUploadingPhotoIndex(index);
+    try {
+      const cloudinaryUrl = await uploadPhotoToCloudinary(file);
       const updated = suspects.map((suspect, i) =>
         i === index
           ? {
               ...suspect,
-              photoUrl: reader.result as string,
+              photoUrl: cloudinaryUrl,
               photoName: file.name,
             }
           : suspect
       );
 
       setSuspects(updated);
-    };
-
-    reader.readAsDataURL(file);
+    } catch (err) {
+      console.error("Photo upload failed:", err);
+      alert("Failed to upload photo. Please try again.");
+    } finally {
+      setUploadingPhotoIndex(null);
+    }
   }
 
   function removeSuspect(index: number) {
@@ -558,10 +563,11 @@ export default function SuspectDetails({
               <button
                 type="button"
                 onClick={() => fileInputRefs.current[index]?.click()}
-                className="flex items-center gap-2 rounded-full border px-4 py-2"
+                disabled={uploadingPhotoIndex === index}
+                className="flex items-center gap-2 rounded-full border px-4 py-2 hover:bg-slate-50 disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 <Camera size={18} />
-                Upload Photo
+                {uploadingPhotoIndex === index ? "Uploading..." : "Upload Photo"}
               </button>
 
             </div>
@@ -574,6 +580,7 @@ export default function SuspectDetails({
               accept="image/*"
               className="hidden"
               onChange={(e) => handlePhotoUpload(index, e)}
+              disabled={uploadingPhotoIndex === index}
             />
 
             {suspect.photoUrl && (

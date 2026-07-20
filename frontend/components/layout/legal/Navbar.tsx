@@ -5,18 +5,25 @@ import { useLanguage } from "@/app/providers/LanguageProvider";
 import LanguageSwitcher from "../LanguageSwitcher";
 import { Suspense } from "react";
 
-function NavbarContent() {
+interface NavbarProps {
+  /** Small colored label above the heading, e.g. "Legal Library". Falls back to nav.operationsCenter. */
+  eyebrow?: string;
+  /** Main heading, e.g. "Search Legal Sections". Falls back to nav.dailyCaseOverview. */
+  title?: string;
+}
+
+function NavbarContent({ eyebrow, title }: NavbarProps) {
   const { t } = useLanguage();
 
   return (
     <header className="relative z-20 flex items-center justify-between border-b border-slate-200 bg-white/80 px-6 py-4 backdrop-blur">
       <div>
         <p className="text-sm font-medium text-blue-600">
-          {t("nav.operationsCenter")}
+          {eyebrow ?? t("nav.operationsCenter")}
         </p>
 
         <h2 className="text-xl font-semibold text-slate-900">
-          {t("nav.dailyCaseOverview")}
+          {title ?? t("nav.dailyCaseOverview")}
         </h2>
       </div>
 
@@ -52,7 +59,7 @@ function NavbarContent() {
   );
 }
 
-export default function Navbar() {
+export default function Navbar({ eyebrow, title }: NavbarProps) {
   return (
     <Suspense
       fallback={
@@ -66,8 +73,7 @@ export default function Navbar() {
         </header>
       }
     >
-      <NavbarContent />
+      <NavbarContent eyebrow={eyebrow} title={title} />
     </Suspense>
   );
 }
-

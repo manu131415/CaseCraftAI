@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
+  BookOpenIcon,
   FileText,
   LayoutDashboard,
   ShieldCheck,
@@ -19,34 +20,22 @@ const navigationItems = [
     icon: LayoutDashboard,
   },
   {
-    href: "/dashboard",
+    href: "/dashboard/legal",
     key: "dashboard",
     namespace: "common",
-    icon: LayoutDashboard,
+    icon: Sparkles,
   },
   {
-    href: "/complaints",
-    key: "complaintList",
-    namespace: "common", // <-- change this
-    icon: FileText,
-  },
-  {
-    href: "/cases",
+    href: "/legal/cases",
     key: "caseList",
     namespace: "common",
     icon: ShieldCheck,
   },
   {
-    href: "/complaintRegister",
-    key: "registerComplaint",
-    namespace: "common", // <-- change this
-    icon: FileText,
-  },
-  {
-    href: "/doc_gen_index.html",
-    key: "Generate Document",
+    href: "/legal/legal-library",
+    key: "Legal Library",
     namespace: "common",   
-    icon: FileText,
+    icon: BookOpenIcon,
   },
   
 ] as const;

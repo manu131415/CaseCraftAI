@@ -3,9 +3,11 @@ from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
+from sqlalchemy import text as sql_text
 
 from database.db import SessionLocal
 from models.legal_sections import LegalSection
+from app.legal.embeddings import embed_query
 
 
 router = APIRouter(prefix="/api/legal-sections", tags=["legal-sections"])
@@ -68,6 +70,26 @@ class LegalSectionDeleteResponse(BaseModel):
     message: str
 
 
+class MappingReference(BaseModel):
+    act_pair: str
+    old_act: str
+    new_act: str
+    old_section: Optional[str] = None
+    new_section: str
+    subject: Optional[str] = None
+    summary_of_comparison: Optional[str] = None
+
+
+class LegalSectionSearchResult(LegalSectionSummary):
+    similarity: float
+    mapping: Optional[MappingReference] = None
+
+
+class LegalSectionSearchResponse(BaseModel):
+    query: str
+    results: List[LegalSectionSearchResult]
+
+
 @router.post(
     "",
     response_model=LegalSectionCreateResponse,
@@ -86,11 +108,11 @@ def create_legal_section(payload: LegalSectionCreate) -> Dict[str, Any]:
             category=payload.category,
             embedding=payload.embedding
         )
-        
+
         db.add(legal_section)
         db.commit()
         db.refresh(legal_section)
-        
+
         return {
             "success": True,
             "message": "Legal section created successfully",
@@ -137,6 +159,102 @@ def get_all_legal_sections() -> Dict[str, Any]:
 
 
 @router.get(
+    "/search",
+    response_model=LegalSectionSearchResponse,
+    summary="Semantic search across legal sections",
+    description=(
+        "Embeds the query with the same model used to index legal_sections, "
+        "ranks sections by pgvector cosine similarity, and attaches the "
+        "corresponding old/new act cross-reference from "
+        "legal_section_mappings when one exists. NOTE: registered before "
+        "/{id} so 'search' is never parsed as a UUID."
+    ),
+    tags=["legal-sections"],
+)
+def search_legal_sections(q: str, limit: int = 10) -> Dict[str, Any]:
+    query = q.strip()
+    if not query:
+        raise HTTPException(status_code=400, detail="Query parameter 'q' is required")
+    if limit < 1 or limit > 50:
+        raise HTTPException(status_code=400, detail="limit must be between 1 and 50")
+
+    try:
+        query_vector = embed_query(query)
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=f"Failed to embed query: {str(e)}")
+
+    # pgvector's Postgres literal format: '[0.1,0.2,...]', cast explicitly
+    # in SQL. This avoids relying on the project's custom `Vector` type
+    # (models/_types.py) exposing an ORM-level `.cosine_distance()`
+    # comparator -- raw SQL only needs Postgres itself to have the `vector`
+    # type, which it already does (the ivfflat index proves that).
+    query_vector_literal = "[" + ",".join(f"{v:.8f}" for v in query_vector) + "]"
+
+    db = SessionLocal()
+    try:
+        # <=> is pgvector's cosine distance operator: 0 (identical) to
+        # 2 (opposite); convert to a 0-1 similarity score for the frontend.
+        rows = db.execute(
+            sql_text(
+                """
+                SELECT id, act_code, section_number, title, section_text,
+                       category, created_at,
+                       (embedding <=> CAST(:qvec AS vector)) AS distance
+                FROM legal_sections
+                ORDER BY embedding <=> CAST(:qvec AS vector)
+                LIMIT :limit
+                """
+            ),
+            {"qvec": query_vector_literal, "limit": limit},
+        ).mappings().all()
+
+        results = []
+        for row in rows:
+            similarity = max(0.0, 1.0 - (row["distance"] / 2.0))
+
+            # A section can appear as either side of a cross-reference:
+            # a BNS section maps to its old IPC section, or vice versa.
+            mapping_row = db.execute(
+                sql_text(
+                    """
+                    SELECT act_pair, old_act, new_act, old_section, new_section,
+                           subject, summary_of_comparison
+                    FROM legal_section_mappings
+                    WHERE (new_act = :act_code AND new_section = :section_number)
+                       OR (old_act = :act_code AND old_section = :section_number)
+                    LIMIT 1
+                    """
+                ),
+                {
+                    "act_code": row["act_code"],
+                    "section_number": row["section_number"],
+                },
+            ).mappings().first()
+
+            results.append(
+                {
+                    "id": str(row["id"]),
+                    "act_code": row["act_code"],
+                    "section_number": row["section_number"],
+                    "title": row["title"],
+                    "section_text": row["section_text"],
+                    "category": row["category"],
+                    "created_at": row["created_at"].isoformat() if row["created_at"] else None,
+                    "similarity": round(similarity, 4),
+                    "mapping": dict(mapping_row) if mapping_row else None,
+                }
+            )
+
+        return {"query": query, "results": results}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Search failed: {str(e)}")
+    finally:
+        db.close()
+
+
+@router.get(
     "/{id}",
     response_model=LegalSectionDetailResponse,
     summary="Get legal section",
@@ -149,7 +267,7 @@ def get_legal_section(id: str) -> Dict[str, Any]:
         legal_section = db.query(LegalSection).filter(LegalSection.id == uuid.UUID(id)).first()
         if not legal_section:
             raise HTTPException(status_code=404, detail="Legal section not found")
-        
+
         return {
             "id": str(legal_section.id),
             "act_code": legal_section.act_code,
@@ -182,8 +300,7 @@ def update_legal_section(id: str, payload: LegalSectionUpdate) -> Dict[str, Any]
         legal_section = db.query(LegalSection).filter(LegalSection.id == uuid.UUID(id)).first()
         if not legal_section:
             raise HTTPException(status_code=404, detail="Legal section not found")
-        
-        # Update only provided fields
+
         if payload.act_code is not None:
             legal_section.act_code = payload.act_code
         if payload.section_number is not None:
@@ -196,10 +313,10 @@ def update_legal_section(id: str, payload: LegalSectionUpdate) -> Dict[str, Any]
             legal_section.category = payload.category
         if payload.embedding is not None:
             legal_section.embedding = payload.embedding
-        
+
         db.commit()
         db.refresh(legal_section)
-        
+
         return {
             "success": True,
             "message": "Legal section updated successfully",
@@ -231,10 +348,10 @@ def delete_legal_section(id: str) -> Dict[str, Any]:
         legal_section = db.query(LegalSection).filter(LegalSection.id == uuid.UUID(id)).first()
         if not legal_section:
             raise HTTPException(status_code=404, detail="Legal section not found")
-        
+
         db.delete(legal_section)
         db.commit()
-        
+
         return {
             "success": True,
             "message": "Legal section deleted successfully"

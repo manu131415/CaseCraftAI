@@ -1,81 +1,77 @@
-# app/services/doc_engine/engine.py
+from io import BytesIO
+from sqlalchemy.orm import Session
 
-from pathlib import Path
-
-from .fetcher import CaseDataFetcher
+from .fetcher import DataFetcher
 from .context_builder import ContextBuilder
-from .translator import Translator
-from .renderer import Renderer
-from .registry import DOCUMENT_REGISTRY
+from .validator import DocumentValidator
+from .registry import GeneratorRegistry
 
 
 class DocumentEngine:
+    """
+    Main orchestration class for document generation.
+    """
 
-    def __init__(self, db):
-
+    def __init__(self, db: Session):
         self.db = db
 
-        self.fetcher = CaseDataFetcher(db)
-
-        self.translator = Translator()
-
-        self.renderer = Renderer(
-            Path(__file__).parent / "templates"
-        )
+        self.fetcher = DataFetcher(db)
+        self.context_builder = ContextBuilder()
 
     def generate(
         self,
-        *,
         case_id: str,
         document_type: str,
         language: str = "en",
-    ):
+    ) -> BytesIO:
+        """
+        Generate a document.
 
-        # ----------------------------------------
-        # Validate document
-        # ----------------------------------------
+        Args:
+            case_id: Case ID
+            document_type: medical/remand/chargesheet...
+            language: Template language
 
-        if document_type not in DOCUMENT_REGISTRY:
-            raise ValueError(
-                f"Unsupported document type: {document_type}"
-            )
+        Returns:
+            BytesIO
+        """
 
-        # ----------------------------------------
-        # Fetch database
-        # ----------------------------------------
+        # --------------------------------------------------
+        # Fetch complete case data
+        # --------------------------------------------------
 
-        data = self.fetcher.fetch(case_id)
+        raw_data = self.fetcher.fetch_case_data(case_id)
 
-        # ----------------------------------------
-        # Load translations
-        # ----------------------------------------
+        # --------------------------------------------------
+        # Build template context
+        # --------------------------------------------------
 
-        translations = self.translator.load(language)
+        context = self.context_builder.build(raw_data)
 
-        # ----------------------------------------
-        # Build common context
-        # ----------------------------------------
+        # --------------------------------------------------
+        # Validate
+        # --------------------------------------------------
 
-        builder = ContextBuilder(translations)
-
-        context = builder.build(data)
-
-        # ----------------------------------------
-        # Document-specific context
-        # ----------------------------------------
-
-        generator_cls = DOCUMENT_REGISTRY[document_type]
-        generator = generator_cls()
-
-        context = generator.build_context(context)
-
-        # ----------------------------------------
-        # Render DOCX
-        # ----------------------------------------
-
-        buffer = self.renderer.render(
-            generator.template_name,
-            context,
+        DocumentValidator.validate(
+            document_type=document_type,
+            context=context,
         )
 
-        return buffer
+        # --------------------------------------------------
+        # Select Generator
+        # --------------------------------------------------
+
+        generator = GeneratorRegistry.get_generator(
+            document_type
+        )
+
+        # --------------------------------------------------
+        # Generate document
+        # --------------------------------------------------
+
+        output = generator.generate(
+            context=context,
+            language=language,
+        )
+
+        return output

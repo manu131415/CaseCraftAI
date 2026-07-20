@@ -1,44 +1,50 @@
 export const documentList = [
   {
-    type: "purvani_chargesheet",
-    title: "Purvani Chargesheet",
+    title: "Medical Examination Requisition",
     description:
-      "Supplementary report for absconding accused and additional evidence.",
+      "Generate a requisition letter requesting medical examination of the victim or accused.",
+    type: "medical",
   },
   {
-    type: "medical_treatment_letter",
-    title: "Medical Treatment Letter",
+    title: "Police Remand Application",
     description:
-      "Medical requisition letter for accused or victim examination.",
+      "Prepare an application requesting police custody remand of the accused before the court.",
+    type: "remand",
   },
   {
-    type: "remand_request_letter",
-    title: "Remand Request Letter",
+    title: "Chargesheet",
     description:
-      "Application requesting police custody before Magistrate.",
+      "Generate the final chargesheet containing investigation findings, evidence, witnesses, and applicable legal sections.",
+    type: "chargesheet",
   },
   {
-    type: "seizure_receipt",
-    title: "Seizure Receipt",
+    title: "Supplementary Chargesheet",
     description:
-      "Receipt for seized articles, devices and recovered property.",
+      "Create an additional chargesheet to submit newly discovered evidence or investigation findings.",
+    type: "purvani",
   },
   {
-    type: "court_custody_letter",
-    title: "Court Custody Letter",
+    title: "Seizure Memo",
     description:
-      "Letter requesting judicial custody of the accused.",
+      "Generate a seizure memo documenting all articles, property, and evidence seized during the investigation.",
+    type: "seizure",
   },
   {
-    type: "accused_panchanama",
-    title: "Accused Panchanama",
+    title: "Scene of Offence Panchnama",
     description:
-      "Discovery and recovery panchanama for recovered articles.",
+      "Prepare a detailed panchnama describing the crime scene, observations, and recovered evidence.",
+    type: "panchnama",
   },
   {
-    type: "accused_face_identification_form",
-    title: "Accused Face ID Form",
+    title: "Court Custody Warrant",
     description:
-      "Physical description and facial identification form.",
+      "Generate the warrant and commitment memo for transferring the accused to judicial custody.",
+    type: "custody",
+  },
+  {
+    title: "Face Identification Memo",
+    description:
+      "Prepare a suspect identification memo containing photographs, physical features, and identification marks.",
+    type: "face_identification",
   },
 ];

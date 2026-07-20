@@ -1,108 +1,138 @@
-# app/services/doc_engine/fetcher.py
-
 from sqlalchemy.orm import Session
 
 from models.case import Case
-from models.officer import Officer
-from models.suspect import Suspects
+from models.complaint import Complaint
 from models.victim import Victim
-from models.witness import Witness
+from models.suspect import Suspects
+from models.document import Document
 from models.evidence import Evidence
-from models.case_legal_sections import CaseLegalSection
-from models.legal_sections import LegalSection
+from models.officer import Officer
+from models.case_diary import CaseDiary
+
+from .exceptions import (
+    CaseNotFoundError,
+    ComplaintNotFoundError,
+)
 
 
-class CaseDataFetcher:
+class DataFetcher:
+    """
+    Fetches all data required for document generation.
+
+    Returns a single dictionary containing all related entities.
+    """
 
     def __init__(self, db: Session):
         self.db = db
 
-    def fetch(self, case_id: str) -> dict:
+    def fetch_case_data(self, case_id: str) -> dict:
+        """
+        Fetch complete case data.
+        """
 
-        case = self._fetch_case(case_id)
-
-        if not case:
-            raise ValueError(f"Case '{case_id}' not found")
-
-        return {
-            "case": case,
-            "officer": self._fetch_officer(case.assigned_officer_id),
-            "accuseds": self._fetch_accuseds(case.case_id),
-            "victims": self._fetch_victims(case.case_id),
-            "witnesses": self._fetch_witnesses(case.case_id),
-            "evidences": self._fetch_evidences(case.complaint_id),
-            "sections": self._fetch_sections(case.case_id),
-        }
-
-    def _fetch_case(self, case_id):
-
-        return (
+        # ----------------------------------------------------
+        # Case
+        # ----------------------------------------------------
+        case = (
             self.db.query(Case)
             .filter(Case.case_id == case_id)
             .first()
         )
 
-    def _fetch_officer(self, officer_id):
+        if not case:
+            raise CaseNotFoundError(case_id)
 
-        if not officer_id:
-            return None
-
-        return (
-            self.db.query(Officer)
-            .filter(Officer.officer_id == officer_id)
+        # ----------------------------------------------------
+        # Complaint
+        # ----------------------------------------------------
+        complaint = (
+            self.db.query(Complaint)
+            .filter(
+                Complaint.complaint_id == case.complaint_id
+            )
             .first()
         )
 
-    def _fetch_accuseds(self, case_id):
+        if not complaint:
+            raise ComplaintNotFoundError(case.complaint_id)
 
-        return (
-            self.db.query(Accused)
-            .filter(Accused.case_id == case_id)
-            .all()
-        )
-
-    def _fetch_victims(self, case_id):
-
-        return (
+        # ----------------------------------------------------
+        # Victims
+        # ----------------------------------------------------
+        victims = (
             self.db.query(Victim)
-            .filter(Victim.case_id == case_id)
+            .filter(
+                Victim.complaint_id == complaint.complaint_id
+            )
             .all()
         )
 
-    def _fetch_witnesses(self, case_id):
-
-        return (
-            self.db.query(Witness)
-            .filter(Witness.case_id == case_id)
+        # ----------------------------------------------------
+        # Suspects
+        # ----------------------------------------------------
+        suspects = (
+            self.db.query(Suspects)
+            .filter(
+                Suspects.complaint_id == complaint.complaint_id
+            )
             .all()
         )
 
-    def _fetch_evidences(self, complaint_id):
-
-        if not complaint_id:
-            return []
-
-        return (
+        # ----------------------------------------------------
+        # Evidence
+        # ----------------------------------------------------
+        evidences = (
             self.db.query(Evidence)
-            .filter(Evidence.complaint_id == complaint_id)
+            .filter(
+                Evidence.complaint_id == complaint.complaint_id
+            )
             .all()
         )
 
-    def _fetch_sections(self, case_id):
-
-        mappings = (
-            self.db.query(CaseLegalSection)
-            .filter(CaseLegalSection.case_id == case_id)
+        # ----------------------------------------------------
+        # Uploaded Documents
+        # ----------------------------------------------------
+        documents = (
+            self.db.query(Document)
+            .filter(
+                Document.complaint_id == complaint.complaint_id
+            )
             .all()
         )
 
-        if not mappings:
-            return []
+        # ----------------------------------------------------
+        # Investigating Officer
+        # ----------------------------------------------------
+        officer = (
+            self.db.query(Officer)
+            .filter(
+                Officer.officer_id == case.assigned_officer_id
+            )
+            .first()
+        )
 
-        ids = [m.legal_section_id for m in mappings]
-
-        return (
-            self.db.query(LegalSection)
-            .filter(LegalSection.id.in_(ids))
+        # ----------------------------------------------------
+        # Case Diaries
+        # ----------------------------------------------------
+        case_diaries = (
+            self.db.query(CaseDiary)
+            .filter(
+                CaseDiary.case_id == case.case_id
+            )
+            .order_by(CaseDiary.created_at.asc())
             .all()
         )
+
+        # ----------------------------------------------------
+        # Return all fetched data
+        # ----------------------------------------------------
+        return {
+            "case": case,
+            "complaint": complaint,
+            "victims": victims,
+            "suspects": suspects,
+            "evidences": evidences,
+            "documents": documents,
+            "officer": officer,
+            "case_diaries": case_diaries,
+        }

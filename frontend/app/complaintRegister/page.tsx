@@ -1,4 +1,4 @@
-import Navbar from "@/components/layout/io/Navbar";
+import Navbar from "@/components/layout/shared/Navbar";
 import Sidebar from "@/components/layout/io/Sidebar";
 import ComplaintWizard from "@/components/complaint/ComplaintWizard";
 

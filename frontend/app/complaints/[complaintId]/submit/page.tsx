@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import axios from "axios";
 import { CheckCircle2, AlertCircle } from "lucide-react";
-import Navbar from "@/components/layout/Navbar";
-import Sidebar from "@/components/layout/Sidebar";
+import Navbar from "@/components/layout/shared/Navbar";
+import Sidebar from "@/components/layout/io/Sidebar";
 
 export default function SubmitDraftPage() {
   const router = useRouter();

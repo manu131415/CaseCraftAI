@@ -11,6 +11,9 @@ interface Attachment {
   fileName: string;
   fileType: string;
   documentUrl?: string;
+  cloudinaryUrl?: string;
+  url?: string;
+  document_url?: string;
 }
 
 interface Props {
@@ -26,6 +29,18 @@ export default function ReviewSubmission({
   suspects,
   attachments,
 }: Props) {
+  const complainantPhotoUrl =
+    form.complainantPhotoUrl ||
+    (form as any).complainant_photo_url ||
+    (form as any).complainantPhotoURL ||
+    (form as any).complainantPhotoUrl ||
+    "";
+  const complainantPhotoName =
+    form.complainantPhotoName ||
+    (form as any).complainant_photo_name ||
+    (form as any).complainantPhotoName ||
+    "";
+
   return (
     <div className="space-y-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
 
@@ -287,6 +302,20 @@ export default function ReviewSubmission({
 
         </div>
 
+        {complainantPhotoUrl ? (
+          <div className="mt-6 rounded-2xl bg-white p-4 shadow-sm">
+            <p className="text-sm font-medium text-slate-700">Complainant Photo</p>
+            <img
+              src={complainantPhotoUrl}
+              alt={complainantPhotoName || "Complainant photo"}
+              className="mt-3 h-56 w-56 max-w-full rounded-2xl object-cover border"
+            />
+            {complainantPhotoName ? (
+              <p className="mt-2 text-sm text-slate-500">{complainantPhotoName}</p>
+            ) : null}
+          </div>
+        ) : null}
+
       </div>
             {/* Victims */}
 
@@ -373,13 +402,21 @@ export default function ReviewSubmission({
 
                 </div>
 
-                {victim.photoName && (
-
-                  <p className="mt-3 text-sm text-blue-600">
-                    📷 {victim.photoName}
-                  </p>
-
-                )}
+                {(victim.photoUrl || (victim as any).photo_url || (victim as any).photoURL) ? (
+                  <div className="mt-4 flex flex-col items-start gap-3">
+                    <p className="text-sm text-slate-500">Photo</p>
+                    <img
+                      src={victim.photoUrl || (victim as any).photo_url || (victim as any).photoURL}
+                      alt={`Victim ${index + 1}`}
+                      className="h-52 w-52 min-w-[208px] rounded-2xl object-cover border"
+                    />
+                    {victim.photoName ? (
+                      <p className="text-sm text-slate-500">{victim.photoName}</p>
+                    ) : null}
+                  </div>
+                ) : victim.photoName ? (
+                  <p className="mt-3 text-sm text-blue-600">📷 {victim.photoName}</p>
+                ) : null}
 
               </div>
 
@@ -518,13 +555,21 @@ export default function ReviewSubmission({
 
                 </div>
 
-                {suspect.photoName && (
-
-                  <p className="mt-3 text-sm text-blue-600">
-                    📷 {suspect.photoName}
-                  </p>
-
-                )}
+                {(suspect.photoUrl || (suspect as any).photo_url || (suspect as any).photoURL) ? (
+                  <div className="mt-4 flex flex-col items-start gap-3">
+                    <p className="text-sm text-slate-500">Photo</p>
+                    <img
+                      src={suspect.photoUrl || (suspect as any).photo_url || (suspect as any).photoURL}
+                      alt={`Suspect ${index + 1}`}
+                      className="h-52 w-52 min-w-[208px] rounded-2xl object-cover border"
+                    />
+                    {suspect.photoName ? (
+                      <p className="text-sm text-slate-500">{suspect.photoName}</p>
+                    ) : null}
+                  </div>
+                ) : suspect.photoName ? (
+                  <p className="mt-3 text-sm text-blue-600">📷 {suspect.photoName}</p>
+                ) : null}
 
               </div>
 
@@ -554,34 +599,39 @@ export default function ReviewSubmission({
 
           <div className="space-y-3">
 
-            {attachments.map((file) => (
+            {attachments.map((file) => {
+              const url = file.documentUrl || file.cloudinaryUrl || file.url || file.document_url;
+              const safeUrl = url ? encodeURI(url) : undefined;
+              const isImage = (file.fileType || "").startsWith("image") || (url && /\.(jpg|jpeg|png|gif|webp)$/i.test(url));
 
-              <div
-                key={file.id}
-                className="rounded-xl border border-slate-200 bg-white p-4"
-              >
+              return (
+                <div
+                  key={file.id}
+                  className="rounded-xl border border-slate-200 bg-white p-4"
+                >
 
-                <p className="font-semibold">
-                  {file.fileName}
-                </p>
+                  <p className="font-semibold">
+                    {file.fileName}
+                  </p>
 
-                <p className="text-sm text-slate-500">
-                  {file.fileType}
-                </p>
+                  <p className="text-sm text-slate-500">
+                    {file.fileType || "Document"}
+                  </p>
 
-              </div>
+                  {isImage && safeUrl ? (
+                    <a href={safeUrl} target="_blank" rel="noreferrer noopener" className="mt-3 block">
+                      <img src={safeUrl} alt={file.fileName} className="max-h-40 w-full rounded-xl object-contain" />
+                    </a>
+                  ) : safeUrl ? (
+                    <a href={safeUrl} target="_blank" rel="noreferrer noopener" className="mt-3 inline-block text-indigo-600 hover:underline">Open file</a>
+                  ) : null}
 
-            ))}
+                </div>
+              );
+            })}
 
           </div>
-
         )}
-
-      </div>
-
-      {/* Final Summary */}
-
-      <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
 
         <h3 className="font-semibold text-emerald-800">
           Ready for Submission

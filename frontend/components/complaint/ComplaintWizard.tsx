@@ -71,6 +71,7 @@ export default function ComplaintWizard() {
   const [step, setStep] = useState(1);
 
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const [form, setForm] =
     useState<ComplaintData>(initialForm);
@@ -145,7 +146,10 @@ export default function ComplaintWizard() {
   }
 
   async function handleSubmit() {
+    if (submitting) return;
+
     try {
+      setSubmitting(true);
       const API_BASE =
         process.env.NEXT_PUBLIC_API_BASE_URL ??
         "http://localhost:8000";
@@ -170,6 +174,8 @@ export default function ComplaintWizard() {
         err?.message ||
         "Failed to register complaint.";
       alert(`Failed to register complaint: ${errorMessage}`);
+    } finally {
+      setSubmitting(false);
     }
   }
 
@@ -359,6 +365,7 @@ export default function ComplaintWizard() {
         onBack={handleBack}
         onNext={handleNext}
         onSubmit={handleSubmit}
+        isSubmitting={submitting}
       />
 
     </div>

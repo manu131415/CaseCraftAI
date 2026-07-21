@@ -52,6 +52,7 @@ interface ComplaintDetail {
     documentUrl?: string;
     cloudinaryUrl?: string;
     url?: string;
+    document_url?: string;
     extractedText?: string;
     summary?: string;
   }>;
@@ -179,6 +180,23 @@ export default function ComplaintPage() {
       </div>
     </div>
   );
+
+  const complainantPhotoUrl = complaint.complainant_photo_url || (complaint as any).complainantPhotoUrl || "";
+  const complainantPhotoName = complaint.complainant_photo_name || (complaint as any).complainantPhotoName || "";
+
+  const mergedAttachments = [
+    ...(complaint.attachments || []),
+    ...((complaint.documents || []) as any[]).map((doc) => ({
+      id: String(doc.document_id || doc.id || doc.fileName || Math.random()),
+      fileName: doc.fileName || doc.title || "Document",
+      fileType: doc.fileType || doc.document_type || "document",
+      documentUrl: doc.documentUrl || doc.cloudinaryUrl || doc.filePath || doc.file_path,
+      cloudinaryUrl: doc.cloudinaryUrl || doc.filePath || doc.file_path,
+      url: doc.url || doc.documentUrl || doc.filePath || doc.file_path,
+      document_url: (doc as any).document_url || undefined,
+      summary: (doc as any).summary || undefined,
+    })),
+  ];
 
   return (
     <div className="min-h-screen bg-slate-100">
@@ -328,10 +346,13 @@ export default function ComplaintPage() {
                     <p className="mt-1 text-sm text-slate-600 whitespace-pre-wrap">{complaint.complainant_address}</p>
                   </div>
                 )}
-                {complaint.complainant_photo_url && (
+                {complainantPhotoUrl && (
                   <div className="mt-4">
                     <p className="text-sm font-medium text-slate-700 mb-2">Photo</p>
-                    <img src={complaint.complainant_photo_url} alt="Complainant photo" className="max-h-48 rounded-lg" />
+                    <img src={complainantPhotoUrl} alt={complainantPhotoName || "Complainant photo"} className="max-h-48 rounded-lg" />
+                    {complainantPhotoName ? (
+                      <p className="mt-2 text-sm text-slate-500">{complainantPhotoName}</p>
+                    ) : null}
                   </div>
                 )}
               </div>
@@ -355,24 +376,25 @@ export default function ComplaintPage() {
                 </div>
               )}
 
-              {complaint.attachments && complaint.attachments.length > 0 && (
+              {(complaint.attachments && complaint.attachments.length > 0) || (complaint.documents && complaint.documents.length > 0) ? (
                 <div>
                   <h2 className="text-lg font-semibold text-slate-900 mb-4">Attachments & Evidence</h2>
                   <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                    {complaint.attachments.map((att) => {
-                      const url = att.documentUrl || att.cloudinaryUrl || (att as any).url || (att as any).document_url;
-                      const isImage = (att.fileType || "").startsWith("image") || (url && /\.(jpg|jpeg|png|gif|webp)$/i.test(url));
+                    {mergedAttachments.map((att) => {
+                      const url = att.documentUrl || att.cloudinaryUrl || att.url || (att as any).document_url;
+                      const safeUrl = url ? encodeURI(url) : undefined;
+                      const isImage = (att.fileType || "").startsWith("image") || (safeUrl && /\.(jpg|jpeg|png|gif|webp)$/i.test(safeUrl));
 
                       return (
                         <div key={att.id || att.fileName} className="rounded-xl border bg-white p-3 text-sm shadow-sm">
                           <p className="font-semibold text-slate-900">{att.fileName || "Document"}</p>
                           <p className="text-xs text-slate-500">{att.fileType || "—"}</p>
-                          {isImage && url ? (
-                            <a href={url} target="_blank" rel="noreferrer">
-                              <img src={url} alt={att.fileName || "attachment"} className="mt-2 max-h-40 w-full object-contain" />
+                          {isImage && safeUrl ? (
+                            <a href={safeUrl} target="_blank" rel="noreferrer noopener">
+                              <img src={safeUrl} alt={att.fileName || "attachment"} className="mt-2 max-h-40 w-full object-contain" />
                             </a>
-                          ) : url ? (
-                            <a href={url} target="_blank" rel="noreferrer" className="mt-2 inline-block text-indigo-600 hover:underline">Open document</a>
+                          ) : safeUrl ? (
+                            <a href={safeUrl} target="_blank" rel="noreferrer noopener" className="mt-2 inline-block text-indigo-600 hover:underline">Open document</a>
                           ) : att.summary ? (
                             <p className="mt-2 text-slate-600">{att.summary}</p>
                           ) : null}
@@ -381,7 +403,7 @@ export default function ComplaintPage() {
                     })}
                   </div>
                 </div>
-              )}
+              ) : null}
 
               {complaint.complainants && complaint.complainants.length > 0 && (
                 <div>
@@ -404,12 +426,22 @@ export default function ComplaintPage() {
                   <div className="space-y-3">
                     {complaint.victims.map((v: any, idx: number) => (
                       <div key={v.victim_id || idx} className="rounded-xl bg-slate-50 p-4 border border-slate-200">
-                        <p className="font-semibold text-slate-900">{v.fullName || `Victim ${idx + 1}`}</p>
-                        <div className="grid gap-2 sm:grid-cols-2 mt-2 text-sm text-slate-600">
-                          <p>Age: {v.age || "—"}</p>
-                          <p>Gender: {v.gender || "—"}</p>
-                          <p className="sm:col-span-2">Address: {v.address || "—"}</p>
-                          {v.injuries && <p className="sm:col-span-2">Injuries: {v.injuries}</p>}
+                        <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
+                          <div className="flex-1">
+                            <p className="font-semibold text-slate-900">{v.fullName || `Victim ${idx + 1}`}</p>
+                            <div className="grid gap-2 sm:grid-cols-2 mt-2 text-sm text-slate-600">
+                              <p>Age: {v.age || "—"}</p>
+                              <p>Gender: {v.gender || "—"}</p>
+                              <p className="sm:col-span-2">Address: {v.address || "—"}</p>
+                              {v.injuries && <p className="sm:col-span-2">Injuries: {v.injuries}</p>}
+                            </div>
+                          </div>
+                          {(v.photoUrl || v.photo_url) ? (
+                            <div className="max-w-xs">
+                              <p className="text-sm font-medium text-slate-700">Photo</p>
+                              <img src={v.photoUrl || v.photo_url} alt={`Victim ${idx + 1}`} className="mt-2 max-h-40 w-full rounded-xl object-cover border" />
+                            </div>
+                          ) : null}
                         </div>
                       </div>
                     ))}
@@ -423,11 +455,21 @@ export default function ComplaintPage() {
                   <div className="space-y-3">
                     {complaint.suspects.map((s: any, idx: number) => (
                       <div key={s.suspect_id || idx} className="rounded-xl bg-slate-50 p-4 border border-slate-200">
-                        <p className="font-semibold text-slate-900">{s.fullName || `Suspect ${idx + 1}`}</p>
-                        <div className="grid gap-2 sm:grid-cols-2 mt-2 text-sm text-slate-600">
-                          <p>Alias: {s.alias || "—"}</p>
-                          <p>Gender: {s.gender || "—"}</p>
-                          <p className="sm:col-span-2">Address: {s.presentAddress || s.permanentAddress || "—"}</p>
+                        <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
+                          <div className="flex-1">
+                            <p className="font-semibold text-slate-900">{s.fullName || `Suspect ${idx + 1}`}</p>
+                            <div className="grid gap-2 sm:grid-cols-2 mt-2 text-sm text-slate-600">
+                              <p>Alias: {s.alias || "—"}</p>
+                              <p>Gender: {s.gender || "—"}</p>
+                              <p className="sm:col-span-2">Address: {s.presentAddress || s.permanentAddress || "—"}</p>
+                            </div>
+                          </div>
+                          {(s.photoUrl || s.photo_url) ? (
+                            <div className="max-w-xs">
+                              <p className="text-sm font-medium text-slate-700">Photo</p>
+                              <img src={s.photoUrl || s.photo_url} alt={`Suspect ${idx + 1}`} className="mt-2 max-h-40 w-full rounded-xl object-cover border" />
+                            </div>
+                          ) : null}
                         </div>
                       </div>
                     ))}

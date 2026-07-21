@@ -25,6 +25,7 @@ interface ComplaintSummary {
   description?: string;
   status?: string;
   is_draft?: boolean;
+  attachments_count?: number;
   created_at?: string;
   incident_datetime?: string;
 }
@@ -160,6 +161,7 @@ export default function ComplaintList({
           <th className="px-6 py-4">Crime Subcategory</th>
           <th className="px-6 py-4">Complainant</th>
           <th className="px-6 py-4">Location</th>
+          <th className="px-6 py-4">Attachments</th>
           <th className="px-6 py-4">Status</th>
           <th className="px-6 py-4">Case</th>
           <th className="px-6 py-4">Date</th>
@@ -215,6 +217,12 @@ export default function ComplaintList({
 
     <td className="px-6 py-4">
       {complaint.location || "-"}
+    </td>
+
+    <td className="px-6 py-4">
+      <span className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
+        {complaint.attachments_count || 0} uploaded
+      </span>
     </td>
 
     <td className="px-6 py-4">

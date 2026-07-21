@@ -8,6 +8,7 @@ interface Props {
   onBack: () => void;
   onNext: () => void;
   onSubmit: () => void;
+  isSubmitting?: boolean;
 }
 
 export default function NavigationButtons({
@@ -16,6 +17,7 @@ export default function NavigationButtons({
   onBack,
   onNext,
   onSubmit,
+  isSubmitting = false,
 }: Props) {
   const { t } = useLanguage();
 
@@ -35,9 +37,12 @@ export default function NavigationButtons({
           <button
             type="button"
             onClick={onSubmit}
-            className="rounded-full bg-blue-600 px-5 py-3 text-base font-medium text-white transition hover:bg-blue-700"
+            disabled={isSubmitting}
+            className="rounded-full bg-blue-600 px-5 py-3 text-base font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {t("navigation.submitComplaint", "complaints")}
+            {isSubmitting
+              ? t("navigation.submitting", "complaints")
+              : t("navigation.submitComplaint", "complaints")}
           </button>
         ) : (
           <button

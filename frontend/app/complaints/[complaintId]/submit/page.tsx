@@ -228,6 +228,38 @@ export default function SubmitDraftPage() {
                 </div>
               </div>
 
+              {(complaint.complainant_photo_url || complaint.complainant_photo_url) && (
+                <div className="mt-6">
+                  <p className="text-sm font-medium text-slate-700">Complainant Photo</p>
+                  <img src={complaint.complainant_photo_url || complaint.complainantPhotoUrl} alt="Complainant photo" className="mt-3 max-h-48 rounded-xl object-cover border" />
+                </div>
+              )}
+
+              {complaint.attachments && complaint.attachments.length > 0 && (
+                <div className="mt-6 rounded-xl border border-slate-200 bg-slate-50 p-4">
+                  <p className="font-semibold text-slate-900">Uploaded Documents</p>
+                  <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                    {complaint.attachments.map((att: any, idx: number) => {
+                      const url = att.documentUrl || att.cloudinaryUrl || att.url;
+                      const isImage = (att.fileType || "").startsWith("image") || (url && /\.(jpg|jpeg|png|gif|webp)$/i.test(url));
+                      return (
+                        <div key={att.id || idx} className="rounded-xl border border-white bg-white p-3 shadow-sm">
+                          <p className="font-medium text-slate-900">{att.fileName || "Document"}</p>
+                          <p className="text-sm text-slate-500">{att.fileType || "File"}</p>
+                          {isImage && url ? (
+                            <a href={url} target="_blank" rel="noreferrer">
+                              <img src={url} alt={att.fileName || "uploaded image"} className="mt-2 max-h-32 w-full rounded-lg object-cover" />
+                            </a>
+                          ) : url ? (
+                            <a href={url} target="_blank" rel="noreferrer" className="mt-2 inline-block text-indigo-600 hover:underline">Open file</a>
+                          ) : null}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
               {/* Victims Summary */}
               {complaint.victims && complaint.victims.length > 0 && (
                 <div className="mt-6 pt-6 border-t border-slate-200">

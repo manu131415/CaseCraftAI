@@ -180,6 +180,7 @@ class ComplaintSummary(BaseModel):
     description: Optional[str] = None
     status: Optional[str] = None
     is_draft: bool = True
+    attachments_count: int = 0
     created_at: Optional[str] = None
 
 
@@ -202,14 +203,33 @@ class ComplaintListResponse(BaseModel):
 
 
 class ComplaintDetailResponse(ComplaintSummary):
+    complaint_title: Optional[str] = None
+    complaint_mode: Optional[str] = None
+    priority: Optional[str] = None
+    emergency: Optional[str] = None
+    landmark: Optional[str] = None
+    incident_date: Optional[str] = None
+    incident_time: Optional[str] = None
+    complainant_father_name: Optional[str] = None
+    complainant_age: Optional[str] = None
+    complainant_gender: Optional[str] = None
+    complainant_address: Optional[str] = None
+    complainant_aadhaar: Optional[str] = None
+    complainant_relationship: Optional[str] = None
+    complainant_occupation: Optional[str] = None
+    complainant_nationality: Optional[str] = None
+    complainant_photo_url: Optional[str] = None
+    complainant_photo_name: Optional[str] = None
     officerNotes: Optional[str] = None
+    officer_notes: Optional[str] = None
     aiSummary: Optional[str] = None
-    complainantFatherName: Optional[str] = None
-    complainantAddress: Optional[str] = None
-    
+    ai_summary: Optional[str] = None
+    notes: Optional[str] = None
     victims: List[Dict[str, Any]] = []
     suspects: List[Dict[str, Any]] = []
     documents: List[Dict[str, Any]] = []
+    attachments: List[Dict[str, Any]] = []
+    complainants: List[Dict[str, Any]] = []
 
 
 class ComplaintUpdateResponse(BaseModel):
@@ -371,14 +391,18 @@ def _format_suspect(suspect: Suspects) -> Dict[str, Any]:
 
 def _format_document(document: Document) -> Dict[str, Any]:
     """Format document record for response."""
+    file_path = getattr(document, "file_path", None)
+    cloudinary_url = getattr(document, "cloudinary_url", None)
+    extracted_data = getattr(document, "extracted_data", None)
+
     return {
         "document_id": document.document_id,
         "complaint_id": document.complaint_id,
-        "fileName": document.file_name,
-        "fileType": document.file_type,
-        "filePath": document.file_path,
-        "cloudinaryUrl": document.cloudinary_url,
-        "extractedData": json.loads(document.extracted_data) if document.extracted_data else {},
+        "fileName": getattr(document, "file_name", document.title if getattr(document, "title", None) else None),
+        "fileType": getattr(document, "file_type", None),
+        "filePath": file_path,
+        "cloudinaryUrl": cloudinary_url,
+        "extractedData": json.loads(extracted_data) if extracted_data else {},
     }
 
 
@@ -621,6 +645,19 @@ def save_complaint_draft(payload: ComplaintSubmission) -> Dict[str, Any]:
         if payload.suspects:
             _create_suspect_records(db, complaint.complaint_id, payload.suspects)
         
+        # Create evidence records from attachments
+        for attachment in payload.attachments:
+            if attachment.fileName:
+                evidence = Evidence(
+                    complaint_id=complaint.complaint_id,
+                    evidence_type=attachment.fileType or "document",
+                    file_name=attachment.fileName,
+                    file_type=attachment.fileType,
+                    file_path=attachment.documentUrl,
+                    description="",
+                )
+                db.add(evidence)
+
         db.commit()
         db.refresh(complaint)
         
@@ -696,9 +733,10 @@ def submit_draft_complaint(complaint_id: str, payload: ComplaintSubmission) -> D
         complaint.status = "Submitted"
         complaint.is_draft = False
         
-        # Delete existing victims/suspects for this complaint
+        # Delete existing victims/suspects/evidence for this complaint
         db.query(Victim).filter(Victim.complaint_id == complaint_id).delete()
         db.query(Suspects).filter(Suspects.complaint_id == complaint_id).delete()
+        db.query(Evidence).filter(Evidence.complaint_id == complaint_id).delete()
         
         # Create new victim records
         if payload.victims:
@@ -707,6 +745,19 @@ def submit_draft_complaint(complaint_id: str, payload: ComplaintSubmission) -> D
         # Create new suspect records
         if payload.suspects:
             _create_suspect_records(db, complaint.complaint_id, payload.suspects)
+
+        # Create new evidence records from attachments
+        for attachment in payload.attachments:
+            if attachment.fileName:
+                evidence = Evidence(
+                    complaint_id=complaint.complaint_id,
+                    evidence_type=attachment.fileType or "document",
+                    file_name=attachment.fileName,
+                    file_type=attachment.fileType,
+                    file_path=attachment.documentUrl,
+                    description="",
+                )
+                db.add(evidence)
         
         db.commit()
         db.refresh(complaint)
@@ -764,6 +815,7 @@ def get_all_complaints() -> Dict[str, Any]:
                     "description": c.description,
                     "status": c.status,
                     "is_draft": c.is_draft,
+                    "attachments_count": db.query(Evidence).filter(Evidence.complaint_id == c.complaint_id).count(),
                     "created_at": c.created_at.isoformat() if c.created_at else None,
                     "complainant_father_name": c.complainant_father_name,
                     "complainant_address": c.complainant_address,
@@ -825,6 +877,10 @@ def get_complaint(complaint_id: str) -> Dict[str, Any]:
             Suspects.complaint_id == complaint_id
         ).all()
         
+        evidences = db.query(Evidence).filter(
+            Evidence.complaint_id == complaint_id
+        ).all()
+        
         documents = db.query(Document).filter(
             Document.complaint_id == complaint_id
         ).all()
@@ -832,20 +888,39 @@ def get_complaint(complaint_id: str) -> Dict[str, Any]:
         # Format response
         attachments = [
             {
-                "id": str(document.document_id),
-                "fileName": document.title or document.document_type,
-                "fileType": document.document_type,
-                "documentUrl": None,
-                "cloudinaryUrl": None,
+                "id": str(evidence.evidence_id),
+                "fileName": evidence.file_name,
+                "fileType": evidence.file_type,
+                "documentUrl": evidence.file_path,
+                "url": evidence.file_path,
+                "cloudinaryUrl": evidence.file_path,
             }
-            for document in documents
+            for evidence in evidences
         ]
 
         return {
             "complaint_id": complaint.complaint_id,
             "complaint_number": complaint.complaint_number,
             "complaint_title": complaint.complaint_title,
+            "complaint_mode": complaint.complaint_mode,
+            "priority": complaint.priority,
+            "emergency": complaint.emergency,
+            "landmark": complaint.landmark,
+            "incident_date": complaint.incident_date,
+            "incident_time": complaint.incident_time,
             "complainant_name": complaint.complainant_name,
+            "complainant_father_name": complaint.complainant_father_name,
+            "complainant_age": complaint.complainant_age,
+            "complainant_gender": complaint.complainant_gender,
+            "complainant_address": complaint.complainant_address,
+            "complainant_aadhaar": complaint.complainant_aadhaar,
+            "complainant_relationship": complaint.complainant_relationship,
+            "complainant_occupation": complaint.complainant_occupation,
+            "complainant_nationality": complaint.complainant_nationality,
+            "complainant_photo_url": complaint.complainant_photo_url,
+            "complainant_photo_name": complaint.complainant_photo_name,
+            "complainantPhotoUrl": complaint.complainant_photo_url,
+            "complainantPhotoName": complaint.complainant_photo_name,
             "phone": complaint.phone,
             "email": complaint.email,
             "crime_category": complaint.crime_category,
@@ -856,10 +931,13 @@ def get_complaint(complaint_id: str) -> Dict[str, Any]:
             "is_draft": complaint.is_draft,
             "created_at": complaint.created_at.isoformat() if complaint.created_at else None,
             "incident_datetime": complaint.incident_date or None,
-            "complainant_father_name": complaint.complainant_father_name,
-            "complainant_address": complaint.complainant_address,
+            "incidentDate": complaint.incident_date,
+            "incidentTime": complaint.incident_time,
+            "complainantFatherName": complaint.complainant_father_name,
+            "complainantAddress": complaint.complainant_address,
             "officerNotes": complaint.officer_notes,
             "aiSummary": complaint.ai_summary,
+            "ai_summary": complaint.ai_summary,
             "victims": [_format_victim(v) for v in victims],
             "suspects": [_format_suspect(s) for s in suspects],
             "documents": [_format_document(d) for d in documents],

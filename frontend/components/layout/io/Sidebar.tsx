@@ -42,12 +42,7 @@ const navigationItems = [
     namespace: "common", // <-- change this
     icon: FileText,
   },
-  {
-    href: "/doc_gen_index.html",
-    key: "Generate Document",
-    namespace: "common",   
-    icon: FileText,
-  },
+  
   
 ] as const;
 

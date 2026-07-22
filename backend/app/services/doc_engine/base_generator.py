@@ -3,8 +3,10 @@ from __future__ import annotations
 from abc import ABC
 from io import BytesIO
 from pathlib import Path
-
-from docxtpl import DocxTemplate
+import tempfile
+import requests
+from docxtpl import DocxTemplate, InlineImage
+from docx.shared import Mm
 
 from .exceptions import (
     TemplateNotFoundError,
@@ -47,6 +49,55 @@ class BaseGenerator(ABC):
 
         return template_path
 
+    def _prepare_images(self, doc: DocxTemplate, context: dict):
+    # """
+    # Downloads Cloudinary images and converts them into InlineImage
+    # objects for docxtpl.
+    # """
+
+        image_collections = [
+            "victims",
+            "suspects",
+        ]
+
+        for collection in image_collections:
+
+            for person in context.get(collection, []):
+
+                photo_url = person.get("photo_url")
+
+                if not photo_url:
+                    person["photo"] = ""
+                    continue
+
+                try:
+                    response = requests.get(photo_url, timeout=10)
+                    response.raise_for_status()
+
+                    suffix = ".jpg"
+
+                    if ".png" in photo_url.lower():
+                        suffix = ".png"
+                    elif ".jpeg" in photo_url.lower():
+                        suffix = ".jpeg"
+
+                    temp = tempfile.NamedTemporaryFile(
+                        delete=False,
+                        suffix=suffix
+                    )
+
+                    temp.write(response.content)
+                    temp.close()
+
+                    person["photo"] = InlineImage(
+                        doc,
+                        temp.name,
+                        width=Mm(22)
+                    )
+
+                except Exception:
+                    person["photo"] = ""
+
     def generate(
         self,
         context: dict,
@@ -63,6 +114,8 @@ class BaseGenerator(ABC):
 
         try:
             doc = DocxTemplate(template_path)
+
+            self._prepare_images(doc, context)
 
             doc.render(context)
 

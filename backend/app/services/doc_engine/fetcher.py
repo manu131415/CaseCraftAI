@@ -8,6 +8,7 @@ from models.document import Document
 from models.evidence import Evidence
 from models.officer import Officer
 from models.case_diary import CaseDiary
+from models.fir_drafts import FirDraft
 
 from .exceptions import (
     CaseNotFoundError,
@@ -124,6 +125,17 @@ class DataFetcher:
         )
 
         # ----------------------------------------------------
+        # FIR Draft
+        # ----------------------------------------------------
+        fir_draft = (
+            self.db.query(FirDraft)
+            .filter(
+                FirDraft.complaint_id == complaint.complaint_id
+            )
+            .first()
+)
+
+        # ----------------------------------------------------
         # Return all fetched data
         # ----------------------------------------------------
         return {
@@ -135,4 +147,5 @@ class DataFetcher:
             "documents": documents,
             "officer": officer,
             "case_diaries": case_diaries,
+            "fir_draft": fir_draft,
         }

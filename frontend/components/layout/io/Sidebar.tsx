@@ -12,12 +12,12 @@ import { useLanguage } from "@/app/providers/LanguageProvider";
 import { Suspense } from "react";
 
 const navigationItems = [
-  {
-    href: "/",
-    key: "overview",
-    namespace: "common",
-    icon: LayoutDashboard,
-  },
+  // {
+  //   href: "/",
+  //   key: "overview",
+  //   namespace: "common",
+  //   icon: LayoutDashboard,
+  // },
   {
     href: "/dashboard",
     key: "dashboard",
@@ -76,7 +76,7 @@ function SidebarContent() {
 
           const isActive =
             pathname === item.href ||
-            (item.href !== "/" && pathname.startsWith(item.href));
+            (item.href !== "/dashboard" && pathname.startsWith(item.href));
 
           return (
             <Link

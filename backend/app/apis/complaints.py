@@ -211,7 +211,7 @@ class ComplaintDetailResponse(ComplaintSummary):
     incident_date: Optional[str] = None
     incident_time: Optional[str] = None
     complainant_father_name: Optional[str] = None
-    complainant_age: Optional[str] = None
+    complainant_age: Optional[int] = None
     complainant_gender: Optional[str] = None
     complainant_address: Optional[str] = None
     complainant_aadhaar: Optional[str] = None

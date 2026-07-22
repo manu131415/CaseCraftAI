@@ -10,7 +10,7 @@ import Sidebar from "@/components/layout/io/Sidebar";
 interface ComplaintDetail {
   complaint_id: string;
   complaint_number: string;
-  complaint_title?: string;
+  // complaint_title?: string;
   complaint_mode?: string;
   priority?: string;
   emergency?: string;
@@ -84,7 +84,7 @@ export default function ComplaintPage() {
       const res = await axios.post(`${API_BASE}/api/cases`, {
         complaint_id: complaint.complaint_id || complaintId,
         complaint_number: complaint.complaint_number,
-        title: complaint.complaint_title || `Case for ${complaint.complaint_number}`,
+        // title: complaint.complaint_title || `Case for ${complaint.complaint_number}`,
         priority: complaint.status || "Medium",
       });
 
@@ -211,7 +211,7 @@ export default function ComplaintPage() {
               <div>
                 <div className="flex items-center gap-3">
                   <h1 className="text-2xl font-semibold text-slate-900">
-                    {complaint.complaint_title || `Complaint ${complaint.complaint_number}`}
+                    {`Complaint ${complaint.complaint_number}`}
                   </h1>
                   {complaint.is_draft && (
                     <span className="inline-block bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-sm font-medium">

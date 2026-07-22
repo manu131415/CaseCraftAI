@@ -11,9 +11,9 @@ export default function Stepper({ currentStep }: Props) {
 
   const steps = [
     t("steps.complaint", "complaints"),
+    t("steps.complainant", "complaints"),
     t("steps.victims", "complaints"),
     t("steps.suspects", "complaints"),
-    t("steps.complainant", "complaints"),
     t("steps.documents", "complaints", "Documents"), // fallback to "Documents" if translation key doesn't exist
     t("steps.review", "complaints"),
   ];

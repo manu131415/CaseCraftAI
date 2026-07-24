@@ -37,5 +37,32 @@
   "legalAdvisorPage": "Legal Advisor Dashboard",
   "legalDashboardDescription": "Cases awaiting legal review, flagged evidence, and legal team updates can be monitored here.",
 
-  "stationOfficerPage": "Station House Officer Dashboard"
+  "stationOfficerPage": "Station House Officer Dashboard",
+
+  "legalLibrary": "Legal Library",
+  "searchLegalSections": "Search Legal Sections",
+
+  "findExactSection": "Find the Exact Section, Instantly",
+
+  "legalLibraryDescription": "Search by meaning, not just keywords — describe the offence or paste a section reference and we'll rank the closest matches, including old/new act cross-references.",
+
+  "legalSearchPlaceholder": "e.g. cheating by impersonation, dowry death, BNS 103...",
+
+  "browseLegalSections": "Browse Legal Sections",
+
+  "browseHint": "Try a scenario, an offence, or a section number — at least 2 characters.",
+
+  "couldNotLoadSections": "Couldn't load sections",
+
+  "startTyping": "Start typing to search",
+
+  "result": "result",
+  "results": "results",
+
+  "tryDifferentDescription": "Try describing it differently.",
+
+  "untitledSection": "Untitled section",
+
+  "previously": "Previously",
+  "now": "Now"
 }

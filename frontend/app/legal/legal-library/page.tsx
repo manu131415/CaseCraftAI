@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Search, BookOpen, AlertCircle, X, ScrollText, ArrowLeftRight } from "lucide-react";
 import Sidebar from "@/components/layout/legal/Sidebar";
 import Navbar from "@/components/layout/shared/Navbar";
+import { useLanguage } from "@/app/providers/LanguageProvider";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "";
 const MIN_QUERY_LENGTH = 2;
@@ -58,12 +59,14 @@ function crossReferenceLabel(section: LegalSectionResult): string | null {
   const mapping = section.mapping;
   if (!mapping) return null;
   const isNewAct = mapping.new_act === section.act_code && mapping.new_section === section.section_number;
+  const { t } = useLanguage();
   return isNewAct
-    ? `Previously ${mapping.old_act} Section ${mapping.old_section ?? "—"}`
-    : `Now ${mapping.new_act} Section ${mapping.new_section}`;
+    ? `${t("previously","dashboard")} ${mapping.old_act} ${t("section","common")} ${mapping.old_section ?? "—"}`
+    : `${t("now","dashboard")} ${mapping.new_act} ${t("section","common")} ${mapping.new_section}`;
 }
 
 export default function LegalLibraryPage() {
+  const { t } = useLanguage();
   const [query, setQuery] = useState("");
   const [selectedSection, setSelectedSection] = useState<LegalSectionResult | null>(null);
   const [results, setResults] = useState<LegalSectionResult[]>([]);
@@ -150,20 +153,18 @@ export default function LegalLibraryPage() {
       <Sidebar />
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <Navbar eyebrow="Legal Library" title="Search Legal Sections" />
+        <Navbar eyebrow={t("legalLibrary", "dashboard")} title={t("searchLegalSections", "dashboard")} />
 
         <main className="flex-1 space-y-6 px-8 py-6">
           <section className="rounded-2xl bg-gradient-to-r from-indigo-600 via-indigo-600 to-violet-700 p-8 shadow-sm">
             <p className="text-xs font-semibold uppercase tracking-wide text-indigo-200">
-              CaseCraftAI · Legal Library
+              CaseCraftAI · {t("legalLibrary", "dashboard")}
             </p>
             <h2 className="mt-1 text-2xl md:text-3xl font-semibold text-white">
-              Find the exact section, instantly
+              {t("findExactSection", "dashboard")}
             </h2>
             <p className="mt-2 max-w-xl text-sm text-indigo-100">
-              Search by meaning, not just keywords — describe the offense or paste a section
-              reference and we&apos;ll rank the closest matches, with old/new act cross-references
-              included.
+              {t("legalLibraryDescription", "dashboard")}
             </p>
 
             <div className="relative mt-6 max-w-2xl">
@@ -172,7 +173,7 @@ export default function LegalLibraryPage() {
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="e.g. cheating by impersonation, dowry death, BNS 103..."
+                placeholder={t("legalSearchPlaceholder", "dashboard")}
                 autoFocus
                 className="w-full rounded-xl border-0 bg-white py-3 pl-11 pr-11 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-300"
               />
@@ -180,7 +181,7 @@ export default function LegalLibraryPage() {
                 <button
                   type="button"
                   onClick={() => setQuery("")}
-                  aria-label="Clear search"
+                  aria-label={t("clearSearch", "common")}
                   className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                 >
                   <X className="h-4 w-4" />
@@ -190,7 +191,7 @@ export default function LegalLibraryPage() {
 
             {!showPrompt && !loading && !error && (
               <p className="mt-3 text-xs text-indigo-200">
-                {results.length} result{results.length === 1 ? "" : "s"} for &ldquo;{trimmedQuery}&rdquo;
+                {results.length} {t("result","dashboard")}{results.length === 1 ? "" : "s"} {t("for","common")} &ldquo;{trimmedQuery}&rdquo;
               </p>
             )}
           </section>
@@ -199,9 +200,9 @@ export default function LegalLibraryPage() {
           {showPrompt && (
             <>
               <div className="flex items-center justify-between">
-                <h3 className="text-sm font-semibold text-slate-700">Browse legal sections</h3>
+                <h3 className="text-sm font-semibold text-slate-700">{t("browseLegalSections","dashboard")}</h3>
                 <p className="text-xs text-slate-400">
-                  Try a scenario, an offense, or a section number — at least {MIN_QUERY_LENGTH} characters.
+                  {t("browseHint","dashboard")}
                 </p>
               </div>
 
@@ -222,7 +223,7 @@ export default function LegalLibraryPage() {
                 <div className="flex items-start gap-3 rounded-2xl border border-red-100 bg-red-50 p-5">
                   <AlertCircle className="h-5 w-5 shrink-0 text-red-500" />
                   <div>
-                    <p className="text-sm font-medium text-red-700">Couldn&apos;t load sections</p>
+                    <p className="text-sm font-medium text-red-700">{t("couldNotLoadSections","dashboard")}</p>
                     <p className="mt-1 text-sm text-red-500">{browseError}</p>
                   </div>
                 </div>
@@ -231,10 +232,9 @@ export default function LegalLibraryPage() {
               {!browseLoading && !browseError && browseResults.length === 0 && (
                 <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-slate-200 bg-white px-6 py-16 text-center">
                   <Search className="h-8 w-8 text-slate-300" />
-                  <p className="text-sm font-medium text-slate-600">Start typing to search</p>
+                  <p className="text-sm font-medium text-slate-600">{t("startTyping","dashboard")}</p>
                   <p className="text-xs text-slate-400 max-w-sm">
-                    Try a scenario, an offense, or a section number — at least {MIN_QUERY_LENGTH}{" "}
-                    characters.
+                    {t("browseHint","dashboard")}
                   </p>
                 </div>
               )}
@@ -270,7 +270,7 @@ export default function LegalLibraryPage() {
             <div className="flex items-start gap-3 rounded-2xl border border-red-100 bg-red-50 p-5">
               <AlertCircle className="h-5 w-5 shrink-0 text-red-500" />
               <div>
-                <p className="text-sm font-medium text-red-700">Search failed</p>
+                <p className="text-sm font-medium text-red-700">{t("searchFailed","complaints")}</p>
                 <p className="mt-1 text-sm text-red-500">{error}</p>
               </div>
             </div>
@@ -279,8 +279,8 @@ export default function LegalLibraryPage() {
           {!showPrompt && !loading && !error && hasSearched && results.length === 0 && (
             <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-slate-200 bg-white px-6 py-16 text-center">
               <ScrollText className="h-8 w-8 text-slate-300" />
-              <p className="text-sm font-medium text-slate-600">No matching sections</p>
-              <p className="text-xs text-slate-400 max-w-sm">Try describing it differently.</p>
+              <p className="text-sm font-medium text-slate-600">{t("noMatchingSections","complaints")}</p>
+              <p className="text-xs text-slate-400 max-w-sm">{t("tryDifferentDescription","dashboard")}</p>
             </div>
           )}
 
@@ -313,6 +313,7 @@ function SectionCard({
   onClick: () => void;
 }) {
   const crossRef = crossReferenceLabel(section);
+  const { t } = useLanguage();
 
   return (
     <article
@@ -341,13 +342,13 @@ function SectionCard({
               )}
               {section.section_number && (
                 <span className="text-xs font-medium text-slate-400">
-                  Section {section.section_number}
+                  {t("section","common")} {section.section_number}
                 </span>
               )}
               {section.category && <span className="text-xs text-slate-400">• {section.category}</span>}
             </div>
             <h3 className="mt-1 text-sm font-semibold text-slate-900">
-              {section.title ?? "Untitled section"}
+              {section.title ?? t("untitledSection","dashboard")}
             </h3>
           </div>
         </div>
@@ -355,7 +356,7 @@ function SectionCard({
         {/* similarity is only meaningful for a real search match, not the browse list */}
         {(section.similarity ?? 0) > 0 && (
           <span className="shrink-0 rounded-full bg-slate-50 px-2 py-1 text-xs font-medium text-slate-500">
-            {Math.round((section.similarity ?? 0) * 100)}% match
+            {Math.round((section.similarity ?? 0) * 100)}% {t("match","complaints")}
           </span>
         )}
       </div>
@@ -389,6 +390,7 @@ function SectionModal({
   onClose: () => void;
 }) {
   const crossRef = crossReferenceLabel(section);
+  const { t } = useLanguage();
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -425,7 +427,7 @@ function SectionModal({
                 )}
                 {section.section_number && (
                   <span className="text-xs font-medium text-slate-400">
-                    Section {section.section_number}
+                    {t("section","common")} {section.section_number}
                   </span>
                 )}
                 {section.category && (
@@ -433,7 +435,7 @@ function SectionModal({
                 )}
               </div>
               <h3 className="mt-1 text-base font-semibold text-slate-900">
-                {section.title ?? "Untitled section"}
+                {section.title ?? t("untitledSection","dashboard")}
               </h3>
             </div>
           </div>
@@ -441,7 +443,7 @@ function SectionModal({
           <button
             type="button"
             onClick={onClose}
-            aria-label="Close"
+            aria-label={t("close","common")}
             className="shrink-0 rounded-full p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
           >
             <X className="h-5 w-5" />

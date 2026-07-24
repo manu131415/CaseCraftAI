@@ -36,5 +36,21 @@
 
   "legalAdvisorPage": "કાનૂની સલાહકાર ડેશબોર્ડ",
   "legalDashboardDescription": "કાનૂની સમીક્ષાની રાહ જોતા કેસો, ચિહ્નિત પુરાવાઓ અને કાનૂની ટીમના અપડેટ્સ અહીં જોઈ શકાય છે.",
-  "stationOfficerPage": "સ્ટેશન હાઉસ ઓફિસર ડેશબોર્ડ"
+  "stationOfficerPage": "સ્ટેશન હાઉસ ઓફિસર ડેશબોર્ડ",
+
+  "legalLibrary": "કાનૂની લાઇબ્રેરી",
+  "searchLegalSections": "કાનૂની કલમો શોધો",
+  "findExactSection": "ચોક્કસ કલમ તરત શોધો",
+  "legalLibraryDescription": "માત્ર કીવર્ડ નહીં, પરંતુ અર્થના આધારે પણ શોધો. ગુનાનું વર્ણન અથવા કલમ નંબર દાખલ કરો અને સૌથી યોગ્ય પરિણામ મેળવો.",
+  "legalSearchPlaceholder": "જેમ કે: પ્રતિરૂપ દ્વારા છેતરપિંડી, દહેજ મૃત્યુ, BNS 103...",
+  "browseLegalSections": "કાનૂની કલમો બ્રાઉઝ કરો",
+  "browseHint": "કોઈ ઘટના, ગુનો અથવા કલમ નંબર લખો — ઓછામાં ઓછા 2 અક્ષરો.",
+  "couldNotLoadSections": "કલમો લોડ કરી શકાઈ નથી",
+  "startTyping": "શોધવા માટે ટાઇપ કરવાનું શરૂ કરો",
+  "result": "પરિણામ",
+  "results": "પરિણામો",
+  "tryDifferentDescription": "અલગ રીતે વર્ણન કરીને જુઓ.",
+  "untitledSection": "શીર્ષક વગરની કલમ",
+  "previously": "અગાઉ",
+  "now": "હવે"
 }

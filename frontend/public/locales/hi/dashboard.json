@@ -36,5 +36,21 @@
 
   "legalAdvisorPage": "कानूनी सलाहकार डैशबोर्ड",
   "legalDashboardDescription": "कानूनी समीक्षा की प्रतीक्षा कर रहे मामलों, चिह्नित साक्ष्यों और कानूनी टीम के अपडेट की यहाँ निगरानी की जा सकती है।",
-  "stationOfficerPage": "स्टेशन हाउस अधिकारी डैशबोर्ड"
+  "stationOfficerPage": "स्टेशन हाउस अधिकारी डैशबोर्ड",
+
+  "legalLibrary": "कानूनी पुस्तकालय",
+  "searchLegalSections": "कानूनी धाराएँ खोजें",
+  "findExactSection": "सही धारा तुरंत खोजें",
+  "legalLibraryDescription": "केवल कीवर्ड ही नहीं, अर्थ के आधार पर भी खोजें। अपराध का विवरण लिखें या धारा संख्या दर्ज करें, और सबसे उपयुक्त परिणाम प्राप्त करें।",
+  "legalSearchPlaceholder": "जैसे: प्रतिरूपण द्वारा धोखाधड़ी, दहेज मृत्यु, BNS 103...",
+  "browseLegalSections": "कानूनी धाराएँ देखें",
+  "browseHint": "कोई घटना, अपराध या धारा संख्या लिखें — कम से कम 2 अक्षर।",
+  "couldNotLoadSections": "धाराएँ लोड नहीं हो सकीं",
+  "startTyping": "खोजने के लिए टाइप करना शुरू करें",
+  "result": "परिणाम",
+  "results": "परिणाम",
+  "tryDifferentDescription": "इसे किसी अन्य तरीके से लिखकर देखें।",
+  "untitledSection": "शीर्षक रहित धारा",
+  "previously": "पहले",
+  "now": "अब"
 }

@@ -78,5 +78,167 @@
     "files": "Files",
     "secureCloud": "Secure Cloud Storage",
     "secureClouds": "All documents are securely uploaded to Cloudinary and linked to this complaint for easy access and management."
-  }
+  },
+
+  "complaintListSubtitle": "View and manage all registered complaints.",
+  "searchComplaint": "Search complaint...",
+
+  "crimeCategory": "Crime Category",
+  "cyberCrimes": "Cyber Crimes",
+  "propertyCrimes": "Property Crimes",
+  "crimesAgainstWomen": "Crimes Against Women",
+  "financialCrimes": "Financial Crimes",
+  "trafficOffences": "Traffic Offences",
+
+  "subcategory": "Subcategory",
+
+  "pending": "Pending",
+  "underInvestigation": "Under Investigation",
+  "closed": "Closed",
+  "rejected": "Rejected",
+
+  "case": "Case",
+  "created": "Created",
+  "notCreated": "Not Created",
+
+  "searching": "Searching...",
+  "clearFilters": "Clear Filters",
+  "searchFailed": "Search failed.",
+
+  "complainantDetails": "Complainant Details",
+  "fullName": "Full Name",
+  "fatherName": "Father's Name",
+  "age": "Age",
+  "gender": "Gender",
+  "phone": "Phone",
+  "email": "Email",
+  "occupation": "Occupation",
+  "nationality": "Nationality",
+  "relationshipToCase": "Relationship to Case",
+  "aadhaarNumber": "Aadhaar Number",
+  "address": "Address",
+  "photo": "Photo",
+  "notProvided": "Not provided",
+  "notAvailable": "-",
+
+  "loadingComplaint": "Loading complaint...",
+  "complaintNotFound": "Complaint not found.",
+  "draft": "Draft",
+  "noDate": "No date",
+
+  "complaintInformation": "Complaint Information",
+  "complaintNumber": "Complaint Number",
+  "complaintMode": "Complaint Mode",
+  "emergency": "Emergency",
+  "crimeSubCategory": "Crime Sub-Category",
+
+  "incidentDate": "Incident Date",
+  "incidentTime": "Incident Time",
+  "landmark": "Landmark",
+
+  "incidentDescription": "Incident Description",
+  "aiSummary": "AI Summary",
+  "officerNotes": "Officer Notes",
+  "additionalNotes": "Additional Notes",
+
+  "attachmentsEvidence": "Attachments & Evidence",
+  "openDocument": "Open document",
+
+  "complainants": "Complainants",
+  "victims": "Victims",
+  "suspects": "Suspects",
+
+  "contact": "Contact",
+  "statement": "Statement",
+  "alias": "Alias",
+  "injuries": "Injuries",
+
+  "backToList": "Back to List",
+  "submitDraft": "Submit Draft",
+  "viewCase": "View Case",
+  "createCase": "Create Case",
+  "creatingCase": "Creating Case...",
+  "unableToCreateCase": "Unable to create case",
+
+  "unableToLoadCaseDiary": "Unable to load the case diary right now.",
+  "unableToCreateDiaryEntry": "Unable to create the diary entry. Please try again.",
+  "failedToUploadFiles": "Failed to upload files. Please try again.",
+
+  "caseDiaryDescription": "Review and add investigation diary entries for complaint",
+
+  "addDiaryEntry": "Add Diary Entry",
+
+  "actionTypePlaceholder": "Action type (e.g., Investigation, Interview, Evidence collection)",
+  "officerIdOptional": "Officer ID (optional)",
+  "locationOptional": "Location (optional)",
+
+  "attachmentsPhotosFiles": "Attachments (Photos & Files)",
+  "clickToUpload": "Click to upload",
+  "orDragDrop": "or drag and drop",
+  "supportedFiles": "Photos, PDFs, Documents (Max 10MB)",
+
+  "uploadedFiles": "Uploaded Files",
+
+  "saving": "Saving...",
+  "createDiaryEntry": "Create Diary Entry",
+
+  "diaryEntries": "Diary Entries",
+  "loadingDiaryEntries": "Loading diary entries...",
+  "noCaseExists": "No case exists for this complaint yet.",
+  "noDiaryEntries": "No diary entries found for this case.",
+
+  "action": "Action",
+  "officer": "Officer",
+
+  "legalSectionIntelligence": "Legal Section Intelligence",
+  "caseSummaryUsed": "Case summary used for analysis",
+  "caseSummaryPlaceholder": "Describe the incident (who, what, where, how)…",
+  "noStoredSummary": "No stored summary found for this complaint — enter one above to analyze.",
+
+  "analyzing": "Analyzing...",
+  "reanalyze": "Re-analyze",
+
+  "firDraftSaved": "FIR draft saved. You can now download it below.",
+
+  "selectedItems": "Selected Items",
+  "itemsSelected": "items selected",
+
+  "savingDraft": "Saving draft...",
+  "saveFirDraft": "Save FIR Draft",
+  "downloadDocx": "Download DOCX",
+
+  "applicableSections": "Applicable Sections",
+  "waitingSummary": "Waiting on a case summary.",
+  "noMatchingSections": "No BNS/BNSS/BSA section matches. This case may fall under a special/local act.",
+
+  "landmarkJudgments": "Landmark Judgments",
+  "noJudgmentsFound": "No relevant judgments found.",
+
+  "hideSectionText": "Hide Section Text",
+  "showSectionText": "Show Section Text",
+  "correspondsTo": "Corresponds To",
+
+  "match": "match",
+  "ipc": "IPC",
+
+  "draftSubmittedSuccessfully": "Draft Submitted Successfully!",
+  "complaintReadyForInvestigation": "Your complaint has been submitted and is ready for investigation.",
+  "redirectingToComplaints": "Redirecting to complaints list...",
+
+  "submitDraftComplaint": "Submit Draft Complaint",
+  "reviewSubmitDraft": "Review and submit the draft complaint",
+
+  "complainantPhoto": "Complainant Photo",
+
+  "uploadedDocuments": "Uploaded Documents",
+  "openFile": "Open File",
+
+  "submitting": "Submitting...",
+  "submitComplaint": "Submit Complaint",
+
+  "investigationTimeline": "Investigation Timeline",
+  "followInvestigation": "Follow the investigation progress for complaint",
+  "loadingTimeline": "Loading timeline...",
+  "noTimelineEntries": "No timeline entries found for this case.",
+  "unableToLoadTimeline": "Unable to load the investigation timeline right now."
 }

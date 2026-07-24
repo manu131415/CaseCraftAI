@@ -1,6 +1,7 @@
 'use client';
 
 import { use, useCallback, useEffect, useState } from 'react';
+import { useLanguage } from "@/app/providers/LanguageProvider";
 
 // ---------- Types ----------
 
@@ -53,6 +54,7 @@ const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:8000'
 // ---------- Small presentational helpers ----------
 
 function SimilarityBadge({ score }: { score: number }) {
+  const { t } = useLanguage();
   const pct = Math.round(score * 100);
   const tone =
     pct >= 75 ? 'bg-emerald-50 text-emerald-700 ring-emerald-600/20'
@@ -60,7 +62,7 @@ function SimilarityBadge({ score }: { score: number }) {
     : 'bg-slate-100 text-slate-600 ring-slate-500/20';
   return (
     <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ring-1 ring-inset ${tone}`}>
-      {pct}% match
+      {pct}% {t("match", "complaints")}
     </span>
   );
 }
@@ -80,6 +82,7 @@ function ActBadge({ act }: { act: string }) {
 
 function SectionCard({ section, selected, onToggle }: { section: LegalSection; selected: boolean; onToggle: () => void }) {
   const [expanded, setExpanded] = useState(false);
+  const { t } = useLanguage();
 
   return (
     <div className={`rounded-lg border-2 p-4 shadow-sm ${selected ? 'border-amber-500 bg-white ring-2 ring-amber-200' : 'border-slate-200 bg-white'}`}>
@@ -87,14 +90,14 @@ function SectionCard({ section, selected, onToggle }: { section: LegalSection; s
         <div className="flex items-center gap-2">
           <ActBadge act={section.act_code} />
           <h3 className="font-semibold text-slate-900">
-            Sec {section.section_number} — {section.title}
+            {t("section","common")} {section.section_number} — {section.title}
           </h3>
         </div>
         <div className="flex items-center gap-2">
           <SimilarityBadge score={section.similarity} />
           <label className="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-2 py-1 text-xs font-medium text-slate-700 shadow-sm">
             <input type="checkbox" checked={selected} onChange={onToggle} />
-            Select
+            {t("select", "common")}
           </label>
         </div>
       </div>
@@ -105,7 +108,7 @@ function SectionCard({ section, selected, onToggle }: { section: LegalSection; s
         onClick={() => setExpanded((v) => !v)}
         className="mt-2 text-xs font-medium text-blue-900 hover:text-blue-950"
       >
-        {expanded ? 'Hide section text' : 'Show section text'}
+        {expanded ? t("hideSectionText", "complaints") : t("showSectionText", "complaints")}
       </button>
 
       {expanded && (
@@ -117,7 +120,7 @@ function SectionCard({ section, selected, onToggle }: { section: LegalSection; s
       {section.cross_references.length > 0 && (
         <div className="mt-3 border-t border-slate-100 pt-3">
           <p className="mb-1.5 text-xs font-medium uppercase tracking-wide text-slate-500">
-            Corresponds to
+            {t("correspondsTo", "complaints")}
           </p>
           <div className="flex flex-wrap gap-2">
             {section.cross_references.map((xref, i) => (
@@ -127,7 +130,7 @@ function SectionCard({ section, selected, onToggle }: { section: LegalSection; s
                 className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-xs text-slate-700"
               >
                 <ActBadge act={xref.act} />
-                Sec {xref.section}
+                {t("section","common")} {xref.section}
                 {xref.subject ? ` · ${xref.subject}` : ''}
               </span>
             ))}
@@ -139,6 +142,7 @@ function SectionCard({ section, selected, onToggle }: { section: LegalSection; s
 }
 
 function JudgmentCard({ judgment, selected, onToggle }: { judgment: LandmarkJudgment; selected: boolean; onToggle: () => void }) {
+  const { t } = useLanguage();
   const outcomeTone =
     judgment.bail_outcome?.toLowerCase().includes('grant')
       ? 'bg-emerald-50 text-emerald-700'
@@ -159,7 +163,7 @@ function JudgmentCard({ judgment, selected, onToggle }: { judgment: LandmarkJudg
           <SimilarityBadge score={judgment.similarity} />
           <label className="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-2 py-1 text-xs font-medium text-slate-700 shadow-sm">
             <input type="checkbox" checked={selected} onChange={onToggle} />
-            Select
+            {t("select", "common")}
           </label>
         </div>
       </div>
@@ -169,7 +173,7 @@ function JudgmentCard({ judgment, selected, onToggle }: { judgment: LandmarkJudg
       <div className="mt-3 flex flex-wrap items-center gap-2">
         {judgment.ipc_sections && (
           <span className="rounded-md bg-slate-50 px-2 py-1 text-xs text-slate-700 ring-1 ring-inset ring-slate-200">
-            IPC {judgment.ipc_sections}
+            {t("ipc","complaints")} {judgment.ipc_sections}
           </span>
         )}
         {judgment.bail_outcome && (
@@ -200,6 +204,7 @@ export default function LegalSectionsPage({
   params: Promise<{ complaintId: string }>;
 }) {
   const { complaintId } = use(params);
+  const { t } = useLanguage();
 
   const [caseSummary, setCaseSummary] = useState('');
   const [result, setResult] = useState<AnalysisResult | null>(null);
@@ -325,26 +330,26 @@ export default function LegalSectionsPage({
   return (
     <div className="p-6 bg-blue-950 min-h-screen">
       <div className="mb-6">
-        <h1 className="text-2xl font-semibold text-amber-400">Legal Section Intelligence</h1>
-        <p className="mt-1 text-sm text-slate-300">Complaint {complaintId}</p>
+        <h1 className="text-2xl font-semibold text-amber-400">{t("legalSectionIntelligence","complaints")}</h1>
+        <p className="mt-1 text-sm text-slate-300">{t("complaint","common")} {complaintId}</p>
       </div>
 
       {/* Case summary panel */}
       <div className="mb-6 rounded-lg border border-slate-200 bg-white p-4">
         <label className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-slate-500">
-          Case summary used for analysis
+          {t("caseSummaryUsed","complaints")}
         </label>
         <textarea
           value={caseSummary}
           onChange={(e) => setCaseSummary(e.target.value)}
           rows={3}
-          placeholder="Describe the incident (who, what, where, how)…"
+          placeholder={t("caseSummaryPlaceholder","complaints")}
           className="w-full resize-none rounded-md border border-slate-200 p-2.5 text-sm text-slate-800 focus:border-blue-900 focus:outline-none focus:ring-1 focus:ring-blue-900"
         />
         <div className="mt-2 flex items-center justify-between gap-4">
           {needsManualSummary && (
             <p className="text-xs text-amber-700">
-              No stored summary found for this complaint — enter one above to analyze.
+              {t("noStoredSummary","complaints")}
             </p>
           )}
           <button
@@ -352,7 +357,7 @@ export default function LegalSectionsPage({
             disabled={loading || !caseSummary.trim()}
             className="ml-auto rounded-md bg-blue-900 px-3.5 py-1.5 text-sm font-medium text-white hover:bg-blue-950 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {loading ? 'Analyzing…' : 'Re-analyze'}
+            {loading ? t("analyzing","complaints") : t("reanalyze","complaints")}
           </button>
         </div>
       </div>
@@ -365,7 +370,7 @@ export default function LegalSectionsPage({
 
       {draftId && (
         <div className="mb-6 rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-700">
-          FIR draft saved. You can now download it below.
+          {t("firDraftSaved","complaints")}
         </div>
       )}
 
@@ -378,8 +383,8 @@ export default function LegalSectionsPage({
       <div className="mb-6 rounded-lg border border-slate-200 bg-white p-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="text-sm font-semibold text-slate-900">Selected items</p>
-            <p className="text-sm text-slate-500">{selectedCount} item{selectedCount === 1 ? '' : 's'} selected</p>
+            <p className="text-sm font-semibold text-slate-900">{t("selectedItems","complaints")}</p>
+            <p className="text-sm text-slate-500">{selectedCount} item{selectedCount === 1 ? '' : 's'} {t("selected","common")}</p>
           </div>
           <div className="flex flex-wrap gap-3">
             <button
@@ -387,14 +392,14 @@ export default function LegalSectionsPage({
               disabled={savingDraft || selectedCount === 0 || !result}
               className="rounded-md bg-blue-900 px-3.5 py-1.5 text-sm font-medium text-white hover:bg-blue-950 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {savingDraft ? 'Saving draft…' : 'Save FIR draft'}
+              {savingDraft ? t("savingDraft","complaints") : t("saveFirDraft","complaints")}
             </button>
             <button
               onClick={handleDownloadDraft}
               disabled={!draftId}
               className="rounded-md bg-emerald-600 px-3.5 py-1.5 text-sm font-medium text-white hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              Download DOCX
+              {t("downloadDocx","complaints")}
             </button>
           </div>
         </div>
@@ -402,7 +407,7 @@ export default function LegalSectionsPage({
 
       {/* Sections */}
       <section className="mb-8">
-        <h2 className="mb-3 text-lg font-semibold text-amber-400">Applicable Sections</h2>
+        <h2 className="mb-3 text-lg font-semibold text-amber-400">{t("applicableSections","complaints")}</h2>
         {loading ? (
           <div className="grid gap-3 sm:grid-cols-2">
             {Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)}
@@ -424,14 +429,14 @@ export default function LegalSectionsPage({
           </div>
         ) : (
           <p className="text-sm text-slate-300">
-            {needsManualSummary ? 'Waiting on a case summary.' : 'No BNS/BNSS/BSA section matches. This case may fall under a special/local act.'}
+            {needsManualSummary ? t("waitingSummary","complaints") : t("noMatchingSections","complaints")}
           </p>
         )}
       </section>
 
       {/* Judgments */}
       <section>
-        <h2 className="mb-3 text-lg font-semibold text-amber-400">Landmark Judgments</h2>
+        <h2 className="mb-3 text-lg font-semibold text-amber-400">{t("landmarkJudgments","complaints")}</h2>
         {loading ? (
           <div className="grid gap-3 sm:grid-cols-2">
             {Array.from({ length: 2 }).map((_, i) => <SkeletonCard key={i} />)}
@@ -453,7 +458,7 @@ export default function LegalSectionsPage({
           </div>
         ) : (
           <p className="text-sm text-slate-300">
-            {needsManualSummary ? 'Waiting on a case summary.' : 'No relevant judgments found.'}
+            {needsManualSummary ? t("waitingSummary","complaints") : t("noJudgmentsFound","complaints")}
           </p>
         )}
       </section>

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import axios from "axios";
+import { useLanguage } from "@/app/providers/LanguageProvider";
 import {
   createCaseDiary,
   getCaseByComplaint,
@@ -33,6 +34,7 @@ export default function CaseDiaryPage() {
   const [hasCase, setHasCase] = useState(true);
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [uploadingFiles, setUploadingFiles] = useState(false);
+  const { t } = useLanguage();
 
   const loadDiary = async () => {
     if (!complaintId) {
@@ -54,7 +56,7 @@ export default function CaseDiaryPage() {
       setEntries(sortedEntries);
     } catch (err) {
       console.error(err);
-      setError("Unable to load the case diary right now.");
+      setError(t("unableToLoadCaseDiary", "complaints"));
     } finally {
       setLoading(false);
     }
@@ -97,7 +99,7 @@ export default function CaseDiaryPage() {
       await loadDiary();
     } catch (err: any) {
       console.error(err);
-      const message = err?.response?.data?.detail || err?.message || "Unable to create the diary entry. Please try again.";
+      const message = err?.response?.data?.detail || err?.message || t("unableToCreateDiaryEntry", "complaints");
       setError(message);
     } finally {
       setSubmitting(false);
@@ -154,7 +156,7 @@ export default function CaseDiaryPage() {
       event.target.value = '';
     } catch (err) {
       console.error('Error handling files:', err);
-      setError('Failed to upload files. Please try again.');
+      setError(t("failedToUploadFiles", "complaints"));
     } finally {
       setUploadingFiles(false);
     }
@@ -167,31 +169,31 @@ export default function CaseDiaryPage() {
   return (
     <div className="space-y-6 p-6">
       <div className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-sm">
-        <h1 className="text-2xl font-semibold text-slate-900">Case Diary</h1>
+        <h1 className="text-2xl font-semibold text-slate-900">{t("caseDiary", "cases")}</h1>
         <p className="mt-2 text-base text-slate-600">
-          Review and add investigation diary entries for complaint {complaintId}.
+          {t("caseDiaryDescription", "complaints")} {complaintId}.
         </p>
       </div>
 
       <div className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-sm">
-        <h2 className="text-xl font-semibold text-slate-900">Add diary entry</h2>
+        <h2 className="text-xl font-semibold text-slate-900">{t("addDiaryEntry", "complaints")}</h2>
         <form className="mt-4 grid gap-4 md:grid-cols-2" onSubmit={handleSubmit}>
           <input
             className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
-            placeholder="Action type (e.g., Investigation, Interview, Evidence collection)"
+            placeholder={t("actionTypePlaceholder", "complaints")}
             value={form.action_type}
             onChange={(event) => setForm((prev) => ({ ...prev, action_type: event.target.value }))}
             required
           />
           <input
             className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
-            placeholder="Officer ID (optional)"
+            placeholder={t("officerIdOptional", "complaints")}
             value={form.officer_id}
             onChange={(event) => setForm((prev) => ({ ...prev, officer_id: event.target.value }))}
           />
           <input
             className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
-            placeholder="Location (optional)"
+            placeholder={t("locationOptional", "complaints")}
             value={form.location}
             onChange={(event) => setForm((prev) => ({ ...prev, location: event.target.value }))}
           />
@@ -203,7 +205,7 @@ export default function CaseDiaryPage() {
           />
           <textarea
             className="md:col-span-2 rounded-xl border border-slate-200 px-3 py-2 text-sm"
-            placeholder="Description"
+            placeholder={t("description", "cases")}
             rows={4}
             value={form.description}
             onChange={(event) => setForm((prev) => ({ ...prev, description: event.target.value }))}
@@ -212,7 +214,7 @@ export default function CaseDiaryPage() {
           
           {/* File upload section */}
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-slate-700 mb-2">Attachments (Photos & Files)</label>
+            <label className="block text-sm font-medium text-slate-700 mb-2">{t("attachmentsPhotosFiles", "complaints")}</label>
             <div className="flex items-center justify-center w-full">
               <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-slate-300 border-dashed rounded-lg cursor-pointer hover:bg-slate-50">
                 <div className="flex flex-col items-center justify-center pt-5 pb-6">
@@ -220,9 +222,9 @@ export default function CaseDiaryPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                   </svg>
                   <p className="text-sm text-slate-600">
-                    <span className="font-semibold">Click to upload</span> or drag and drop
+                    <span className="font-semibold">{t("clickToUpload", "complaints")}</span> {t("orDragDrop", "complaints")}
                   </p>
-                  <p className="text-xs text-slate-500">Photos, PDFs, Documents (Max 10MB)</p>
+                  <p className="text-xs text-slate-500">{t("supportedFiles", "complaints")}</p>
                 </div>
                 <input
                   type="file"
@@ -239,7 +241,7 @@ export default function CaseDiaryPage() {
           {/* Display uploaded attachments */}
           {attachments.length > 0 && (
             <div className="md:col-span-2">
-              <p className="text-sm font-medium text-slate-700 mb-2">Uploaded Files ({attachments.length})</p>
+              <p className="text-sm font-medium text-slate-700 mb-2">{t("uploadedFiles", "complaints")} ({attachments.length})</p>
               <div className="space-y-2">
                 {attachments.map((attachment, index) => (
                   <div key={index} className="flex items-center justify-between bg-slate-50 rounded-lg p-3">
@@ -263,7 +265,7 @@ export default function CaseDiaryPage() {
                       onClick={() => removeAttachment(index)}
                       className="ml-2 text-red-600 hover:text-red-700 text-sm"
                     >
-                      Remove
+                      {t("delete", "common")}
                     </button>
                   </div>
                 ))}
@@ -283,44 +285,44 @@ export default function CaseDiaryPage() {
               disabled={submitting || uploadingFiles}
               className="rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:opacity-50"
             >
-              {submitting ? "Saving..." : uploadingFiles ? "Uploading..." : "Create diary entry"}
+              {submitting ? t("saving", "complaints") : uploadingFiles ? t("uploading", "complaints") : t("createDiaryEntry", "complaints")}
             </button>
           </div>
         </form>
       </div>
 
       <div className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-sm">
-        <h2 className="text-xl font-semibold text-slate-900">Diary entries</h2>
+        <h2 className="text-xl font-semibold text-slate-900">{t("diaryEntries", "complaints")}</h2>
 
         {loading ? (
-          <p className="mt-4 text-sm text-slate-600">Loading diary entries...</p>
+          <p className="mt-4 text-sm text-slate-600">{t("loadingDiaryEntries", "complaints")}</p>
         ) : error ? (
           <p className="mt-4 text-sm text-red-600">{error}</p>
         ) : !hasCase ? (
-          <p className="mt-4 text-sm text-slate-600">No case exists for this complaint yet.</p>
+          <p className="mt-4 text-sm text-slate-600">{t("noCaseExists", "complaints")}</p>
         ) : entries.length === 0 ? (
-          <p className="mt-4 text-sm text-slate-600">No diary entries found for this case.</p>
+          <p className="mt-4 text-sm text-slate-600">{t("noDiaryEntries", "complaints")}</p>
         ) : (
           <div className="mt-4 space-y-3">
             {entries.map((entry) => (
               <div key={entry.diary_id} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <p className="text-sm font-semibold text-slate-900">{entry.action_type || "Action"}</p>
+                  <p className="text-sm font-semibold text-slate-900">{entry.action_type || t("action", "complaints")}</p>
                   <p className="text-xs text-slate-500">
-                    {entry.occurred_at ? new Date(entry.occurred_at).toLocaleString() : "—"}
+                    {entry.occurred_at ? new Date(entry.occurred_at).toLocaleString() : t("notAvailable", "complaints")}
                   </p>
                 </div>
                 <p className="mt-2 text-sm text-slate-700">{entry.description}</p>
                 <div className="mt-3 flex flex-wrap gap-4 text-xs text-slate-500">
-                  <span>Location: {entry.location || "—"}</span>
-                  <span>Officer: {entry.officer_id || "—"}</span>
-                  <span>Created: {entry.created_at ? new Date(entry.created_at).toLocaleString() : "—"}</span>
+                  <span>{t("location", "cases")}: {entry.location || t("notAvailable", "complaints")}</span>
+                  <span>{t("officer", "complaints")}: {entry.officer_id || t("notAvailable", "complaints")}</span>
+                  <span>{t("created", "complaints")}: {entry.created_at ? new Date(entry.created_at).toLocaleString() : t("notAvailable", "complaints")}</span>
                 </div>
                 
                 {/* Display attachments if any */}
                 {entry.attachments && entry.attachments.length > 0 && (
                   <div className="mt-3 border-t border-slate-200 pt-3">
-                    <p className="text-xs font-semibold text-slate-700 mb-2">Attachments ({entry.attachments.length})</p>
+                    <p className="text-xs font-semibold text-slate-700 mb-2">{t("attachments", "complaints")} ({entry.attachments.length})</p>
                     <div className="flex flex-wrap gap-2">
                       {entry.attachments.map((attachment, idx) => (
                         <a

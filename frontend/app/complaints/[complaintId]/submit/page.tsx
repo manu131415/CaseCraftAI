@@ -6,6 +6,7 @@ import axios from "axios";
 import { CheckCircle2, AlertCircle } from "lucide-react";
 import Navbar from "@/components/layout/shared/Navbar";
 import Sidebar from "@/components/layout/io/Sidebar";
+import { useLanguage } from "@/app/providers/LanguageProvider";
 
 export default function SubmitDraftPage() {
   const router = useRouter();
@@ -17,6 +18,7 @@ export default function SubmitDraftPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const { t } = useLanguage();
 
   useEffect(() => {
     if (!complaintId) return;
@@ -109,7 +111,7 @@ export default function SubmitDraftPage() {
           <main className="flex-1 p-8">
             <div className="text-center py-12">
               <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-slate-300 border-t-blue-600"></div>
-              <p className="mt-4 text-slate-600">Loading complaint...</p>
+              <p className="mt-4 text-slate-600">{t("loadingComplaint","complaints")}</p>
             </div>
           </main>
         </div>
@@ -129,7 +131,7 @@ export default function SubmitDraftPage() {
                 <div className="flex items-center gap-3">
                   <AlertCircle className="h-6 w-6 text-red-600" />
                   <div>
-                    <h2 className="font-semibold text-red-900">Error</h2>
+                    <h2 className="font-semibold text-red-900">{t("error","common")}</h2>
                     <p className="text-red-700">{error}</p>
                   </div>
                 </div>
@@ -137,7 +139,7 @@ export default function SubmitDraftPage() {
                   onClick={() => router.back()}
                   className="mt-4 rounded-lg bg-red-600 px-4 py-2 text-white font-medium hover:bg-red-700"
                 >
-                  Go Back
+                  {t("goBack","common")}
                 </button>
               </div>
             </div>
@@ -159,9 +161,9 @@ export default function SubmitDraftPage() {
                 <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
                   <CheckCircle2 className="h-8 w-8 text-green-600" />
                 </div>
-                <h2 className="text-2xl font-semibold text-green-900">Draft Submitted Successfully!</h2>
-                <p className="mt-2 text-green-700">Your complaint has been submitted and is ready for investigation.</p>
-                <p className="mt-1 text-sm text-green-600">Redirecting to complaints list...</p>
+                <h2 className="text-2xl font-semibold text-green-900">{t("draftSubmittedSuccessfully","complaints")}</h2>
+                <p className="mt-2 text-green-700">{t("complaintReadyForInvestigation","complaints")}</p>
+                <p className="mt-1 text-sm text-green-600">{t("redirectingToComplaints","complaints")}</p>
               </div>
             </div>
           </main>
@@ -178,7 +180,7 @@ export default function SubmitDraftPage() {
           <Sidebar />
           <main className="flex-1 p-8">
             <div className="text-center py-12">
-              <p className="text-slate-600">Complaint not found</p>
+              <p className="text-slate-600">{t("complaintNotFound","complaints")}</p>
             </div>
           </main>
         </div>
@@ -195,63 +197,63 @@ export default function SubmitDraftPage() {
           <div className="mx-auto max-w-4xl">
             {/* Header */}
             <div className="mb-8">
-              <h1 className="text-3xl font-bold text-slate-900">Submit Draft Complaint</h1>
+              <h1 className="text-3xl font-bold text-slate-900">{t("submitDraftComplaint","complaints")}</h1>
               <p className="mt-2 text-slate-600">
-                Review and submit the draft complaint #{complaint.complaint_number}
+                {t("reviewSubmitDraft","complaints")} #{complaint.complaint_number}
               </p>
             </div>
 
             {/* Complaint Summary */}
             <div className="mb-8 rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-              <h2 className="mb-4 text-xl font-semibold text-slate-900">Complaint Details</h2>
+              <h2 className="mb-4 text-xl font-semibold text-slate-900">{t("complaintDetails","complaints")}</h2>
               
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700">Title</label>
+                  <label className="block text-sm font-medium text-slate-700">{t("title","common")}</label>
                   <p className="mt-1 text-slate-900">{complaint.complaint_title || "-"}</p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700">Crime Category</label>
+                  <label className="block text-sm font-medium text-slate-700">{t("crimeCategory","complaints")}</label>
                   <p className="mt-1 text-slate-900">{complaint.crime_category || "-"}</p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700">Complainant</label>
+                  <label className="block text-sm font-medium text-slate-700">{t("complainant","complaints")}</label>
                   <p className="mt-1 text-slate-900">{complaint.complainant_name || "-"}</p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700">Location</label>
+                  <label className="block text-sm font-medium text-slate-700">{t("location","cases")}</label>
                   <p className="mt-1 text-slate-900">{complaint.location || "-"}</p>
                 </div>
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-slate-700">Description</label>
+                  <label className="block text-sm font-medium text-slate-700">{t("description","cases")}</label>
                   <p className="mt-1 text-slate-900">{complaint.description || "-"}</p>
                 </div>
               </div>
 
               {(complaint.complainant_photo_url || complaint.complainant_photo_url) && (
                 <div className="mt-6">
-                  <p className="text-sm font-medium text-slate-700">Complainant Photo</p>
-                  <img src={complaint.complainant_photo_url || complaint.complainantPhotoUrl} alt="Complainant photo" className="mt-3 max-h-48 rounded-xl object-cover border" />
+                  <p className="text-sm font-medium text-slate-700">{t("complainantPhoto","complaints")}</p>
+                  <img src={complaint.complainant_photo_url || complaint.complainantPhotoUrl} alt={t("complainantPhoto","complaints")} className="mt-3 max-h-48 rounded-xl object-cover border" />
                 </div>
               )}
 
               {complaint.attachments && complaint.attachments.length > 0 && (
                 <div className="mt-6 rounded-xl border border-slate-200 bg-slate-50 p-4">
-                  <p className="font-semibold text-slate-900">Uploaded Documents</p>
+                  <p className="font-semibold text-slate-900">{t("uploadedDocuments","complaints")}</p>
                   <div className="mt-3 grid gap-3 sm:grid-cols-2">
                     {complaint.attachments.map((att: any, idx: number) => {
                       const url = att.documentUrl || att.cloudinaryUrl || att.url;
                       const isImage = (att.fileType || "").startsWith("image") || (url && /\.(jpg|jpeg|png|gif|webp)$/i.test(url));
                       return (
                         <div key={att.id || idx} className="rounded-xl border border-white bg-white p-3 shadow-sm">
-                          <p className="font-medium text-slate-900">{att.fileName || "Document"}</p>
-                          <p className="text-sm text-slate-500">{att.fileType || "File"}</p>
+                          <p className="font-medium text-slate-900">{att.fileName || t("document","common")}</p>
+                          <p className="text-sm text-slate-500">{att.fileType || t("file","common")}</p>
                           {isImage && url ? (
                             <a href={url} target="_blank" rel="noreferrer">
                               <img src={url} alt={att.fileName || "uploaded image"} className="mt-2 max-h-32 w-full rounded-lg object-cover" />
                             </a>
                           ) : url ? (
-                            <a href={url} target="_blank" rel="noreferrer" className="mt-2 inline-block text-indigo-600 hover:underline">Open file</a>
+                            <a href={url} target="_blank" rel="noreferrer" className="mt-2 inline-block text-indigo-600 hover:underline">{t("openFile","complaints")}</a>
                           ) : null}
                         </div>
                       );
@@ -263,11 +265,11 @@ export default function SubmitDraftPage() {
               {/* Victims Summary */}
               {complaint.victims && complaint.victims.length > 0 && (
                 <div className="mt-6 pt-6 border-t border-slate-200">
-                  <h3 className="font-semibold text-slate-900">Victims ({complaint.victims.length})</h3>
+                  <h3 className="font-semibold text-slate-900">{t("victims","complaints")} ({complaint.victims.length})</h3>
                   <ul className="mt-2 space-y-1">
                     {complaint.victims.map((victim: any, idx: number) => (
                       <li key={idx} className="text-sm text-slate-600">
-                        • {victim.fullName || "Unknown"} ({victim.age || "N/A"})
+                        • {victim.fullName || t("unknown","common")} ({victim.age || t("notAvailable","complaints")})
                       </li>
                     ))}
                   </ul>
@@ -277,11 +279,11 @@ export default function SubmitDraftPage() {
               {/* Suspects Summary */}
               {complaint.suspects && complaint.suspects.length > 0 && (
                 <div className="mt-4 pt-4 border-t border-slate-200">
-                  <h3 className="font-semibold text-slate-900">Suspects ({complaint.suspects.length})</h3>
+                  <h3 className="font-semibold text-slate-900">{t("suspects","complaints")} ({complaint.suspects.length})</h3>
                   <ul className="mt-2 space-y-1">
                     {complaint.suspects.map((suspect: any, idx: number) => (
                       <li key={idx} className="text-sm text-slate-600">
-                        • {suspect.fullName || "Unknown"} {suspect.alias ? `(${suspect.alias})` : ""}
+                        • {suspect.fullName || t("unknown","common")} {suspect.alias ? `(${suspect.alias})` : ""}
                       </li>
                     ))}
                   </ul>
@@ -295,14 +297,14 @@ export default function SubmitDraftPage() {
                 onClick={() => router.back()}
                 className="rounded-lg border border-slate-300 px-6 py-3 text-slate-700 font-medium hover:bg-slate-50 transition"
               >
-                Cancel
+                {t("cancel","common")}
               </button>
               <button
                 onClick={handleSubmit}
                 disabled={submitting}
                 className="rounded-lg bg-blue-600 px-6 py-3 text-white font-medium hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {submitting ? "Submitting..." : "Submit Complaint"}
+                {submitting ? t("cancel","common") : t("submitComplaint","complaints")}
               </button>
             </div>
           </div>

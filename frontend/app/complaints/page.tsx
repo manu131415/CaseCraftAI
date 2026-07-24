@@ -4,6 +4,7 @@ import { useState } from "react";
 import Navbar from "@/components/layout/shared/Navbar";
 import Sidebar from "@/components/layout/io/Sidebar";
 import ComplaintList from "@/components/complaint/ComplaintList";
+import { useLanguage } from "@/app/providers/LanguageProvider";
 
 export default function ComplaintsPage() {
   const [search, setSearch] = useState("");
@@ -15,6 +16,7 @@ export default function ComplaintsPage() {
 
   const [results, setResults] = useState<any>(null);
   const [loading, setLoading] = useState(false);
+  const { t } = useLanguage();
 
   const handleSearch = async () => {
     if (!search.trim()) {
@@ -38,7 +40,7 @@ export default function ComplaintsPage() {
       setResults(data.complaints ?? data);
     } catch (err) {
       console.error(err);
-      alert("Search failed.");
+      alert(t("searchFailed", "complaints"));
     }
 
     setLoading(false);
@@ -65,11 +67,11 @@ export default function ComplaintsPage() {
 
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-slate-800">
-              Complaints
+              {t("complaintList", "common")}
             </h1>
 
             <p className="mt-2 text-slate-600">
-              View and manage all registered complaints.
+              {t("subtitle", "complaints")}
             </p>
           </div>
 
@@ -83,7 +85,7 @@ export default function ComplaintsPage() {
 
               <input
                 type="text"
-                placeholder="Search complaint..."
+                placeholder={t("searchPlaceholder", "complaints")}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="rounded-lg border border-slate-300 px-3 py-2 text-sm"
@@ -96,12 +98,12 @@ export default function ComplaintsPage() {
                 onChange={(e) => setCrimeCategory(e.target.value)}
                 className="rounded-lg border border-slate-300 px-3 py-2 text-sm"
               >
-                <option value="">Crime Category</option>
-                <option>Cyber Crimes</option>
-                <option>Property Crimes</option>
-                <option>Crimes Against Women</option>
-                <option>Financial Crimes</option>
-                <option>Traffic Offences</option>
+                <option value="">{t("crimeCategory", "complaints")}</option>
+                <option>{t("cyberCrimes", "complaints")}</option>
+                <option>{t("propertyCrimes", "complaints")}</option>
+                <option>{t("crimesAgainstWomen", "complaints")}</option>
+                <option>{t("financialCrimes", "complaints")}</option>
+                <option>{t("trafficOffences", "complaints")}</option>
               </select>
 
               {/* Crime Subcategory */}
@@ -111,7 +113,7 @@ export default function ComplaintsPage() {
                 onChange={(e) => setCrimeSubcategory(e.target.value)}
                 className="rounded-lg border border-slate-300 px-3 py-2 text-sm"
               >
-                <option value="">Subcategory</option>
+                <option value="">{t("subcategory", "complaints")}</option>
               </select>
 
               {/* Status */}
@@ -121,11 +123,11 @@ export default function ComplaintsPage() {
                 onChange={(e) => setStatus(e.target.value)}
                 className="rounded-lg border border-slate-300 px-3 py-2 text-sm"
               >
-                <option value="">Status</option>
-                <option>Pending</option>
-                <option>Under Investigation</option>
-                <option>Closed</option>
-                <option>Rejected</option>
+                <option value="">{t("status", "complaints")}</option>
+                <option>{t("pending", "complaints")}</option>
+                <option>{t("pending", "complaints")}</option>
+                <option>{t("pending", "complaints")}</option>
+                <option>{t("rejected", "complaints")}</option>
               </select>
 
               {/* Case */}
@@ -135,9 +137,9 @@ export default function ComplaintsPage() {
                 onChange={(e) => setCaseStatus(e.target.value)}
                 className="rounded-lg border border-slate-300 px-3 py-2 text-sm"
               >
-                <option value="">Case</option>
-                <option>Created</option>
-                <option>Not Created</option>
+                <option value="">{t("case", "complaints")}</option>
+                <option>{t("case", "complaints")}</option>
+                <option>{t("created", "complaints")}</option>
               </select>
             </div>
 
@@ -149,14 +151,14 @@ export default function ComplaintsPage() {
                 disabled={loading}
                 className="rounded-lg bg-indigo-600 px-5 py-2 text-white hover:bg-indigo-700"
               >
-                {loading ? "Searching..." : "Search"}
+                {loading ? t("searching", "complaints") : t("search", "common")}
               </button>
 
               <button
                 onClick={clearFilters}
                 className="rounded-lg border border-slate-300 bg-white px-5 py-2 hover:bg-slate-100"
               >
-                Clear Filters
+                {t("clearFilters", "complaints")}
               </button>
             </div>
           </div>

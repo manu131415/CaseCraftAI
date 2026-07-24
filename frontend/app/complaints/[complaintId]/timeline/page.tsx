@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { loadDiaryEntriesForComplaint, getCaseByComplaint, type DiaryEntry } from "@/lib/api/caseDiary";
 import axios from "axios";
+import { useLanguage } from "@/app/providers/LanguageProvider";
 
 export default function TimelinePage() {
   const params = useParams<{ complaintId: string }>();
@@ -13,6 +14,7 @@ export default function TimelinePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [hasCase, setHasCase] = useState(true);
+  const { t } = useLanguage();
 
   useEffect(() => {
     const loadEntries = async () => {
@@ -78,7 +80,7 @@ export default function TimelinePage() {
         setEntries(sortedEntries as DiaryEntry[]);
       } catch (err) {
         console.error(err);
-        setError("Unable to load the investigation timeline right now.");
+        setError(t("unableToLoadTimeline", "complaints"));
       } finally {
         setLoading(false);
       }
@@ -90,21 +92,21 @@ export default function TimelinePage() {
   return (
     <div className="space-y-6 p-6">
       <div className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-sm">
-        <h1 className="text-2xl font-semibold text-slate-900">Investigation Timeline</h1>
+        <h1 className="text-2xl font-semibold text-slate-900">{t("investigationTimeline","complaints")}</h1>
         <p className="mt-2 text-base text-slate-600">
-          Follow the investigation progress for complaint {complaintId}.
+          {t("followInvestigation","complaints")} {complaintId}.
         </p>
       </div>
 
       <div className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-sm">
         {loading ? (
-          <p className="text-sm text-slate-600">Loading timeline...</p>
+          <p className="text-sm text-slate-600">{t("loadingTimeline","complaints")}</p>
         ) : error ? (
           <p className="text-sm text-red-600">{error}</p>
         ) : !hasCase ? (
-          <p className="text-sm text-slate-600">No case exists for this complaint yet.</p>
+          <p className="text-sm text-slate-600">{t("noCaseExists","complaints")}</p>
         ) : entries.length === 0 ? (
-          <p className="text-sm text-slate-600">No timeline entries found for this case.</p>
+          <p className="text-sm text-slate-600">{t("noTimelineEntries","complaints")}</p>
         ) : (
           <div className="space-y-4">
             {entries.map((entry, index) => (
@@ -115,18 +117,18 @@ export default function TimelinePage() {
                 </div>
                 <div className="flex-1 rounded-2xl border border-slate-200 bg-slate-50 p-4">
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <p className="text-sm font-semibold text-slate-900">{entry.action_type || "Action"}</p>
+                    <p className="text-sm font-semibold text-slate-900">{entry.action_type || t("action","complaints")}</p>
                     <p className="text-xs text-slate-500">
                       {entry.occurred_at ? new Date(entry.occurred_at).toLocaleString() : "—"}
                     </p>
                   </div>
                   <p className="mt-2 text-sm text-slate-700">{entry.description}</p>
-                  <p className="mt-3 text-xs text-slate-500">Location: {entry.location || "—"}</p>
+                  <p className="mt-3 text-xs text-slate-500">{t("location","cases")}: {entry.location || "—"}</p>
                   
                   {/* Display attachments if any */}
                   {entry.attachments && entry.attachments.length > 0 && (
                     <div className="mt-3 border-t border-slate-200 pt-3">
-                      <p className="text-xs font-semibold text-slate-700 mb-2">Attachments ({entry.attachments.length})</p>
+                      <p className="text-xs font-semibold text-slate-700 mb-2">{t("attachments","complaints")} ({entry.attachments.length})</p>
                       <div className="flex flex-wrap gap-2">
                         {entry.attachments.map((attachment, idx) => {
                           const isImage = attachment.file_type === 'photo' || (attachment.file_url && /\.(jpg|jpeg|png|gif|webp)$/i.test(attachment.file_url));

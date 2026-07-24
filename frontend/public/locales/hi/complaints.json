@@ -56,7 +56,167 @@
     "files": "फाइलें",
     "secureCloud": "सुरक्षित क्लाउड स्टोरेज",
     "secureClouds": "सभी दस्तावेज़ सुरक्षित रूप से Cloudinary को अपलोड किए जाते हैं और आसान पहुंच और प्रबंधन के लिए इस शिकायत से जुड़े होते हैं।"
-  }
+  },
 
+  "complaintListSubtitle": "सभी पंजीकृत शिकायतों को देखें और प्रबंधित करें।",
+  "searchComplaint": "शिकायत खोजें...",
+
+  "crimeCategory": "अपराध श्रेणी",
+  "cyberCrimes": "साइबर अपराध",
+  "propertyCrimes": "संपत्ति अपराध",
+  "crimesAgainstWomen": "महिलाओं के विरुद्ध अपराध",
+  "financialCrimes": "वित्तीय अपराध",
+  "trafficOffences": "यातायात अपराध",
+
+  "subcategory": "उपश्रेणी",
+
+  "pending": "लंबित",
+  "underInvestigation": "जांच जारी",
+  "closed": "बंद",
+  "rejected": "अस्वीकृत",
+
+  "case": "केस",
+  "created": "बनाया गया",
+  "notCreated": "नहीं बनाया गया",
+
+  "searching": "खोजा जा रहा है...",
+  "clearFilters": "फ़िल्टर साफ़ करें",
+  "searchFailed": "खोज विफल रही।",
+
+  "complainantDetails": "शिकायतकर्ता का विवरण",
+  "fullName": "पूरा नाम",
+  "fatherName": "पिता का नाम",
+  "age": "आयु",
+  "gender": "लिंग",
+  "phone": "फोन",
+  "email": "ईमेल",
+  "occupation": "व्यवसाय",
+  "nationality": "राष्ट्रीयता",
+  "relationshipToCase": "मामले से संबंध",
+  "aadhaarNumber": "आधार संख्या",
+  "address": "पता",
+  "photo": "फोटो",
+  "notProvided": "उपलब्ध नहीं",
+  "notAvailable": "-",
+
+  "loadingComplaint": "शिकायत लोड हो रही है...",
+  "complaintNotFound": "शिकायत नहीं मिली।",
+  "draft": "ड्राफ्ट",
+  "noDate": "तिथि उपलब्ध नहीं",
+
+  "complaintInformation": "शिकायत की जानकारी",
+  "complaintNumber": "शिकायत संख्या",
+  "complaintMode": "शिकायत का माध्यम",
+  "emergency": "आपातकाल",
+  "crimeSubCategory": "अपराध उप-श्रेणी",
+
+  "incidentDate": "घटना की तिथि",
+  "incidentTime": "घटना का समय",
+  "landmark": "पहचान चिन्ह",
+
+  "incidentDescription": "घटना का विवरण",
+  "aiSummary": "एआई सारांश",
+  "officerNotes": "अधिकारी के नोट्स",
+  "additionalNotes": "अतिरिक्त टिप्पणियाँ",
+
+  "attachmentsEvidence": "संलग्नक एवं साक्ष्य",
+  "openDocument": "दस्तावेज़ खोलें",
+
+  "complainants": "शिकायतकर्ता",
+  "victims": "पीड़ित",
+  "suspects": "संदिग्ध",
+
+  "contact": "संपर्क",
+  "statement": "बयान",
+  "alias": "उपनाम",
+  "injuries": "चोटें",
+
+  "backToList": "सूची पर वापस जाएँ",
+  "submitDraft": "ड्राफ्ट जमा करें",
+  "viewCase": "केस देखें",
+  "createCase": "केस बनाएँ",
+  "creatingCase": "केस बनाया जा रहा है...",
+  "unableToCreateCase": "केस नहीं बनाया जा सका",
+
+  "unableToLoadCaseDiary": "केस डायरी लोड नहीं हो सकी।",
+  "unableToCreateDiaryEntry": "डायरी प्रविष्टि नहीं बनाई जा सकी। पुनः प्रयास करें।",
+  "failedToUploadFiles": "फ़ाइलें अपलोड नहीं हो सकीं। पुनः प्रयास करें।",
+
+  "caseDiaryDescription": "शिकायत के लिए जांच डायरी प्रविष्टियाँ देखें और जोड़ें",
+
+  "addDiaryEntry": "डायरी प्रविष्टि जोड़ें",
+
+  "actionTypePlaceholder": "कार्य का प्रकार (जैसे जांच, पूछताछ, साक्ष्य संग्रह)",
+  "officerIdOptional": "अधिकारी आईडी (वैकल्पिक)",
+  "locationOptional": "स्थान (वैकल्पिक)",
+
+  "attachmentsPhotosFiles": "संलग्नक (फोटो एवं फ़ाइलें)",
+  "clickToUpload": "अपलोड करने के लिए क्लिक करें",
+  "orDragDrop": "या यहाँ खींचकर छोड़ें",
+  "supportedFiles": "फोटो, PDF, दस्तावेज़ (अधिकतम 10MB)",
+
+  "uploadedFiles": "अपलोड की गई फ़ाइलें",
+
+  "saving": "सहेजा जा रहा है...",
+  "createDiaryEntry": "डायरी प्रविष्टि बनाएँ",
+
+  "diaryEntries": "डायरी प्रविष्टियाँ",
+  "loadingDiaryEntries": "डायरी प्रविष्टियाँ लोड हो रही हैं...",
+  "noCaseExists": "इस शिकायत के लिए अभी कोई केस मौजूद नहीं है।",
+  "noDiaryEntries": "इस केस के लिए कोई डायरी प्रविष्टि नहीं मिली।",
+
+  "action": "कार्य",
+  "officer": "अधिकारी",
   
+  "legalSectionIntelligence": "कानूनी धाराओं का विश्लेषण",
+  "caseSummaryUsed": "विश्लेषण के लिए उपयोग किया गया केस सारांश",
+  "caseSummaryPlaceholder": "घटना का विवरण लिखें (कौन, क्या, कहाँ, कैसे)…",
+  "noStoredSummary": "इस शिकायत के लिए कोई सारांश उपलब्ध नहीं है। कृपया ऊपर सारांश दर्ज करें।",
+
+  "analyzing": "विश्लेषण किया जा रहा है...",
+  "reanalyze": "पुनः विश्लेषण करें",
+
+  "firDraftSaved": "एफआईआर ड्राफ्ट सफलतापूर्वक सहेजा गया। अब आप इसे डाउनलोड कर सकते हैं।",
+
+  "selectedItems": "चयनित आइटम",
+  "itemsSelected": "आइटम चयनित",
+
+  "savingDraft": "ड्राफ्ट सहेजा जा रहा है...",
+  "saveFirDraft": "एफआईआर ड्राफ्ट सहेजें",
+  "downloadDocx": "DOCX डाउनलोड करें",
+
+  "applicableSections": "लागू धाराएँ",
+  "waitingSummary": "केस सारांश की प्रतीक्षा की जा रही है।",
+  "noMatchingSections": "कोई उपयुक्त BNS/BNSS/BSA धारा नहीं मिली। यह मामला किसी विशेष या स्थानीय अधिनियम के अंतर्गत हो सकता है।",
+
+  "landmarkJudgments": "महत्वपूर्ण निर्णय",
+  "noJudgmentsFound": "कोई प्रासंगिक निर्णय नहीं मिला।",
+
+  "hideSectionText": "धारा का पाठ छिपाएँ",
+  "showSectionText": "धारा का पाठ दिखाएँ",
+  "correspondsTo": "संबंधित धारा",
+
+  "match": "मिलान",
+  "ipc": "आईपीसी",
+
+  "draftSubmittedSuccessfully": "ड्राफ्ट सफलतापूर्वक जमा किया गया!",
+  "complaintReadyForInvestigation": "आपकी शिकायत जमा कर दी गई है और अब जांच के लिए तैयार है।",
+  "redirectingToComplaints": "शिकायत सूची पर भेजा जा रहा है...",
+
+  "submitDraftComplaint": "ड्राफ्ट शिकायत जमा करें",
+  "reviewSubmitDraft": "ड्राफ्ट शिकायत की समीक्षा करें और जमा करें",
+
+  "complainantPhoto": "शिकायतकर्ता का फोटो",
+
+  "uploadedDocuments": "अपलोड किए गए दस्तावेज़",
+  "openFile": "फ़ाइल खोलें",
+
+  "submitting": "जमा किया जा रहा है...",
+  "submitComplaint": "शिकायत जमा करें",
+
+  "investigationTimeline": "जांच समयरेखा",
+  "followInvestigation": "शिकायत के लिए जांच की प्रगति का अनुसरण करें",
+  "loadingTimeline": "समयरेखा लोड हो रही है...",
+  "noTimelineEntries": "इस केस के लिए कोई समयरेखा प्रविष्टि नहीं मिली।",
+  "unableToLoadTimeline": "जांच समयरेखा लोड नहीं की जा सकी।"
 }

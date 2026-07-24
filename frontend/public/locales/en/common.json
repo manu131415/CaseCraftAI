@@ -41,5 +41,28 @@
     "changeLanguage": "Change Language",
     "language": "Language",
     "logout": "Logout"
+  },
+
+  "caseOperationsHub": "Case Operations Hub",
+  "operationsCenter": "OPERATIONS CENTER",
+
+  "secureByDesign": "Secure by Design",
+
+  "login": {
+    "heroTitle": "One command center for every complaint, case, and closing argument.",
+    "heroSubtitle": "Sign in with your role to reach the tools built for it — intake for IOs, oversight for SHOs, and documentation for Legal Advisors.",
+
+    "signIn": "Sign in",
+    "subtitle": "Choose your role and enter your credentials.",
+    "signingIn": "Signing in…",
+    "signingInAs": "Signing in as",
+
+    "policeCode": "Police Code",
+    "password": "Password",
+
+    "footer": "Access is role-restricted. Contact your administrator if you believe you should have access to a different area.",
+
+    "errorGeneric": "Something went wrong. Please try again.",
+    "errorConnection": "Couldn't reach the server. Check your connection and try again."
   }
 }

@@ -3,6 +3,7 @@
 import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ROLES, Role } from "@/lib/auth";
+import { useLanguage } from "@/app/providers/LanguageProvider";
 
 const CODE_PLACEHOLDER: Record<Role, string> = {
   IO: "e.g. IO3420",
@@ -25,6 +26,7 @@ function LoginForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const { t } = useLanguage();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -45,7 +47,7 @@ function LoginForm() {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || "Something went wrong. Please try again.");
+        setError(data.error || t("login.errorGeneric"));
         setLoading(false);
         return;
       }
@@ -53,7 +55,7 @@ function LoginForm() {
       router.push(nextPath);
       router.refresh();
     } catch {
-      setError("Couldn't reach the server. Check your connection and try again.");
+      setError(t("login.errorConnection"));
       setLoading(false);
     }
   }
@@ -75,32 +77,28 @@ function LoginForm() {
           </div>
           <div>
             <p className="text-white font-semibold leading-tight">CaseCraftAI</p>
-            <p className="text-white/50 text-xs leading-tight">Case Operations Hub</p>
+            <p className="text-white/50 text-xs leading-tight">{t("caseOperationsHub")}</p>
           </div>
         </div>
 
         <div className="relative z-10 max-w-sm">
           <p className="text-[13px] tracking-wide text-[#7C8CFF] font-medium mb-3">
-            OPERATIONS CENTER
+            {t("operationsCenter")}
           </p>
           <h1 className="text-3xl font-semibold text-white leading-snug mb-4">
-            One command center for every complaint, case, and closing
-            argument.
+            {t("login.heroTitle")}
           </h1>
           <p className="text-white/60 text-sm leading-relaxed">
-            Sign in with your role to reach the tools built for it — intake
-            for IOs, oversight for SHOs, and documentation for Legal
-            Advisors.
+            {t("login.heroSubtitle")}
           </p>
         </div>
 
         <div className="relative z-10 rounded-2xl bg-white/5 border border-white/10 p-4">
           <p className="text-white text-sm font-medium mb-1">
-            Secure by design
+            {t("secureByDesign")}
           </p>
           <p className="text-white/50 text-xs leading-relaxed">
-            All complaint files are protected with layered verification and
-            audit logs.
+            {t("secureDescription")}
           </p>
         </div>
       </div>
@@ -115,9 +113,9 @@ function LoginForm() {
             <span className="font-semibold">CaseCraftAI</span>
           </div>
 
-          <h2 className="text-2xl font-semibold text-[#0B0F1D] mb-1">Sign in</h2>
+          <h2 className="text-2xl font-semibold text-[#0B0F1D] mb-1">{t("login.signIn")}</h2>
           <p className="text-sm text-gray-500 mb-6">
-            Choose your role and enter your credentials.
+            {t("login.subtitle")}
           </p>
 
           {/* Role tabs */}
@@ -138,13 +136,13 @@ function LoginForm() {
             ))}
           </div>
           <p className="text-xs text-gray-400 -mt-4 mb-6">
-            Signing in as {ROLES.find((r) => r.value === role)?.blurb}
+            {t("login.signingInAs")} {ROLES.find((r) => r.value === role)?.blurb}
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-[#0B0F1D] mb-1.5">
-                Police code
+                {t("login.signingInAs")}
               </label>
               <input
                 type="text"
@@ -159,7 +157,7 @@ function LoginForm() {
 
             <div>
               <label className="block text-sm font-medium text-[#0B0F1D] mb-1.5">
-                Password
+                {t("login.password")}
               </label>
               <input
                 type="password"
@@ -183,13 +181,12 @@ function LoginForm() {
               className="w-full rounded-xl text-white text-sm font-medium py-2.5 transition-colors disabled:opacity-60"
               style={{ backgroundColor: "#3B5BFF" }}
             >
-              {loading ? "Signing in…" : "Sign in"}
+              {loading ? t("login.signingIn") : t("login.signIn")}
             </button>
           </form>
 
           <p className="text-xs text-gray-400 mt-6 text-center">
-            Access is role-restricted. Contact your administrator if you
-            believe you should have access to a different area.
+            {t("login.footer")}
           </p>
         </div>
       </div>

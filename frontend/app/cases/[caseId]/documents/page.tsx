@@ -6,9 +6,11 @@ import { useParams } from "next/navigation";
 import ComplaintHeader from "@/components/documents/ComplaintHeader";
 import DocumentCard from "@/components/documents/DocumentCard";
 import { documentList } from "@/components/documents/documentList";
+import { useLanguage } from "@/app/providers/LanguageProvider";
 
 export default function DocumentsPage() {
   const { caseId } = useParams();
+  const { t, language } = useLanguage();
 
   const API = process.env.NEXT_PUBLIC_API_URL!;
 
@@ -26,7 +28,7 @@ export default function DocumentsPage() {
         body: JSON.stringify({
           case_id: caseId,
           document_type: documentType,
-          language: "en",
+          language,
         }),
       });
 
@@ -60,7 +62,7 @@ throw new Error(
       window.URL.revokeObjectURL(url);
     } catch (err: any) {
       console.error(err);
-      alert(err.message || "Failed to generate document");
+      alert(err.message || t("failedToGenerate", "cases"));
     } finally {
       setLoadingDoc(null);
     }
@@ -71,7 +73,7 @@ throw new Error(
       <ComplaintHeader caseId={caseId as string} />
 
       <h2 className="mb-6 mt-8 text-2xl font-semibold text-white">
-        Available Templates
+        {t("availableTemplates", "cases")}
       </h2>
 
       <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
@@ -87,7 +89,7 @@ throw new Error(
 
       {loadingDoc && (
         <div className="fixed bottom-6 right-6 rounded-xl bg-cyan-600 px-5 py-3 text-white shadow-xl">
-          Generating {loadingDoc.replaceAll("_", " ")}...
+          {t("generating", "cases")} {loadingDoc.replaceAll("_", " ")}...
         </div>
       )}
     </div>

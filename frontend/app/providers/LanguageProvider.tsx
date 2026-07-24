@@ -14,12 +14,17 @@ import commonGu from '@/public/locales/gu/common.json';
 import dashboardGu from '@/public/locales/gu/dashboard.json';
 import complaintsGu from '@/public/locales/gu/complaints.json';
 
+import casesEn from "@/public/locales/en/cases.json";
+import casesHi from "@/public/locales/hi/cases.json";
+import casesGu from "@/public/locales/gu/cases.json";
+
 export type Language = 'en' | 'hi' | 'gu';
 
 export type Namespace =
-  | 'common'
-  | 'dashboard'
-  | 'complaints';
+  | "common"
+  | "dashboard"
+  | "complaints"
+  | "cases";
 
 interface LanguageContextType {
   language: Language;
@@ -34,16 +39,19 @@ const translations: Record<Language, Record<Namespace, Record<string, any>>> = {
     common: commonEn,
     dashboard: dashboardEn,
     complaints: complaintsEn,
+    cases: casesEn,
   },
   hi: {
     common: commonHi,
     dashboard: dashboardHi,
     complaints: complaintsHi,
+    cases: casesHi,
   },
   gu: {
     common: commonGu,
     dashboard: dashboardGu,
     complaints: complaintsGu,
+    cases: casesGu,
   },
 };
 

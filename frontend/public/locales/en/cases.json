@@ -1,0 +1,69 @@
+{
+  "title": "Cases",
+  "subtitle": "View and manage all created investigation cases.",
+  "searchPlaceholder": "Search case...",
+  "status": "Status",
+  "priority": "Priority",
+  "clearFilters": "Clear Filters",
+
+  "caseCreated": "Case Created",
+  "firRegistered": "FIR Registered",
+  "underInvestigation": "Under Investigation",
+  "evidenceCollection": "Evidence Collection",
+  "chargeSheetFiled": "Charge Sheet Filed",
+  "trial": "Trial",
+  "closed": "Closed",
+
+  "loadingCaseDetails": "Loading case details...",
+  "failedToLoad": "Failed to load case details.",
+ "caseNotFound": "Case not found.",
+
+  "backToCases": "Back to Cases",
+
+  "caseId": "Case ID",
+  "caseNumber": "Case Number",
+  "complaintNumber": "Complaint Number",
+  "createdDate": "Created Date",
+  "assignedOfficerId": "Assigned Officer ID",
+
+  "basicInformation": "Basic Information",
+
+  "firDetails": "FIR Details",
+  "firNumber": "FIR Number",
+  "firYear": "FIR Year",
+  "firDate": "FIR Date",
+
+  "location": "Location",
+  "district": "District",
+  "policeStation": "Police Station",
+
+  "incidentDetails": "Incident Details",
+  "incidentDateTime": "Incident Date & Time",
+
+  "chargesheetDetails": "Chargesheet Details",
+  "originalChargesheetNo": "Original Chargesheet No.",
+  "originalChargesheetDate": "Original Chargesheet Date",
+  "supplementaryChargesheetNo": "Supplementary Chargesheet No.",
+  "supplementaryReason": "Supplementary Reason",
+
+  "courtDetails": "Court Details",
+  "courtName": "Court Name",
+  "courtNumber": "Court Number",
+
+  "currentStage": "Current Stage",
+
+  "description": "Description",
+
+  "relatedInformation": "Related Information",
+
+  "viewComplaint": "View Complaint",
+  "caseDiary": "Case Diary",
+  "legalSections": "Legal Sections",
+  "timeline": "Timeline",
+  "documents": "Documents",
+
+  "availableTemplates": "Available Templates",
+  "generating": "Generating",
+  "failedToGenerate": "Failed to generate document"
+
+}

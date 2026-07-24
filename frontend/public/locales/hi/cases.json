@@ -1,0 +1,72 @@
+{
+  "cases": {
+    "title": "केस सूची",
+    "subtitle": "सभी जांच मामलों को देखें और प्रबंधित करें।",
+
+    "searchPlaceholder": "केस खोजें...",
+    "status": "स्थिति",
+    "priority": "प्राथमिकता",
+    "clearFilters": "फ़िल्टर साफ़ करें",
+
+    "caseCreated": "केस बनाया गया",
+    "firRegistered": "एफआईआर दर्ज",
+    "underInvestigation": "जांच जारी",
+    "evidenceCollection": "साक्ष्य संग्रह",
+    "chargeSheetFiled": "चार्जशीट दाखिल",
+    "trial": "मुकदमा",
+    "closed": "बंद",
+    "open": "खुला",
+
+    "loadingCaseDetails": "केस विवरण लोड हो रहे हैं...",
+    "failedToLoad": "केस विवरण लोड नहीं हो सके।",
+    "caseNotFound": "केस नहीं मिला।",
+
+    "backToCases": "केस सूची पर वापस जाएँ",
+
+    "caseId": "केस आईडी",
+    "caseNumber": "केस संख्या",
+    "complaintNumber": "शिकायत संख्या",
+    "createdDate": "निर्माण तिथि",
+    "assignedOfficerId": "नियुक्त अधिकारी आईडी",
+
+    "basicInformation": "मूल जानकारी",
+
+    "firDetails": "एफआईआर विवरण",
+    "firNumber": "एफआईआर संख्या",
+    "firYear": "एफआईआर वर्ष",
+    "firDate": "एफआईआर तिथि",
+
+    "location": "स्थान",
+    "district": "जिला",
+    "policeStation": "पुलिस स्टेशन",
+
+    "incidentDetails": "घटना विवरण",
+    "incidentDateTime": "घटना की तिथि एवं समय",
+
+    "chargesheetDetails": "चार्जशीट विवरण",
+    "originalChargesheetNo": "मूल चार्जशीट संख्या",
+    "originalChargesheetDate": "मूल चार्जशीट तिथि",
+    "supplementaryChargesheetNo": "पूरक चार्जशीट संख्या",
+    "supplementaryReason": "पूरक कारण",
+
+    "courtDetails": "न्यायालय विवरण",
+    "courtName": "न्यायालय का नाम",
+    "courtNumber": "न्यायालय संख्या",
+
+    "currentStage": "वर्तमान चरण",
+
+    "description": "विवरण",
+
+    "relatedInformation": "संबंधित जानकारी",
+
+    "viewComplaint": "शिकायत देखें",
+    "caseDiary": "केस डायरी",
+    "legalSections": "कानूनी धाराएँ",
+    "timeline": "समयरेखा",
+    "documents": "दस्तावेज़",
+
+    "availableTemplates": "उपलब्ध टेम्पलेट",
+    "generating": "दस्तावेज़ तैयार किया जा रहा है",
+    "failedToGenerate": "दस्तावेज़ तैयार नहीं किया जा सका"
+  }
+}

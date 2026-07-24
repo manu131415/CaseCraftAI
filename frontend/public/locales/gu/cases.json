@@ -1,0 +1,72 @@
+{
+  "cases": {
+  "title": "કેસ સૂચિ",
+  "subtitle": "બધા તપાસ કેસો જુઓ અને સંચાલિત કરો.",
+
+  "searchPlaceholder": "કેસ શોધો...",
+  "status": "સ્થિતિ",
+  "priority": "પ્રાથમિકતા",
+  "clearFilters": "ફિલ્ટર સાફ કરો",
+
+  "caseCreated": "કેસ બનાવાયો",
+  "firRegistered": "FIR નોંધાઈ",
+  "underInvestigation": "તપાસ ચાલુ",
+  "evidenceCollection": "પુરાવા એકત્રિત થઈ રહ્યા છે",
+  "chargeSheetFiled": "ચાર્જશીટ દાખલ",
+  "trial": "ટ્રાયલ",
+  "closed": "બંધ",
+  "open": "ખુલ્લો",
+
+  "loadingCaseDetails": "કેસ વિગતો લોડ થઈ રહી છે...",
+  "failedToLoad": "કેસ વિગતો લોડ કરવામાં નિષ્ફળ.",
+  "caseNotFound": "કેસ મળ્યો નથી.",
+
+  "backToCases": "કેસ સૂચિ પર પાછા જાઓ",
+
+  "caseId": "કેસ આઈડી",
+  "caseNumber": "કેસ નંબર",
+  "complaintNumber": "ફરિયાદ નંબર",
+  "createdDate": "બનાવાની તારીખ",
+  "assignedOfficerId": "સોંપાયેલ અધિકારી આઈડી",
+
+  "basicInformation": "મૂળ માહિતી",
+
+  "firDetails": "FIR વિગતો",
+  "firNumber": "FIR નંબર",
+  "firYear": "FIR વર્ષ",
+  "firDate": "FIR તારીખ",
+
+  "location": "સ્થાન",
+  "district": "જિલ્લો",
+  "policeStation": "પોલીસ સ્ટેશન",
+
+  "incidentDetails": "ઘટનાની વિગતો",
+  "incidentDateTime": "ઘટનાની તારીખ અને સમય",
+
+  "chargesheetDetails": "ચાર્જશીટ વિગતો",
+  "originalChargesheetNo": "મૂળ ચાર્જશીટ નંબર",
+  "originalChargesheetDate": "મૂળ ચાર્જશીટ તારીખ",
+  "supplementaryChargesheetNo": "પુરક ચાર્જશીટ નંબર",
+  "supplementaryReason": "પુરક કારણ",
+
+  "courtDetails": "કોર્ટ વિગતો",
+  "courtName": "કોર્ટનું નામ",
+  "courtNumber": "કોર્ટ નંબર",
+
+  "currentStage": "વર્તમાન તબક્કો",
+
+  "description": "વર્ણન",
+
+  "relatedInformation": "સંબંધિત માહિતી",
+
+  "viewComplaint": "ફરિયાદ જુઓ",
+  "caseDiary": "કેસ ડાયરી",
+  "legalSections": "કાનૂની કલમો",
+  "timeline": "સમયરેખા",
+  "documents": "દસ્તાવેજો",
+
+  "availableTemplates": "ઉપલબ્ધ ટેમ્પલેટ્સ",
+  "generating": "દસ્તાવેજ તૈયાર થઈ રહ્યો છે",
+  "failedToGenerate": "દસ્તાવેજ તૈયાર કરવામાં નિષ્ફળ"
+  }
+}

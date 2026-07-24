@@ -12,5 +12,29 @@
     "pending": "બાકી"
   },
   "activityFeed": "પ્રવૃત્તિ ફીડ",
-  "viewAll": "બધું જુઓ"
+  "viewAll": "બધું જુઓ",
+  
+  "appName": "CaseCraftAI",
+
+  "commandCenter": "Command center for complaint operations",
+
+  "dashboardDescription": "Monitor incoming complaints, review flagged evidence, and keep your field team aligned from one place.",
+
+  "liveSync": "Live Sync",
+  "newEntriesLastHour": "12 new entries in the last hour",
+
+  "todaysComplaints": "Today's Complaints",
+  "todaysComplaintsSubtitle": "+18% vs yesterday",
+
+  "pendingReviewSubtitle": "6 require escalation",
+
+  "closedCases": "Closed Cases",
+  "closedCasesSubtitle": "12 cleared today",
+
+  "highRisk": "High Risk",
+  "highRiskSubtitle": "2 flagged for urgent action",
+
+  "legalAdvisorPage": "કાનૂની સલાહકાર ડેશબોર્ડ",
+  "legalDashboardDescription": "કાનૂની સમીક્ષાની રાહ જોતા કેસો, ચિહ્નિત પુરાવાઓ અને કાનૂની ટીમના અપડેટ્સ અહીં જોઈ શકાય છે.",
+  "stationOfficerPage": "સ્ટેશન હાઉસ ઓફિસર ડેશબોર્ડ"
 }

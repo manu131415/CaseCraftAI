@@ -12,5 +12,30 @@
     "pending": "Pending"
   },
   "activityFeed": "Activity Feed",
-  "viewAll": "View All"
+  "viewAll": "View All",
+
+  "appName": "CaseCraftAI",
+
+  "commandCenter": "Command center for complaint operations",
+
+  "dashboardDescription": "Monitor incoming complaints, review flagged evidence, and keep your field team aligned from one place.",
+
+  "liveSync": "Live Sync",
+  "newEntriesLastHour": "12 new entries in the last hour",
+
+  "todaysComplaints": "Today's Complaints",
+  "todaysComplaintsSubtitle": "+18% vs yesterday",
+
+  "pendingReviewSubtitle": "6 require escalation",
+
+  "closedCases": "Closed Cases",
+  "closedCasesSubtitle": "12 cleared today",
+
+  "highRisk": "High Risk",
+  "highRiskSubtitle": "2 flagged for urgent action",
+
+  "legalAdvisorPage": "Legal Advisor Dashboard",
+  "legalDashboardDescription": "Cases awaiting legal review, flagged evidence, and legal team updates can be monitored here.",
+
+  "stationOfficerPage": "Station House Officer Dashboard"
 }

@@ -12,5 +12,29 @@
     "pending": "लंबित"
   },
   "activityFeed": "गतिविधि फीड",
-  "viewAll": "सभी देखें"
+  "viewAll": "सभी देखें",
+
+  "appName": "CaseCraftAI",
+
+  "commandCenter": "शिकायत संचालन नियंत्रण केंद्र",
+
+  "dashboardDescription": "नई शिकायतों की निगरानी करें, चिह्नित साक्ष्यों की समीक्षा करें और अपनी टीम को एक ही स्थान से समन्वित रखें।",
+
+  "liveSync": "लाइव सिंक",
+  "newEntriesLastHour": "पिछले एक घंटे में 12 नई प्रविष्टियाँ",
+
+  "todaysComplaints": "आज की शिकायतें",
+  "todaysComplaintsSubtitle": "कल की तुलना में +18%",
+
+  "pendingReviewSubtitle": "6 मामलों में त्वरित कार्रवाई आवश्यक",
+
+  "closedCases": "बंद मामले",
+  "closedCasesSubtitle": "आज 12 मामले बंद हुए",
+
+  "highRisk": "उच्च जोखिम",
+  "highRiskSubtitle": "2 मामलों को तत्काल कार्रवाई हेतु चिह्नित किया गया",
+
+  "legalAdvisorPage": "कानूनी सलाहकार डैशबोर्ड",
+  "legalDashboardDescription": "कानूनी समीक्षा की प्रतीक्षा कर रहे मामलों, चिह्नित साक्ष्यों और कानूनी टीम के अपडेट की यहाँ निगरानी की जा सकती है।",
+  "stationOfficerPage": "स्टेशन हाउस अधिकारी डैशबोर्ड"
 }

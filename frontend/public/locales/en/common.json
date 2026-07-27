@@ -64,5 +64,23 @@
 
     "errorGeneric": "Something went wrong. Please try again.",
     "errorConnection": "Couldn't reach the server. Check your connection and try again."
+  },
+  
+    "officers": "Officers",
+    "officersSubtitle": "View all officers registered in the system.",
+    "loadingOfficers": "Loading officers…",
+    "failedToLoadOfficers": "Failed to load officers",
+    "noOfficersFound": "No officers found.",
+    "officerId": "Officer ID",
+    "badgeNumber": "Badge No.",
+    "name": "Name",
+    "rank": "Rank",
+    "station": "Station",
+
+  "unauthorized": {
+    "title": "You don't have access to this page",
+    "description": "Your current role doesn't include this section. If this seems wrong, ask your administrator to update your role permissions.",
+    "backToDashboard": "Back to Dashboard",
+    "signInDifferentRole": "Sign in as a Different Role"
   }
 }

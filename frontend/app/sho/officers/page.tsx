@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Sidebar from "@/components/layout/sho/Sidebar";
 import Navbar from "@/components/layout/shared/Navbar";
+import { useLanguage } from "@/app/providers/LanguageProvider";
 
 interface Officer {
   officer_id: string;
@@ -16,6 +17,7 @@ export default function OfficersPage() {
   const [officers, setOfficers] = useState<Officer[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { t } = useLanguage();
 
   useEffect(() => {
     let cancelled = false;
@@ -45,17 +47,17 @@ export default function OfficersPage() {
       <Sidebar />
 
       <div className="flex-1">
-        <Navbar eyebrow="Operations Center" title="Officers" />
+        <Navbar eyebrow={t("operationsCenter", "common")} title={t("officers", "common")} />
 
         <main className="p-6">
-          <h1 className="text-2xl font-bold text-slate-900">Officers</h1>
+          <h1 className="text-2xl font-bold text-slate-900">{t("officers", "common")}</h1>
           <p className="mt-1 text-sm text-slate-600">
-            View all officers registered in the system.
+            {t("officersSubtitle", "common")}
           </p>
 
           <div className="mt-6 overflow-hidden rounded-xl border border-slate-200 bg-white">
             {loading && (
-              <div className="p-6 text-sm text-slate-500">Loading officers…</div>
+              <div className="p-6 text-sm text-slate-500">{t("loadingOfficers", "common")}</div>
             )}
 
             {error && (
@@ -63,18 +65,18 @@ export default function OfficersPage() {
             )}
 
             {!loading && !error && officers.length === 0 && (
-              <div className="p-6 text-sm text-slate-500">No officers found.</div>
+              <div className="p-6 text-sm text-slate-500">{t("noOfficersFound", "common")}</div>
             )}
 
             {!loading && !error && officers.length > 0 && (
               <table className="w-full text-left text-sm">
                 <thead className="border-b border-slate-200 bg-slate-50 text-slate-600">
                   <tr>
-                    <th className="px-4 py-3 font-medium">Officer ID</th>
-                    <th className="px-4 py-3 font-medium">Badge No.</th>
-                    <th className="px-4 py-3 font-medium">Name</th>
-                    <th className="px-4 py-3 font-medium">Rank</th>
-                    <th className="px-4 py-3 font-medium">Station</th>
+                    <th className="px-4 py-3 font-medium">{t("officerId", "common")}</th>
+                    <th className="px-4 py-3 font-medium">{t("badgeNumber", "common")}</th>
+                    <th className="px-4 py-3 font-medium">{t("name", "common")}</th>
+                    <th className="px-4 py-3 font-medium">{t("rank", "common")}</th>
+                    <th className="px-4 py-3 font-medium">{t("station", "common")}</th>
                   </tr>
                 </thead>
                 <tbody>

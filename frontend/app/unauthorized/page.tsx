@@ -1,6 +1,9 @@
+"use client";
 import Link from "next/link";
+import { useLanguage } from "@/app/providers/LanguageProvider";
 
 export default function UnauthorizedPage() {
+  const { t } = useLanguage();
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#F4F6FB] p-6">
       <div className="w-full max-w-sm text-center">
@@ -22,11 +25,10 @@ export default function UnauthorizedPage() {
         </div>
 
         <h1 className="text-xl font-semibold text-ink mb-2">
-          You don't have access to this page
+          {t("unauthorized.title")}
         </h1>
         <p className="text-sm text-gray-500 mb-8">
-          Your current role doesn't include this section. If this seems
-          wrong, ask your administrator to update your role permissions.
+          {t("unauthorized.description")}
         </p>
 
         <div className="flex flex-col gap-2">
@@ -34,13 +36,13 @@ export default function UnauthorizedPage() {
             href="/dashboard"
             className="w-full rounded-xl bg-accent text-white text-sm font-medium py-2.5 hover:bg-accent/90 transition-colors"
           >
-            Back to dashboard
+            {t("unauthorized.backToDashboard")}
           </Link>
           <Link
             href="/login"
             className="w-full rounded-xl border border-gray-200 text-ink text-sm font-medium py-2.5 hover:bg-gray-50 transition-colors"
           >
-            Sign in as a different role
+            {t("unauthorized.signInDifferentRole")}
           </Link>
         </div>
       </div>

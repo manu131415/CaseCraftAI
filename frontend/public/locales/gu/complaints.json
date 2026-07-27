@@ -218,5 +218,20 @@
   "followInvestigation": "આ ફરિયાદ માટે તપાસની પ્રગતિ જુઓ",
   "loadingTimeline": "સમયરેખા લોડ થઈ રહી છે...",
   "noTimelineEntries": "આ કેસ માટે કોઈ સમયરેખા એન્ટ્રી મળી નથી.",
-  "unableToLoadTimeline": "તપાસ સમયરેખા લોડ કરી શકાયી નથી."
+  "unableToLoadTimeline": "તપાસ સમયરેખા લોડ કરી શકાયી નથી.",
+
+  "feature1Title": "ફરિયાદ નોંધણી",
+  "feature1Description": "માર્ગદર્શિત પ્રક્રિયા દ્વારા ફરિયાદ, સ્થાન અને પ્રાથમિકતાની વિગતો નોંધો.",
+
+  "feature2Title": "લાઇવ ઓપરેશન્સ",
+  "feature2Description": "ડેશબોર્ડ પરથી વધતા કેસો અને ઉચ્ચ પ્રાથમિકતાવાળી ફરિયાદોનું નિરીક્ષણ કરો.",
+
+  "feature3Title": "AI સહાયિત સમીક્ષા",
+  "feature3Description": "પુરાવાનો સારાંશ તૈયાર કરવા અને તપાસમાં સહાય માટે સ્વચાલિત વિશ્લેષણનો ઉપયોગ કરો.",
+
+  "todaysSnapshot": "આજનો સારાંશ",
+  "highPriorityQueue": "ઉચ્ચ પ્રાથમિકતા કતાર",
+  "urgentReviews": "તાત્કાલિક સમીક્ષાઓ",
+  "aiDocumentExtraction": "AI દસ્તાવેજ વિશ્લેષણ",
+  "autoClassified": "સ્વચાલિત વર્ગીકૃત"
 }

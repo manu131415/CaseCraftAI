@@ -240,5 +240,20 @@
   "followInvestigation": "Follow the investigation progress for complaint",
   "loadingTimeline": "Loading timeline...",
   "noTimelineEntries": "No timeline entries found for this case.",
-  "unableToLoadTimeline": "Unable to load the investigation timeline right now."
+  "unableToLoadTimeline": "Unable to load the investigation timeline right now.",
+
+  "feature1Title": "Complaint Intake",
+  "feature1Description": "Capture complaint details, location, and urgency in a guided flow.",
+
+  "feature2Title": "Live Operations",
+  "feature2Description": "Track rising cases and high-risk complaints from the dashboard view.",
+
+  "feature3Title": "AI Assisted Review",
+  "feature3Description": "Use automated extraction to summarize evidence and support investigators.",
+
+  "todaysSnapshot": "Today's Snapshot",
+  "highPriorityQueue": "High Priority Queue",
+  "urgentReviews": "Urgent Reviews",
+  "aiDocumentExtraction": "AI Document Extraction",
+  "autoClassified": "Auto-classified"
 }

@@ -9,18 +9,18 @@ export default function HomeContent() {
 
   const features = [
     {
-      title: "Complaint intake",
-      description: "Capture complaint details, location, and urgency in a guided flow.",
+      title: t("feature1Title", "complaints"),
+      description: t("feature1Description", "complaints"),
       icon: FileSignature,
     },
     {
-      title: "Live operations",
-      description: "Track rising cases and high-risk complaints from the dashboard view.",
+      title: t("feature2Title", "complaints"),
+      description: t("feature2Description", "complaints"),
       icon: LayoutDashboard,
     },
     {
-      title: "AI assisted review",
-      description: "Use automated extraction to summarize evidence and support investigators.",
+      title: t("feature3Title", "complaints"),
+      description: t("feature3Description", "complaints"),
       icon: Sparkles,
     },
   ];
@@ -60,8 +60,8 @@ export default function HomeContent() {
             <div className="rounded-[28px] border border-slate-200 bg-slate-950 p-6 text-white shadow-2xl">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-400">Today's snapshot</p>
-                  <p className="mt-2 text-3xl font-semibold">124 cases</p>
+                  <p className="text-sm text-slate-400">{t("todaysSnapshot", "complaints")}</p>
+                  <p className="mt-2 text-3xl font-semibold">124 {t("cases", "cases")}</p>
                 </div>
                 <div className="rounded-2xl bg-blue-600/20 p-3 text-blue-300">
                   <ShieldCheck className="h-6 w-6" />
@@ -69,12 +69,12 @@ export default function HomeContent() {
               </div>
               <div className="mt-8 space-y-4">
                 <div className="rounded-2xl bg-slate-900/70 p-4">
-                  <p className="text-sm text-slate-400">High priority queue</p>
-                  <p className="mt-2 text-xl font-semibold">12 urgent reviews</p>
+                  <p className="text-sm text-slate-400">{t("highPriorityQueue", "complaints")}</p>
+                  <p className="mt-2 text-xl font-semibold">12 {t("urgentReviews", "complaints")}</p>
                 </div>
                 <div className="rounded-2xl bg-slate-900/70 p-4">
-                  <p className="text-sm text-slate-400">AI document extraction</p>
-                  <p className="mt-2 text-xl font-semibold">96% auto-classified</p>
+                  <p className="text-sm text-slate-400">{t("aiDocumentExtraction", "complaints")}</p>
+                  <p className="mt-2 text-xl font-semibold">96% {t("autoClassified", "complaints")}</p>
                 </div>
               </div>
             </div>

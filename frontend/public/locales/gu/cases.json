@@ -1,5 +1,4 @@
 {
-  "cases": {
   "title": "કેસ સૂચિ",
   "subtitle": "બધા તપાસ કેસો જુઓ અને સંચાલિત કરો.",
   "cases": "કેસ",
@@ -68,6 +67,9 @@
 
   "availableTemplates": "ઉપલબ્ધ ટેમ્પલેટ્સ",
   "generating": "દસ્તાવેજ તૈયાર થઈ રહ્યો છે",
-  "failedToGenerate": "દસ્તાવેજ તૈયાર કરવામાં નિષ્ફળ"
-  }
+  "failedToGenerate": "દસ્તાવેજ તૈયાર કરવામાં નિષ્ફળ",
+
+  "loadingCases": "કેસ લોડ થઈ રહ્યા છે...",
+  "titleLabel": "શીર્ષક",
+  "noCasesFound": "કોઈ કેસ મળ્યો નથી."
 }

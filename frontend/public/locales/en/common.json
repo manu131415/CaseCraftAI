@@ -82,5 +82,8 @@
     "description": "Your current role doesn't include this section. If this seems wrong, ask your administrator to update your role permissions.",
     "backToDashboard": "Back to Dashboard",
     "signInDifferentRole": "Sign in as a Different Role"
-  }
+  },
+
+  "view": "View",
+  "actions": "Actions"
 }

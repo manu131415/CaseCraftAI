@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
+import { useLanguage } from "@/app/providers/LanguageProvider";
 
 interface CaseSummary {
   case_id: string;
@@ -30,6 +31,7 @@ export default function CaseList({
   const [cases, setCases] = useState<CaseSummary[]>(initialCases || []);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { t } = useLanguage();
 
   useEffect(() => {
     async function loadCases() {
@@ -46,7 +48,7 @@ export default function CaseList({
         setError(
           err?.response?.data?.detail ||
             err?.message ||
-            "Failed to load cases"
+            t("failedToLoad", "cases")
         );
       } finally {
         setLoading(false);
@@ -65,7 +67,7 @@ export default function CaseList({
   if (loading) {
     return (
       <div className="rounded-2xl border bg-white p-6">
-        Loading cases...
+        {t("loadingCases", "cases")}
       </div>
     );
   }
@@ -109,13 +111,13 @@ export default function CaseList({
 
         <thead className="bg-slate-100">
           <tr className="text-left text-sm font-semibold text-slate-700">
-            <th className="px-6 py-4">Case No.</th>
-            <th className="px-6 py-4">Complaint</th>
-            <th className="px-6 py-4">Title</th>
-            <th className="px-6 py-4">Priority</th>
-            <th className="px-6 py-4">Status</th>
-            <th className="px-6 py-4">Created</th>
-            <th className="px-6 py-4">Actions</th>
+            <th className="px-6 py-4">{t("caseNumber", "cases")}</th>
+            <th className="px-6 py-4">{t("complaintNumber", "cases")}</th>
+            <th className="px-6 py-4">{t("titleLabel", "cases")}</th>
+            <th className="px-6 py-4">{t("priority", "cases")}</th>
+            <th className="px-6 py-4">{t("status", "cases")}</th>
+            <th className="px-6 py-4">{t("createdDate", "cases")}</th>
+            <th className="px-6 py-4">{t("actions", "common")}</th>
           </tr>
         </thead>
 
@@ -127,13 +129,13 @@ export default function CaseList({
                 colSpan={7}
                 className="px-6 py-8 text-center text-slate-500"
               >
-                No cases found.
+                {t("noCasesFound", "cases")}
               </td>
             </tr>
           ) : (
             filteredCases.map((caseItem) => {
 
-              const status = caseItem.status || "Open";
+              const status = caseItem.status || t("open", "cases");
 
               const statusClass =
                 status === "Closed"
@@ -202,35 +204,35 @@ export default function CaseList({
                       href={`/cases/${caseItem.case_id}`}
                       className="rounded-lg bg-blue-600 px-3 py-2 text-sm text-white hover:bg-blue-700"
                     >
-                      View
+                      {t("view", "common")}
                     </Link>
 
                     <Link
                       href={`/complaints/${caseItem.complaint_id}/legal_sections`}
                       className="rounded-lg border border-slate-300 px-3 py-2 text-sm hover:bg-slate-100"
                     >
-                      Legal
+                      {t("legalSections", "cases")}
                     </Link>
 
                     <Link
                       href={`/complaints/${caseItem.complaint_id}/case_diary`}
                       className="rounded-lg border border-slate-300 px-3 py-2 text-sm hover:bg-slate-100"
                     >
-                      Diary
+                      {t("legalSections", "cases")}
                     </Link>
 
                     <Link
                       href={`/complaints/${caseItem.complaint_id}/timeline`}
                       className="rounded-lg border border-slate-300 px-3 py-2 text-sm hover:bg-slate-100"
                     >
-                      Timeline
+                      {t("timeline", "cases")}
                     </Link>
 
                     <Link
                       href={`/cases/${caseItem.case_id}/documents`}
                       className="rounded-lg bg-indigo-600 px-3 py-2 text-sm text-white hover:bg-indigo-700"
                     >
-                      Documents
+                      {t("documents", "cases")}
                     </Link>
 
                   </td>

@@ -172,8 +172,8 @@ export default function ComplaintWizard() {
         err?.response?.data?.detail || 
         err?.response?.data?.message ||
         err?.message ||
-        "Failed to register complaint.";
-      alert(`Failed to register complaint: ${errorMessage}`);
+        t("failedToRegisterComplaint", "complaints");
+      alert(`${t("failedToRegisterComplaint", "complaints")}: ${errorMessage}`);
     } finally {
       setSubmitting(false);
     }
@@ -187,12 +187,11 @@ export default function ComplaintWizard() {
         </div>
 
         <h1 className="mt-6 text-3xl font-semibold text-slate-900">
-          Complaint Registered Successfully
+          {t("complaintRegisteredSuccessfully", "complaints")}
         </h1>
 
         <p className="mt-3 max-w-xl text-base text-slate-600">
-          The complaint has been saved successfully and is ready for further
-          investigation.
+          {t("complaintRegisteredDescription", "complaints")}
         </p>
 
         <button
@@ -250,7 +249,7 @@ export default function ComplaintWizard() {
           }}
           className="mt-8 rounded-full bg-blue-600 px-6 py-3 text-white hover:bg-blue-700"
         >
-          Register Another Complaint
+          {t("registerAnotherComplaint", "complaints")}
         </button>
       </div>
     );
@@ -264,16 +263,15 @@ export default function ComplaintWizard() {
         <div>
 
           <p className="text-blue-600 font-semibold uppercase tracking-[0.25em]">
-            Complaint Registration
+            {t("complaintRegistration", "complaints")}
           </p>
 
           <h1 className="mt-2 text-3xl font-bold">
-            Register New Complaint
+            {t("registerNewComplaint", "complaints")}
           </h1>
 
           <p className="mt-3 text-slate-600">
-            Fill in all the required information regarding the complaint,
-            complainant, victims and suspects.
+            {t("complaintRegistrationDescription", "complaints")}
           </p>
 
         </div>

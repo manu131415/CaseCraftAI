@@ -255,5 +255,20 @@
   "highPriorityQueue": "High Priority Queue",
   "urgentReviews": "Urgent Reviews",
   "aiDocumentExtraction": "AI Document Extraction",
-  "autoClassified": "Auto-classified"
+  "autoClassified": "Auto-classified",
+
+  "unableToLoadComplaints": "Unable to load complaints",
+  "loadingComplaints": "Loading complaints...",
+  "noComplaintsRegistered": "No complaints registered yet",
+  "noComplaintsDescription": "Submit a complaint from the registration page and it will appear here.",
+  "uploaded": "uploaded",
+  "noComplaintsMatchFilters": "No complaints match the selected filters.",
+
+  "failedToRegisterComplaint": "Failed to register complaint",
+  "complaintRegisteredSuccessfully": "Complaint Registered Successfully",
+  "complaintRegisteredDescription": "The complaint has been saved successfully and is ready for further investigation.",
+  "registerAnotherComplaint": "Register Another Complaint",
+  "complaintRegistration": "Complaint Registration",
+  "registerNewComplaint": "Register New Complaint",
+  "complaintRegistrationDescription": "Fill in all the required information regarding the complaint, complainant, victims and suspects."
 }

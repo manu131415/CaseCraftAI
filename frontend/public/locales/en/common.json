@@ -85,5 +85,11 @@
   },
 
   "view": "View",
-  "actions": "Actions"
+  "actions": "Actions",
+
+  "high": "High",
+  "medium": "Medium",
+  "low": "Low",
+
+  "date": "Date"
 }

@@ -233,5 +233,20 @@
   "highPriorityQueue": "उच्च प्राथमिकता कतार",
   "urgentReviews": "तत्काल समीक्षा",
   "aiDocumentExtraction": "एआई दस्तावेज़ विश्लेषण",
-  "autoClassified": "स्वतः वर्गीकृत"
+  "autoClassified": "स्वतः वर्गीकृत",
+
+  "unableToLoadComplaints": "शिकायतें लोड नहीं की जा सकीं",
+  "loadingComplaints": "शिकायतें लोड हो रही हैं...",
+  "noComplaintsRegistered": "अभी तक कोई शिकायत दर्ज नहीं हुई है",
+  "noComplaintsDescription": "पंजीकरण पृष्ठ से शिकायत दर्ज करें, वह यहाँ दिखाई देगी।",
+  "uploaded": "अपलोड",
+  "noComplaintsMatchFilters": "चयनित फ़िल्टर से कोई शिकायत मेल नहीं खाती।",
+
+  "failedToRegisterComplaint": "शिकायत दर्ज नहीं की जा सकी",
+  "complaintRegisteredSuccessfully": "शिकायत सफलतापूर्वक दर्ज की गई",
+  "complaintRegisteredDescription": "शिकायत सफलतापूर्वक सहेज ली गई है और आगे की जांच के लिए तैयार है।",
+  "registerAnotherComplaint": "एक और शिकायत दर्ज करें",
+  "complaintRegistration": "शिकायत पंजीकरण",
+  "registerNewComplaint": "नई शिकायत दर्ज करें",
+  "complaintRegistrationDescription": "शिकायत, शिकायतकर्ता, पीड़ितों और संदिग्धों से संबंधित सभी आवश्यक जानकारी भरें।"
 }

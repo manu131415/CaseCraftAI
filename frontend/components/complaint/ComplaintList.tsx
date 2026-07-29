@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useLanguage } from "@/app/providers/LanguageProvider";
 import {
   User,
   MapPin,
@@ -50,9 +51,11 @@ export default function ComplaintList({
   const [error, setError] = useState<string | null>(null);
   const [caseComplaintIds, setCaseComplaintIds] = useState<Set<string>>(new Set());
   const pathname = usePathname();
+  const { t } = useLanguage();
   const isCaseCreationAllowed = !!pathname && (pathname.includes("/sho") || pathname.includes("/io") || pathname.includes("/dashboard") || pathname.includes("/complaints"));
 
   useEffect(() => {
+    const { t } = useLanguage();
     async function loadData() {
       try {
         const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
@@ -78,7 +81,7 @@ export default function ComplaintList({
       } catch (err: any) {
         console.error("Failed to load complaints:", err);
         const msg = err?.response?.data?.detail || err?.message || String(err);
-        setError(`Unable to load complaints: ${msg}`);
+        setError(`${t("unableToLoadComplaints", "complaints")}: ${msg}`);
       } finally {
         setLoading(false);
       }
@@ -94,7 +97,7 @@ export default function ComplaintList({
 }, [initialComplaints]);
 
   if (loading) {
-    return <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">Loading complaints...</div>;
+    return <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">{t("loadingComplaints", "complaints")}</div>;
   }
 
   if (error) {
@@ -104,8 +107,8 @@ export default function ComplaintList({
   if (!complaints.length) {
     return (
       <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h2 className="text-xl font-semibold text-slate-900">No complaints registered yet</h2>
-        <p className="mt-2 text-slate-600">Submit a complaint from the registration page and it will appear here.</p>
+        <h2 className="text-xl font-semibold text-slate-900">{t("noComplaintsRegistered", "complaints")}</h2>
+        <p className="mt-2 text-slate-600">{t("noComplaintsDescription", "complaints")}</p>
       </div>
     );
   }
@@ -156,16 +159,16 @@ export default function ComplaintList({
     <table className="min-w-full divide-y divide-slate-200">
       <thead className="bg-slate-100">
         <tr className="text-left text-sm font-semibold text-slate-700">
-          <th className="px-6 py-4">Complaint No.</th>
-          <th className="px-6 py-4">Crime Category</th>
-          <th className="px-6 py-4">Crime Subcategory</th>
-          <th className="px-6 py-4">Complainant</th>
-          <th className="px-6 py-4">Location</th>
-          <th className="px-6 py-4">Attachments</th>
-          <th className="px-6 py-4">Status</th>
-          <th className="px-6 py-4">Case</th>
-          <th className="px-6 py-4">Date</th>
-          <th className="px-6 py-4">Actions</th>
+          <th className="px-6 py-4">{t("complaintNumber", "complaints")}</th>
+          <th className="px-6 py-4">{t("crimeCategory", "complaints")}</th>
+          <th className="px-6 py-4">{t("crimeSubcategory", "complaints")}</th>
+          <th className="px-6 py-4">{t("complainant", "complaints")}</th>
+          <th className="px-6 py-4">{t("location", "complaints")}</th>
+          <th className="px-6 py-4">{t("attachments", "complaints")}</th>
+          <th className="px-6 py-4">{t("status", "complaints")}</th>
+          <th className="px-6 py-4">{t("status", "complaints")}</th>
+          <th className="px-6 py-4">{t("date", "common")}</th>
+          <th className="px-6 py-4">{t("actions", "common")}</th>
         </tr>
       </thead>
 
@@ -176,7 +179,7 @@ export default function ComplaintList({
         colSpan={9}
         className="px-6 py-8 text-center text-slate-500"
       >
-        No complaints match the selected filters.
+        {t("noComplaintsMatchFilters", "complaints")}
       </td>
     </tr>
   ) : (
@@ -221,7 +224,7 @@ export default function ComplaintList({
 
     <td className="px-6 py-4">
       <span className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
-        {complaint.attachments_count || 0} uploaded
+        {complaint.attachments_count || 0} {t("uploaded", "complaints")}
       </span>
     </td>
 
@@ -229,18 +232,18 @@ export default function ComplaintList({
       <span
         className={`rounded-full px-3 py-1 text-xs font-semibold ${statusClasses}`}
       >
-        {isDraft ? "Draft" : status}
+        {isDraft ? t("draft", "complaints") : t(status, "complaints")}
       </span>
     </td>
 
     <td className="px-6 py-4">
       {hasCase ? (
         <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
-          Created
+          {t("created", "complaints")}
         </span>
       ) : (
         <span className="rounded-full bg-orange-100 px-3 py-1 text-xs font-semibold text-orange-700">
-          Not Created
+          {t("notCreated", "complaints")}
         </span>
       )}
     </td>
@@ -257,7 +260,7 @@ export default function ComplaintList({
           href={`/complaints/${complaint.complaint_id}`}
           className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
         >
-          View
+          {t("view", "common")}
         </Link>
 
         {isDraft && (
@@ -265,7 +268,7 @@ export default function ComplaintList({
             href={`/complaints/${complaint.complaint_id}/submit`}
             className="rounded-lg bg-orange-600 px-4 py-2 text-sm font-medium text-white hover:bg-orange-700"
           >
-            Submit
+            {t("submit", "common")}
           </Link>
         )}
 
@@ -286,7 +289,7 @@ export default function ComplaintList({
             }}
             className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700"
           >
-            Create case
+            {t("createCase", "complaints")}
           </button>
         )}
 
@@ -295,7 +298,7 @@ export default function ComplaintList({
             href="/cases"
             className="rounded-lg border border-emerald-600 px-4 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-50"
           >
-            Case
+            {t("case", "complaints")}
           </Link>
         )}
       </div>

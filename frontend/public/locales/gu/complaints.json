@@ -233,5 +233,20 @@
   "highPriorityQueue": "ઉચ્ચ પ્રાથમિકતા કતાર",
   "urgentReviews": "તાત્કાલિક સમીક્ષાઓ",
   "aiDocumentExtraction": "AI દસ્તાવેજ વિશ્લેષણ",
-  "autoClassified": "સ્વચાલિત વર્ગીકૃત"
+  "autoClassified": "સ્વચાલિત વર્ગીકૃત",
+
+  "unableToLoadComplaints": "ફરિયાદો લોડ કરી શકાયી નથી",
+  "loadingComplaints": "ફરિયાદો લોડ થઈ રહી છે...",
+  "noComplaintsRegistered": "હજુ સુધી કોઈ ફરિયાદ નોંધાઈ નથી",
+  "noComplaintsDescription": "નોંધણી પૃષ્ઠ પરથી ફરિયાદ નોંધાવો, તે અહીં દેખાશે.",
+  "uploaded": "અપલોડ",
+  "noComplaintsMatchFilters": "પસંદ કરેલા ફિલ્ટર સાથે કોઈ ફરિયાદ મેળ ખાતી નથી.",
+
+  "failedToRegisterComplaint": "ફરિયાદ નોંધવામાં નિષ્ફળતા",
+  "complaintRegisteredSuccessfully": "ફરિયાદ સફળતાપૂર્વક નોંધાઈ",
+  "complaintRegisteredDescription": "ફરિયાદ સફળતાપૂર્વક સાચવવામાં આવી છે અને આગળની તપાસ માટે તૈયાર છે.",
+  "registerAnotherComplaint": "બીજી ફરિયાદ નોંધાવો",
+  "complaintRegistration": "ફરિયાદ નોંધણી",
+  "registerNewComplaint": "નવી ફરિયાદ નોંધાવો",
+  "complaintRegistrationDescription": "ફરિયાદ, ફરિયાદી, પીડિતો અને સંદિગ્ધો સંબંધિત તમામ જરૂરી માહિતી ભરો."
 }

@@ -4,6 +4,7 @@ import { ChangeEvent, useRef, useState } from "react";
 import { Camera } from "lucide-react";
 import { ComplaintData } from "../types";
 import { uploadPhotoToCloudinary } from "@/lib/api/complaints";
+import { useLanguage } from "@/app/providers/LanguageProvider";
 
 interface Props {
   form: ComplaintData;
@@ -16,6 +17,7 @@ export default function ComplainantDetails({
 }: Props) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const { t } = useLanguage();
 
   function handleChange(
     e: React.ChangeEvent<
@@ -34,6 +36,7 @@ export default function ComplainantDetails({
     event: ChangeEvent<HTMLInputElement>
   ) {
     const file = event.target.files?.[0];
+    const { t } = useLanguage();
 
     if (!file) return;
 
@@ -47,7 +50,7 @@ export default function ComplainantDetails({
       });
     } catch (err) {
       console.error("Photo upload failed:", err);
-      alert("Failed to upload photo. Please try again.");
+      alert(t("photoUploadFailed", "complaints"));
     } finally {
       setUploadingPhoto(false);
     }
@@ -59,15 +62,15 @@ export default function ComplainantDetails({
       <div>
 
         <p className="text-base font-medium text-blue-600">
-          Step 2
+          {t("step2", "complaints")}
         </p>
 
         <h2 className="mt-1 text-2xl font-semibold">
-          Complainant Details
+          {t("complainantDetails", "complaints")}
         </h2>
 
         <p className="mt-2 text-slate-500">
-          Record the details of the person filing this complaint.
+          {t("complainantDetailsDescription", "complaints")}
         </p>
 
       </div>
@@ -79,14 +82,14 @@ export default function ComplainantDetails({
         <div>
 
           <label className="font-medium">
-            Full Name *
+            {t("fullName", "complaints")} *
           </label>
 
           <input
             name="complainantName"
             value={form.complainantName}
             onChange={handleChange}
-            placeholder="Full Name"
+            placeholder={t("fullName", "complaints")}
             className="mt-2 w-full rounded-xl border p-3"
           />
 
@@ -95,14 +98,14 @@ export default function ComplainantDetails({
         <div>
 
           <label className="font-medium">
-            Father's / Spouse's Name
+            {t("fatherOrSpouseName", "complaints")}
           </label>
 
           <input
             name="complainantFatherName"
             value={form.complainantFatherName}
             onChange={handleChange}
-            placeholder="Father's / Spouse's Name"
+            placeholder={t("fatherOrSpouseName", "complaints")}
             className="mt-2 w-full rounded-xl border p-3"
           />
 
@@ -117,7 +120,7 @@ export default function ComplainantDetails({
         <div>
 
           <label className="font-medium">
-            Age
+            {t("age", "common")}
           </label>
 
           <input
@@ -127,7 +130,7 @@ export default function ComplainantDetails({
             name="complainantAge"
             value={form.complainantAge}
             onChange={handleChange}
-            placeholder="Age"
+            placeholder={t("age", "common")}
             className="mt-2 w-full rounded-xl border p-3"
           />
 
@@ -136,7 +139,7 @@ export default function ComplainantDetails({
         <div>
 
           <label className="font-medium">
-            Gender
+            {t("gender", "common")}
           </label>
 
           <select
@@ -145,11 +148,11 @@ export default function ComplainantDetails({
             onChange={handleChange}
             className="mt-2 w-full rounded-xl border p-3"
           >
-            <option value="">Select Gender</option>
-            <option>Male</option>
-            <option>Female</option>
-            <option>Transgender</option>
-            <option>Other</option>
+            <option value="">{t("selectGender", "complaints")}</option>
+            <option>{t("male", "common")}</option>
+            <option>{t("female", "common")}</option>
+            <option>{t("transgender", "common")}</option>
+            <option>{t("other", "common")}</option>
           </select>
 
         </div>
@@ -163,14 +166,14 @@ export default function ComplainantDetails({
         <div>
 
           <label className="font-medium">
-            Mobile Number *
+            {t("mobileNumber", "complaints")} *
           </label>
 
           <input
             name="complainantPhone"
             value={form.complainantPhone}
             onChange={handleChange}
-            placeholder="Mobile Number"
+            placeholder={t("mobileNumber", "complaints")}
             className="mt-2 w-full rounded-xl border p-3"
           />
 
@@ -179,7 +182,7 @@ export default function ComplainantDetails({
         <div>
 
           <label className="font-medium">
-            Email
+            {t("email", "common")}
           </label>
 
           <input
@@ -187,7 +190,7 @@ export default function ComplainantDetails({
             name="complainantEmail"
             value={form.complainantEmail}
             onChange={handleChange}
-            placeholder="Email Address"
+            placeholder={t("emailAddress", "complaints")}
             className="mt-2 w-full rounded-xl border p-3"
           />
 
@@ -199,7 +202,7 @@ export default function ComplainantDetails({
       <div>
 
         <label className="font-medium">
-          Residential Address *
+          {t("residentialAddress", "complaints")} *
         </label>
 
         <textarea
@@ -207,7 +210,7 @@ export default function ComplainantDetails({
           name="complainantAddress"
           value={form.complainantAddress}
           onChange={handleChange}
-          placeholder="Complete Residential Address"
+          placeholder={t("completeResidentialAddress", "complaints")}
           className="mt-2 w-full rounded-xl border p-3"
         />
 
@@ -220,14 +223,14 @@ export default function ComplainantDetails({
         <div>
 
           <label className="font-medium">
-            Aadhaar / Government ID
+            {t("aadhaar", "complaints")}
           </label>
 
           <input
             name="complainantAadhaar"
             value={form.complainantAadhaar}
             onChange={handleChange}
-            placeholder="Optional"
+            placeholder={t("optional", "common")}
             className="mt-2 w-full rounded-xl border p-3"
           />
 
@@ -236,7 +239,7 @@ export default function ComplainantDetails({
         <div>
 
           <label className="font-medium">
-            Relationship to Incident
+            {t("relationshipToIncident", "complaints")}
           </label>
 
           <select
@@ -245,16 +248,16 @@ export default function ComplainantDetails({
             onChange={handleChange}
             className="mt-2 w-full rounded-xl border p-3"
           >
-            <option value="">Select Relationship</option>
-            <option>Victim</option>
-            <option>Witness</option>
-            <option>Relative of Victim</option>
-            <option>Neighbour</option>
-            <option>Friend</option>
-            <option>Employer</option>
-            <option>Employee</option>
-            <option>Public Informant</option>
-            <option>Other</option>
+            <option value="">{t("selectRelationship", "complaints")}</option>
+            <option>{t("victim", "complaints")}</option>
+            <option>{t("witness", "complaints")}</option>
+            <option>{t("relativeOfVictim", "complaints")}</option>
+            <option>{t("neighbour", "complaints")}</option>
+            <option>{t("friend", "common")}</option>
+            <option>{t("employer", "complaints")}</option>
+            <option>{t("employee", "complaints")}</option>
+            <option>{t("publicInformant", "complaints")}</option>
+            <option>{t("other", "common")}</option>
           </select>
 
         </div>
@@ -270,11 +273,11 @@ export default function ComplainantDetails({
           <div>
 
             <h3 className="font-semibold">
-              Complainant Photograph
+              {t("complainantPhotograph", "complaints")}
             </h3>
 
             <p className="text-sm text-slate-500">
-              Upload a photograph if available.
+              {t("uploadPhotographDescription", "complaints")}
             </p>
 
           </div>
@@ -286,7 +289,7 @@ export default function ComplainantDetails({
             className="flex items-center gap-2 rounded-full border px-4 py-2 hover:bg-slate-50 disabled:opacity-60 disabled:cursor-not-allowed"
           >
             <Camera size={18} />
-            {uploadingPhoto ? "Uploading..." : "Upload Photo"}
+            {uploadingPhoto ? t("uploading", "common") : t("uploadPhoto", "complaints")}
           </button>
 
         </div>
@@ -317,7 +320,7 @@ export default function ComplainantDetails({
               </p>
 
               <p className="text-sm text-slate-500">
-                Photo uploaded to Cloudinary
+                {t("photoUploaded", "complaints")}
               </p>
 
             </div>

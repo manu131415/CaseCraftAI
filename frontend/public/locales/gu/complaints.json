@@ -248,5 +248,39 @@
   "registerAnotherComplaint": "બીજી ફરિયાદ નોંધાવો",
   "complaintRegistration": "ફરિયાદ નોંધણી",
   "registerNewComplaint": "નવી ફરિયાદ નોંધાવો",
-  "complaintRegistrationDescription": "ફરિયાદ, ફરિયાદી, પીડિતો અને સંદિગ્ધો સંબંધિત તમામ જરૂરી માહિતી ભરો."
+  "complaintRegistrationDescription": "ફરિયાદ, ફરિયાદી, પીડિતો અને સંદિગ્ધો સંબંધિત તમામ જરૂરી માહિતી ભરો.",
+
+  "step2": "પગલું 2",
+  "complainantDetailsDescription": "આ ફરિયાદ નોંધાવનાર વ્યક્તિની વિગતો નોંધો.",
+
+  "fatherOrSpouseName": "પિતા / પતિ / પત્નીનું નામ",
+
+  "selectGender": "લિંગ પસંદ કરો",
+
+  "mobileNumber": "મોબાઇલ નંબર",
+
+  "emailAddress": "ઇમેઇલ સરનામું",
+
+  "residentialAddress": "રહેણાંક સરનામું",
+  "completeResidentialAddress": "સંપૂર્ણ રહેણાંક સરનામું",
+
+  "aadhaar": "આધાર / સરકારી ઓળખપત્ર",
+
+  "relationshipToIncident": "ઘટના સાથેનો સંબંધ",
+  "selectRelationship": "સંબંધ પસંદ કરો",
+
+  "victim": "પીડિત",
+  "witness": "સાક્ષી",
+  "relativeOfVictim": "પીડિતનો સગો",
+  "neighbour": "પાડોશી",
+  "employer": "નિયોજક",
+  "employee": "કર્મચારી",
+  "publicInformant": "જાહેર માહિતીદાતા",
+
+  "complainantPhotograph": "ફરિયાદીનો ફોટો",
+  "uploadPhotographDescription": "જો ઉપલબ્ધ હોય તો ફોટો અપલોડ કરો.",
+  "uploadPhoto": "ફોટો અપલોડ કરો",
+
+  "photoUploaded": "ફોટો સફળતાપૂર્વક અપલોડ થયો",
+  "photoUploadFailed": "ફોટો અપલોડ કરવામાં નિષ્ફળતા. કૃપા કરીને ફરી પ્રયાસ કરો."
 }

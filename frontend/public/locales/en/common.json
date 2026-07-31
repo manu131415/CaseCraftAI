@@ -91,5 +91,16 @@
   "medium": "Medium",
   "low": "Low",
 
-  "date": "Date"
+  "date": "Date",
+
+  "age": "Age",
+  "gender": "Gender",
+  "male": "Male",
+  "female": "Female",
+  "transgender": "Transgender",
+  "other": "Other",
+  "email": "Email",
+  "optional": "Optional",
+  "friend": "Friend",
+  "uploading": "Uploading..."
 }

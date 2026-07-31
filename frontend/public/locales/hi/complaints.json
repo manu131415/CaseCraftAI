@@ -248,5 +248,39 @@
   "registerAnotherComplaint": "एक और शिकायत दर्ज करें",
   "complaintRegistration": "शिकायत पंजीकरण",
   "registerNewComplaint": "नई शिकायत दर्ज करें",
-  "complaintRegistrationDescription": "शिकायत, शिकायतकर्ता, पीड़ितों और संदिग्धों से संबंधित सभी आवश्यक जानकारी भरें।"
+  "complaintRegistrationDescription": "शिकायत, शिकायतकर्ता, पीड़ितों और संदिग्धों से संबंधित सभी आवश्यक जानकारी भरें।",
+
+  "step2": "चरण 2",
+  "complainantDetailsDescription": "इस शिकायत दर्ज करने वाले व्यक्ति का विवरण दर्ज करें।",
+
+  "fatherOrSpouseName": "पिता / पति / पत्नी का नाम",
+
+  "selectGender": "लिंग चुनें",
+
+  "mobileNumber": "मोबाइल नंबर",
+
+  "emailAddress": "ईमेल पता",
+
+  "residentialAddress": "आवासीय पता",
+  "completeResidentialAddress": "पूरा आवासीय पता",
+
+  "aadhaar": "आधार / सरकारी पहचान पत्र",
+
+  "relationshipToIncident": "घटना से संबंध",
+  "selectRelationship": "संबंध चुनें",
+
+  "victim": "पीड़ित",
+  "witness": "गवाह",
+  "relativeOfVictim": "पीड़ित का रिश्तेदार",
+  "neighbour": "पड़ोसी",
+  "employer": "नियोक्ता",
+  "employee": "कर्मचारी",
+  "publicInformant": "सार्वजनिक सूचनादाता",
+
+  "complainantPhotograph": "शिकायतकर्ता का फोटो",
+  "uploadPhotographDescription": "यदि उपलब्ध हो तो फोटो अपलोड करें।",
+  "uploadPhoto": "फोटो अपलोड करें",
+
+  "photoUploaded": "फोटो सफलतापूर्वक अपलोड हो गया",
+  "photoUploadFailed": "फोटो अपलोड नहीं हो सका। कृपया पुनः प्रयास करें।"
 }

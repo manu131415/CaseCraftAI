@@ -2,6 +2,7 @@
 
 import { ComplaintData } from "../types";
 import { crimeTypes } from "../info/crimeTypes";
+import { useLanguage } from "@/app/providers/LanguageProvider";
 
 interface Props {
   form: ComplaintData;
@@ -29,27 +30,27 @@ export default function ComplaintDetails({ form, setForm }: Props) {
     });
   }
 }
-
+  const { t } = useLanguage();
   return (
         <div className="space-y-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
           <div>
-            <p className="text-base font-medium text-blue-600">Step 1</p>
-            <h2 className="mt-1 text-2xl font-semibold text-slate-900">Complaint information</h2>
+            <p className="text-base font-medium text-blue-600">{t("step1", "complaints")}</p>
+            <h2 className="mt-1 text-2xl font-semibold text-slate-900">{t("complaintInformation", "complaints")}</h2>
             <p className="mt-2 text-base text-slate-500">
-              Enter the core facts of the complaint so it can be triaged properly.
+              {t("complaintInformationDescription", "complaints")}
             </p>
           </div>
 
     <div className="grid gap-6 md:grid-cols-2">
         <div>
-          <label className="text-base font-medium text-slate-700">Category</label>
+          <label className="text-base font-medium text-slate-700">{t("category", "complaints")}</label>
           <select
             name="crimeCategory"
             value={form.crimeCategory}
             onChange={handleChange}
             className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none ring-0"
           >
-            <option value="">Select category</option>
+            <option value="">{t("selectCategory", "complaints")}</option>
 
               {Object.keys(crimeTypes).map((category) => (
                 <option key={category} value={category}>
@@ -59,24 +60,24 @@ export default function ComplaintDetails({ form, setForm }: Props) {
           </select>
         </div>
         <div>
-          <label className="text-base font-medium text-slate-700">Priority</label>
+          <label className="text-base font-medium text-slate-700">{t("priority", "cases")}</label>
           <select
             name="priority"
             value={form.priority}
             onChange={handleChange}
             className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none ring-0"
           >
-            <option value="Low">Low</option>
-            <option value="Medium">Medium</option>
-            <option value="High">High</option>
-            <option value="Critical">Critical</option>
+            <option value="Low">{t("low", "common")}</option>
+            <option value="Medium">{t("medium", "common")}</option>
+            <option value="High">{t("high", "common")}</option>
+            <option value="Critical">{t("critical", "complaints")}</option>
           </select>
         </div>
       </div>
 
     <div>
       <label className="text-base font-medium text-slate-700">
-              Crime sub-category
+              {t("crimeSubcategory", "complaints")}
       </label>
 
       <select
@@ -86,7 +87,7 @@ export default function ComplaintDetails({ form, setForm }: Props) {
         className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3"
         disabled={!form.crimeCategory}
       >
-        <option value="">Select Complaint Type</option>
+        <option value="">{t("selectComplaintType", "complaints")}</option>
 
         {form.crimeCategory &&
           crimeTypes[
@@ -103,7 +104,7 @@ export default function ComplaintDetails({ form, setForm }: Props) {
 
       <div className="grid gap-6 md:grid-cols-2">
         <div>
-          <label className="text-base font-medium text-slate-700">Incident date</label>
+          <label className="text-base font-medium text-slate-700">{t("incidentDate", "complaints")}</label>
           <input
             type="date"
             name="incidentDate"
@@ -113,7 +114,7 @@ export default function ComplaintDetails({ form, setForm }: Props) {
           />
         </div>
         <div>
-          <label className="text-base font-medium text-slate-700">Incident time</label>
+          <label className="text-base font-medium text-slate-700">{t("incidentTime", "complaints")}</label>
           <input
             type="time"
             name="incidentTime"
@@ -125,37 +126,37 @@ export default function ComplaintDetails({ form, setForm }: Props) {
       </div>
 
       <div>
-        <label className="text-base font-medium text-slate-700">Incident location</label>
+        <label className="text-base font-medium text-slate-700">{t("incidentLocation", "complaints")}</label>
         <input
           name="location"
           value={form.location}
           onChange={handleChange}
           className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none ring-0"
-          placeholder="Enter location"
+          placeholder={t("enterLocation", "complaints")}
         />
       </div>
 
       <div>
-        <label className="text-base font-medium text-slate-700">Incident description</label>
+        <label className="text-base font-medium text-slate-700">{t("incidentDescription", "complaints")}</label>
         <textarea
           rows={6}
           name="description"
           value={form.description}
           onChange={handleChange}
           className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none ring-0"
-          placeholder="Describe what happened"
+          placeholder={t("describeWhatHappened", "complaints")}
         />
       </div>
 
       <div>
-        <label className="text-base font-medium text-slate-700">Officer notes</label>
+        <label className="text-base font-medium text-slate-700">{t("officerNotes", "complaints")}</label>
         <textarea
           rows={3}
           name="officerNotes"
           value={form.officerNotes}
           onChange={handleChange}
           className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none ring-0"
-          placeholder="Add internal notes"
+          placeholder={t("addInternalNotes", "complaints")}
         />
       </div>
     </div>

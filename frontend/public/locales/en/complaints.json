@@ -332,5 +332,17 @@
   "detailedComplaint": "Detailed Complaint",
   "describeIncident": "Describe the incident in detail...",
 
-  "internalPoliceNotes": "Internal police notes..."
+  "internalPoliceNotes": "Internal police notes...",
+
+  "step1": "Step 1",
+  "complaintInformationDescription": "Enter the core facts of the complaint so it can be triaged properly.",
+
+  "category": "Category",
+  "selectComplaintType": "Select Complaint Type",
+
+  "enterLocation": "Enter location",
+
+  "describeWhatHappened": "Describe what happened",
+
+  "addInternalNotes": "Add internal notes"
 }

@@ -320,5 +320,17 @@
   "detailedComplaint": "विस्तृत शिकायत",
   "describeIncident": "घटना का विस्तृत विवरण लिखें...",
 
-  "internalPoliceNotes": "आंतरिक पुलिस टिप्पणियाँ..."
+  "internalPoliceNotes": "आंतरिक पुलिस टिप्पणियाँ...",
+
+  "step1": "चरण 1",
+  "complaintInformationDescription": "शिकायत के मुख्य तथ्यों को दर्ज करें ताकि उसका उचित मूल्यांकन किया जा सके।",
+
+  "category": "श्रेणी",
+  "selectComplaintType": "शिकायत का प्रकार चुनें",
+
+  "enterLocation": "स्थान दर्ज करें",
+
+  "describeWhatHappened": "बताइए क्या हुआ",
+
+  "addInternalNotes": "आंतरिक टिप्पणियाँ जोड़ें"
 }

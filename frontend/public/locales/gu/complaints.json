@@ -320,5 +320,17 @@
   "detailedComplaint": "વિગતવાર ફરિયાદ",
   "describeIncident": "ઘટનાનું વિગતવાર વર્ણન કરો...",
 
-  "internalPoliceNotes": "આંતરિક પોલીસ નોંધો..."
+  "internalPoliceNotes": "આંતરિક પોલીસ નોંધો...",
+
+  "step1": "પગલું 1",
+  "complaintInformationDescription": "ફરિયાદના મુખ્ય તથ્યો દાખલ કરો જેથી તેની યોગ્ય રીતે તપાસ કરી શકાય.",
+
+  "category": "શ્રેણી",
+  "selectComplaintType": "ફરિયાદનો પ્રકાર પસંદ કરો",
+
+  "enterLocation": "સ્થાન દાખલ કરો",
+
+  "describeWhatHappened": "શું બન્યું તે વર્ણવો",
+
+  "addInternalNotes": "આંતરિક નોંધો ઉમેરો"
 }

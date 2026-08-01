@@ -176,7 +176,7 @@ export default function DocumentsAndEvidence({ onDocumentsSubmit }: Props) {
 
       {uploadedFilesState.length > 0 && (
         <div className="space-y-3 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-          <p className="text-base font-semibold text-slate-800">Uploaded evidence</p>
+          <p className="text-base font-semibold text-slate-800">{t("documentsEvidence.uploadedEvidence", "complaints")}</p>
           <div className="space-y-2">
             {uploadedFilesState.map((item) => (
               <div key={item.id} className="flex items-center justify-between rounded-xl bg-white p-3 shadow-sm">
@@ -184,12 +184,12 @@ export default function DocumentsAndEvidence({ onDocumentsSubmit }: Props) {
                   {getIcon(item.file.type)}
                   <div className="flex-1">
                     <p className="font-semibold text-slate-900">{item.file.name}</p>
-                    <p className="text-sm text-slate-500">{item.cloudinaryUrl ? "Uploaded" : "Uploaded (no link)"}</p>
+                    <p className="text-sm text-slate-500">{item.cloudinaryUrl ? t("documentsEvidence.uploaded", "complaints") : t("documentsEvidence.uploadedNoLink", "complaints")}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
                   {item.cloudinaryUrl ? (
-                    <a href={item.cloudinaryUrl} target="_blank" rel="noreferrer" className="text-indigo-600 hover:underline">Open</a>
+                    <a href={item.cloudinaryUrl} target="_blank" rel="noreferrer" className="text-indigo-600 hover:underline">{t("open", "common")}</a>
                   ) : null}
                 </div>
               </div>

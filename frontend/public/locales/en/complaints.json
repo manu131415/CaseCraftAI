@@ -77,7 +77,10 @@
     "file": "File",
     "files": "Files",
     "secureCloud": "Secure Cloud Storage",
-    "secureClouds": "All documents are securely uploaded to Cloudinary and linked to this complaint for easy access and management."
+    "secureClouds": "All documents are securely uploaded to Cloudinary and linked to this complaint for easy access and management.",
+    "uploadedEvidence": "Uploaded Evidence",
+    "uploaded": "Uploaded",
+    "uploadedNoLink": "Uploaded (No Link)"
   },
 
   "complaintListSubtitle": "View and manage all registered complaints.",

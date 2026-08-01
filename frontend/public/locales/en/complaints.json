@@ -294,5 +294,43 @@
   "uploadPhotographDescription": "Upload a photograph if available.",
   "uploadPhoto": "Upload Photo",
   "photoUploaded": "Photo uploaded successfully",
-  "photoUploadFailed": "Failed to upload photo. Please try again."
+  "photoUploadFailed": "Failed to upload photo. Please try again.",
+
+  "complaintTitle": "Complaint Title",
+  "shortSummaryOfComplaint": "Short summary of complaint",
+
+  "selectCategory": "Select Category",
+
+  "theft": "Theft",
+  "robbery": "Robbery",
+  "burglary": "Burglary",
+  "assault": "Assault",
+  "murder": "Murder",
+  "kidnapping": "Kidnapping",
+  "cyberCrime": "Cyber Crime",
+  "fraud": "Fraud",
+  "domesticViolence": "Domestic Violence",
+  "accident": "Accident",
+  "missingPerson": "Missing Person",
+
+  "enterSubcategory": "Enter subcategory",
+
+  "critical": "Critical",
+
+  "walkIn": "Walk-In",
+  "phoneCall": "Phone Call",
+  "onlinePortal": "Online Portal",
+  "policeReferral": "Police Referral",
+
+  "incidentLocation": "Incident Location",
+  "exactAddress": "Exact address",
+
+  "landmarkNearbyPlace": "Landmark / Nearby Place",
+  "nearestLandmark": "Nearest landmark",
+
+
+  "detailedComplaint": "Detailed Complaint",
+  "describeIncident": "Describe the incident in detail...",
+
+  "internalPoliceNotes": "Internal police notes..."
 }

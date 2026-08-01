@@ -1,6 +1,7 @@
 "use client";
 
 import { ComplaintData } from "../types";
+import { useLanguage } from "@/app/providers/LanguageProvider";
 
 interface Props {
   form: ComplaintData;
@@ -24,18 +25,19 @@ export default function ComplaintDetails({
     });
   }
 
+  const { t } = useLanguage();
   return (
     <div className="space-y-6">
 
       <h2 className="text-xl font-semibold">
-        Complaint Details
+        {t("complaintDetails", "complaints")}
       </h2>
 
       {/* Complaint Title */}
 
       <div>
         <label className="font-medium">
-          Complaint Title *
+          {t("complaintTitle", "complaints")} *
         </label>
 
         <input
@@ -43,7 +45,7 @@ export default function ComplaintDetails({
           name="complaintTitle"
           value={form.complaintTitle}
           onChange={handleChange}
-          placeholder="Short summary of complaint"
+          placeholder={t("shortSummaryOfComplaint", "complaints")}
           className="w-full border rounded-lg p-3 mt-2"
         />
       </div>
@@ -54,7 +56,7 @@ export default function ComplaintDetails({
 
         <div>
           <label className="font-medium">
-            Crime Category *
+            {t("crimeCategory", "complaints")} *
           </label>
 
           <select
@@ -63,20 +65,20 @@ export default function ComplaintDetails({
             onChange={handleChange}
             className="w-full border rounded-lg p-3 mt-2"
           >
-            <option value="">Select Category</option>
+            <option value="">{t("selectCategory", "complaints")}</option>
 
-            <option>Theft</option>
-            <option>Robbery</option>
-            <option>Burglary</option>
-            <option>Assault</option>
-            <option>Murder</option>
-            <option>Kidnapping</option>
-            <option>Cyber Crime</option>
-            <option>Fraud</option>
-            <option>Domestic Violence</option>
-            <option>Accident</option>
-            <option>Missing Person</option>
-            <option>Other</option>
+            <option>{t("theft", "complaints")}</option>
+            <option>{t("robbery", "complaints")}</option>
+            <option>{t("burglary", "complaints")}</option>
+            <option>{t("assault", "complaints")}</option>
+            <option>{t("murder", "complaints")}</option>
+            <option>{t("kidnapping", "complaints")}</option>
+            <option>{t("cyberCrime", "complaints")}</option>
+            <option>{t("fraud", "complaints")}</option>
+            <option>{t("domesticViolence", "complaints")}</option>
+            <option>{t("accident", "complaints")}</option>
+            <option>{t("missingPerson", "complaints")}</option>
+            <option>{t("other", "common")}</option>
 
           </select>
         </div>
@@ -84,7 +86,7 @@ export default function ComplaintDetails({
         <div>
 
           <label className="font-medium">
-            Crime Subcategory *
+            {t("crimeSubcategory", "complaints")} *
           </label>
 
           <input
@@ -92,7 +94,7 @@ export default function ComplaintDetails({
             name="crimeSubcategory"
             value={form.crimeSubcategory}
             onChange={handleChange}
-            placeholder="Enter subcategory"
+            placeholder={t("enterSubcategory", "complaints")}
             className="w-full border rounded-lg p-3 mt-2"
           />
 
@@ -107,7 +109,7 @@ export default function ComplaintDetails({
         <div>
 
           <label className="font-medium">
-            Priority
+            {t("priority", "cases")}
           </label>
 
           <select
@@ -116,10 +118,10 @@ export default function ComplaintDetails({
             onChange={handleChange}
             className="w-full border rounded-lg p-3 mt-2"
           >
-            <option>Low</option>
-            <option>Medium</option>
-            <option>High</option>
-            <option>Critical</option>
+            <option>{t("low", "common")}</option>
+            <option>{t("medium", "common")}</option>
+            <option>{t("high", "common")}</option>
+            <option>{t("critical", "complaints")}</option>
           </select>
 
         </div>
@@ -127,7 +129,7 @@ export default function ComplaintDetails({
         <div>
 
           <label className="font-medium">
-            Complaint Mode
+            {t("complaintMode", "complaints")}
           </label>
 
           <select
@@ -136,12 +138,12 @@ export default function ComplaintDetails({
             onChange={handleChange}
             className="w-full border rounded-lg p-3 mt-2"
           >
-            <option>Walk-In</option>
-            <option>Phone Call</option>
-            <option>Online Portal</option>
-            <option>Email</option>
-            <option>Police Referral</option>
-            <option>Other</option>
+            <option>{t("walkIn", "complaints")}</option>
+            <option>{t("phoneCall", "complaints")}</option>
+            <option>{t("onlinePortal", "complaints")}</option>
+            <option>{t("email", "common")}</option>
+            <option>{t("policeReferral", "complaints")}</option>
+            <option>{t("other", "common")}</option>
           </select>
 
         </div>
@@ -155,7 +157,7 @@ export default function ComplaintDetails({
         <div>
 
           <label className="font-medium">
-            Incident Date *
+            {t("incidentDate", "complaints")} *
           </label>
 
           <input
@@ -171,7 +173,7 @@ export default function ComplaintDetails({
         <div>
 
           <label className="font-medium">
-            Incident Time
+            {t("incidentTime", "complaints")}
           </label>
 
           <input
@@ -191,7 +193,7 @@ export default function ComplaintDetails({
       <div>
 
         <label className="font-medium">
-          Incident Location *
+          {t("incidentLocation", "complaints")} *
         </label>
 
         <input
@@ -199,7 +201,7 @@ export default function ComplaintDetails({
           name="location"
           value={form.location}
           onChange={handleChange}
-          placeholder="Exact address"
+          placeholder={t("exactAddress", "complaints")}
           className="w-full border rounded-lg p-3 mt-2"
         />
 
@@ -208,7 +210,7 @@ export default function ComplaintDetails({
       <div>
 
         <label className="font-medium">
-          Landmark / Nearby Place
+          {t("landmarkNearbyPlace", "complaints")}
         </label>
 
         <input
@@ -216,7 +218,7 @@ export default function ComplaintDetails({
           name="landmark"
           value={form.landmark}
           onChange={handleChange}
-          placeholder="Nearest landmark"
+          placeholder={t("nearestLandmark", "complaints")}
           className="w-full border rounded-lg p-3 mt-2"
         />
 
@@ -227,7 +229,7 @@ export default function ComplaintDetails({
       <div>
 
         <label className="font-medium">
-          Emergency
+          {t("emergency", "complaints")}
         </label>
 
         <select
@@ -236,8 +238,8 @@ export default function ComplaintDetails({
           onChange={handleChange}
           className="w-full border rounded-lg p-3 mt-2"
         >
-          <option>No</option>
-          <option>Yes</option>
+          <option>{t("no", "common")}</option>
+          <option>{t("yes", "common")}</option>
         </select>
 
       </div>
@@ -247,7 +249,7 @@ export default function ComplaintDetails({
       <div>
 
         <label className="font-medium">
-          Detailed Complaint *
+          {t("detailedComplaint", "complaints")} *
         </label>
 
         <textarea
@@ -255,7 +257,7 @@ export default function ComplaintDetails({
           name="description"
           value={form.description}
           onChange={handleChange}
-          placeholder="Describe the incident in detail..."
+          placeholder={t("describeIncident", "complaints")}
           className="w-full border rounded-lg p-3 mt-2"
         />
 
@@ -266,7 +268,7 @@ export default function ComplaintDetails({
       <div>
 
         <label className="font-medium">
-          Officer Notes
+          {t("officerNotes", "complaints")}
         </label>
 
         <textarea
@@ -274,7 +276,7 @@ export default function ComplaintDetails({
           name="officerNotes"
           value={form.officerNotes}
           onChange={handleChange}
-          placeholder="Internal police notes..."
+          placeholder={t("internalPoliceNotes", "complaints")}
           className="w-full border rounded-lg p-3 mt-2"
         />
 

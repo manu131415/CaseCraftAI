@@ -282,5 +282,43 @@
   "uploadPhoto": "फोटो अपलोड करें",
 
   "photoUploaded": "फोटो सफलतापूर्वक अपलोड हो गया",
-  "photoUploadFailed": "फोटो अपलोड नहीं हो सका। कृपया पुनः प्रयास करें।"
+  "photoUploadFailed": "फोटो अपलोड नहीं हो सका। कृपया पुनः प्रयास करें।",
+
+  "complaintTitle": "शिकायत का शीर्षक",
+  "shortSummaryOfComplaint": "शिकायत का संक्षिप्त सारांश",
+
+  "selectCategory": "श्रेणी चुनें",
+
+  "theft": "चोरी",
+  "robbery": "डकैती",
+  "burglary": "सेंधमारी",
+  "assault": "हमला",
+  "murder": "हत्या",
+  "kidnapping": "अपहरण",
+  "cyberCrime": "साइबर अपराध",
+  "fraud": "धोखाधड़ी",
+  "domesticViolence": "घरेलू हिंसा",
+  "accident": "दुर्घटना",
+  "missingPerson": "लापता व्यक्ति",
+
+  "enterSubcategory": "उपश्रेणी दर्ज करें",
+
+  "critical": "अत्यंत गंभीर",
+
+  "walkIn": "प्रत्यक्ष उपस्थित",
+  "phoneCall": "फ़ोन कॉल",
+  "onlinePortal": "ऑनलाइन पोर्टल",
+  "policeReferral": "पुलिस रेफरल",
+
+  "incidentLocation": "घटना का स्थान",
+  "exactAddress": "पूरा पता",
+
+  "landmarkNearbyPlace": "स्थलचिह्न / निकट का स्थान",
+  "nearestLandmark": "निकटतम स्थलचिह्न",
+
+
+  "detailedComplaint": "विस्तृत शिकायत",
+  "describeIncident": "घटना का विस्तृत विवरण लिखें...",
+
+  "internalPoliceNotes": "आंतरिक पुलिस टिप्पणियाँ..."
 }

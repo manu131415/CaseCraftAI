@@ -282,5 +282,43 @@
   "uploadPhoto": "ફોટો અપલોડ કરો",
 
   "photoUploaded": "ફોટો સફળતાપૂર્વક અપલોડ થયો",
-  "photoUploadFailed": "ફોટો અપલોડ કરવામાં નિષ્ફળતા. કૃપા કરીને ફરી પ્રયાસ કરો."
+  "photoUploadFailed": "ફોટો અપલોડ કરવામાં નિષ્ફળતા. કૃપા કરીને ફરી પ્રયાસ કરો.",
+
+  "complaintTitle": "ફરિયાદનું શીર્ષક",
+  "shortSummaryOfComplaint": "ફરિયાદનો સંક્ષિપ્ત સારાંશ",
+
+  "selectCategory": "શ્રેણી પસંદ કરો",
+
+  "theft": "ચોરી",
+  "robbery": "લૂંટ",
+  "burglary": "ઘરફોડ ચોરી",
+  "assault": "હુમલો",
+  "murder": "હત્યા",
+  "kidnapping": "અપહરણ",
+  "cyberCrime": "સાયબર ગુનો",
+  "fraud": "છેતરપિંડી",
+  "domesticViolence": "ઘરેલું હિંસા",
+  "accident": "અકસ્માત",
+  "missingPerson": "ગુમ થયેલ વ્યક્તિ",
+
+  "enterSubcategory": "ઉપશ્રેણી દાખલ કરો",
+
+  "critical": "અતિ ગંભીર",
+
+  "walkIn": "રૂબરૂ",
+  "phoneCall": "ફોન કૉલ",
+  "onlinePortal": "ઓનલાઇન પોર્ટલ",
+  "policeReferral": "પોલીસ રેફરલ",
+
+  "incidentLocation": "ઘટનાનું સ્થળ",
+  "exactAddress": "ચોક્કસ સરનામું",
+
+  "landmarkNearbyPlace": "લેન્ડમાર્ક / નજીકનું સ્થળ",
+  "nearestLandmark": "નજીકનો લેન્ડમાર્ક",
+
+
+  "detailedComplaint": "વિગતવાર ફરિયાદ",
+  "describeIncident": "ઘટનાનું વિગતવાર વર્ણન કરો...",
+
+  "internalPoliceNotes": "આંતરિક પોલીસ નોંધો..."
 }

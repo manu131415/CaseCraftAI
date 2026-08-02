@@ -335,5 +335,31 @@
 
   "describeWhatHappened": "बताइए क्या हुआ",
 
-  "addInternalNotes": "आंतरिक टिप्पणियाँ जोड़ें"
+  "addInternalNotes": "आंतरिक टिप्पणियाँ जोड़ें",
+
+  "finalReview": "अंतिम समीक्षा",
+  "reviewConfirmSubmission": "समीक्षा करें और सबमिशन की पुष्टि करें",
+  "reviewSubmissionDescription": "शिकायत दर्ज करने से पहले दर्ज की गई सभी जानकारी की पुष्टि करें।",
+
+
+  "victimDetails": "पीड़ित का विवरण",
+  "noVictimDetails": "कोई पीड़ित विवरण उपलब्ध नहीं है।",
+
+  "suspectDetails": "संदिग्ध का विवरण",
+  "noSuspectDetails": "कोई संदिग्ध विवरण उपलब्ध नहीं है।",
+
+  "suspect": "संदिग्ध",
+
+
+  "faceShape": "चेहरे का आकार",
+  "complexion": "रंग",
+  "eyeColor": "आंखों का रंग",
+  "hairType": "बालों का प्रकार",
+  "identificationMarks": "पहचान चिन्ह",
+
+  "noDocumentsUploaded": "कोई दस्तावेज़ अपलोड नहीं किया गया।",
+
+  "readyForSubmission": "सबमिशन के लिए तैयार",
+  "readyForSubmissionDescription": "शिकायत, शिकायतकर्ता, पीड़ित, संदिग्ध और अपलोड किए गए साक्ष्यों की समीक्षा की जा चुकी है। शिकायत दर्ज करने के लिए 'शिकायत सबमिट करें' पर क्लिक करें।"
+
 }

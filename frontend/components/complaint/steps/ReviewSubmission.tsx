@@ -1,4 +1,5 @@
 "use client";
+import { useLanguage } from "@/app/providers/LanguageProvider";
 
 import {
   ComplaintData,
@@ -41,6 +42,7 @@ export default function ReviewSubmission({
     (form as any).complainantPhotoName ||
     "";
 
+  const { t } = useLanguage();
   return (
     <div className="space-y-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
 
@@ -48,15 +50,15 @@ export default function ReviewSubmission({
 
       <div>
         <p className="text-base font-medium text-blue-600">
-          Final Review
+          {t("finalReview", "complaints")}
         </p>
 
         <h2 className="mt-1 text-2xl font-semibold text-slate-900">
-          Review & Confirm Submission
+          {t("reviewConfirmSubmission", "complaints")}
         </h2>
 
         <p className="mt-2 text-base text-slate-500">
-          Verify all entered information before registering the complaint.
+          {t("reviewSubmissionDescription", "complaints")}
         </p>
       </div>
 
@@ -65,64 +67,64 @@ export default function ReviewSubmission({
       <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
 
         <h3 className="mb-4 text-lg font-semibold text-slate-900">
-          Complaint Details
+          {t("complaintDetails", "complaints")}
         </h3>
 
         <div className="grid gap-4 md:grid-cols-2">
 
           <div>
             <p className="text-sm text-slate-500">
-              Complaint Title
+              {t("complaintTitle", "complaints")}
             </p>
 
             <p className="font-semibold">
-              {form.complaintTitle || "Not provided"}
+              {form.complaintTitle || t("notProvided", "common")}
             </p>
           </div>
 
           <div>
             <p className="text-sm text-slate-500">
-              Crime Category
+              {t("crimeCategory", "complaints")}
             </p>
 
             <p className="font-semibold">
-              {form.crimeCategory || "Not provided"}
+              {form.crimeCategory || t("notProvided", "common")}
             </p>
           </div>
 
           <div>
             <p className="text-sm text-slate-500">
-              Crime Subcategory
+              {t("crimeSubcategory", "complaints")}
             </p>
 
             <p className="font-semibold">
-              {form.crimeSubcategory || "Not provided"}
+              {form.crimeSubcategory || t("notProvided", "common")}
             </p>
           </div>
 
           <div>
             <p className="text-sm text-slate-500">
-              Priority
+              {t("priority", "cases")}
             </p>
 
             <p className="font-semibold">
-              {form.priority || "Not provided"}
+              {form.priority || t("notProvided", "common")}
             </p>
           </div>
 
           <div>
             <p className="text-sm text-slate-500">
-              Complaint Mode
+              {t("complaintMode", "complaints")}
             </p>
 
             <p className="font-semibold">
-              {form.complaintMode || "Not provided"}
+              {form.complaintMode || t("notProvided", "common")}
             </p>
           </div>
 
           <div>
             <p className="text-sm text-slate-500">
-              Emergency
+              {t("emergency", "complaints")}
             </p>
 
             <p className="font-semibold">
@@ -132,41 +134,41 @@ export default function ReviewSubmission({
 
           <div>
             <p className="text-sm text-slate-500">
-              Incident Date
+              {t("incidentDate", "complaints")}
             </p>
 
             <p className="font-semibold">
-              {form.incidentDate || "Not provided"}
+              {form.incidentDate || t("notProvided", "common")}
             </p>
           </div>
 
           <div>
             <p className="text-sm text-slate-500">
-              Incident Time
+              {t("incidentTime", "complaints")}
             </p>
 
             <p className="font-semibold">
-              {form.incidentTime || "Not provided"}
+              {form.incidentTime || t("notProvided", "common")}
             </p>
           </div>
 
           <div>
             <p className="text-sm text-slate-500">
-              Location
+              {t("location", "cases")}
             </p>
 
             <p className="font-semibold">
-              {form.location || "Not provided"}
+              {form.location || t("notProvided", "common")}
             </p>
           </div>
 
           <div>
             <p className="text-sm text-slate-500">
-              Landmark
+              {t("landmark", "complaints")}
             </p>
 
             <p className="font-semibold">
-              {form.landmark || "Not provided"}
+              {form.landmark || t("notProvided", "common")}
             </p>
           </div>
 
@@ -175,11 +177,11 @@ export default function ReviewSubmission({
         <div className="mt-5">
 
           <p className="text-sm text-slate-500">
-            Description
+            {t("description", "common")}
           </p>
 
           <p className="mt-1 whitespace-pre-wrap rounded-xl bg-white p-3">
-            {form.description || "Not provided"}
+            {form.description || t("notProvided", "common")}
           </p>
 
         </div>
@@ -187,11 +189,11 @@ export default function ReviewSubmission({
         <div className="mt-4">
 
           <p className="text-sm text-slate-500">
-            Officer Notes
+            {t("officerNotes", "complaints")}
           </p>
 
           <p className="mt-1 whitespace-pre-wrap rounded-xl bg-white p-3">
-            {form.officerNotes || "Not provided"}
+            {form.officerNotes || t("notProvided", "common")}
           </p>
 
         </div>
@@ -203,88 +205,88 @@ export default function ReviewSubmission({
       <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
 
         <h3 className="mb-4 text-lg font-semibold text-slate-900">
-          Complainant Details
+          {t("complainantDetails", "complaints")}
         </h3>
 
         <div className="grid gap-4 md:grid-cols-2">
 
           <div>
             <p className="text-sm text-slate-500">
-              Full Name
+              {t("fullName", "complaints")}
             </p>
 
             <p className="font-semibold">
-              {form.complainantName || "Not provided"}
+              {form.complainantName || t("notProvided", "common")}
             </p>
           </div>
 
           <div>
             <p className="text-sm text-slate-500">
-              Father / Spouse Name
+              {t("fatherOrSpouseName", "complaints")}
             </p>
 
             <p className="font-semibold">
-              {form.complainantFatherName || "Not provided"}
+              {form.complainantFatherName || t("notProvided", "common")}
             </p>
           </div>
 
           <div>
             <p className="text-sm text-slate-500">
-              Age
+              {t("age", "common")}
             </p>
 
             <p className="font-semibold">
-              {form.complainantAge || "Not provided"}
+              {form.complainantAge || t("notProvided", "common")}
             </p>
           </div>
 
           <div>
             <p className="text-sm text-slate-500">
-              Gender
+              {t("gender", "common")}
             </p>
 
             <p className="font-semibold">
-              {form.complainantGender || "Not provided"}
+              {form.complainantGender || t("notProvided", "common")}
             </p>
           </div>
 
           <div>
             <p className="text-sm text-slate-500">
-              Phone
+              {t("phone", "common")}
             </p>
 
             <p className="font-semibold">
-              {form.complainantPhone || "Not provided"}
+              {form.complainantPhone || t("notProvided", "common")}
             </p>
           </div>
 
           <div>
             <p className="text-sm text-slate-500">
-              Email
+              {t("email", "common")}
             </p>
 
             <p className="font-semibold">
-              {form.complainantEmail || "Not provided"}
+              {form.complainantEmail || t("notProvided", "common")}
             </p>
           </div>
 
           <div>
             <p className="text-sm text-slate-500">
-              Aadhaar / Govt ID
+              {t("aadhaar", "complaints")}
             </p>
 
             <p className="font-semibold">
-              {form.complainantAadhaar || "Not provided"}
+              {form.complainantAadhaar || t("notProvided", "common")}
             </p>
           </div>
 
           <div>
             <p className="text-sm text-slate-500">
-              Relationship
+              {t("relationshipToIncident", "complaints")}
             </p>
 
             <p className="font-semibold">
-              {form.complainantRelationship || "Not provided"}
+              {form.complainantRelationship || t("notProvided", "common")}
             </p>
           </div>
 
@@ -293,18 +295,18 @@ export default function ReviewSubmission({
         <div className="mt-5">
 
           <p className="text-sm text-slate-500">
-            Address
+            {t("address", "common")}
           </p>
 
           <p className="mt-1 rounded-xl bg-white p-3">
-            {form.complainantAddress || "Not provided"}
+            {form.complainantAddress || t("notProvided", "common")}
           </p>
 
         </div>
 
         {complainantPhotoUrl ? (
           <div className="mt-6 rounded-2xl bg-white p-4 shadow-sm">
-            <p className="text-sm font-medium text-slate-700">Complainant Photo</p>
+            <p className="text-sm font-medium text-slate-700">{t("complainantPhotograph", "complaints")}</p>
             <img
               src={complainantPhotoUrl}
               alt={complainantPhotoName || "Complainant photo"}
@@ -322,13 +324,13 @@ export default function ReviewSubmission({
       <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
 
         <h3 className="mb-4 text-lg font-semibold text-slate-900">
-          Victim Details
+          {t("victimDetails", "complaints")}
         </h3>
 
         {victims.length === 0 ? (
 
           <p className="text-slate-500">
-            No victim details provided.
+            {t("noVictimDetails", "complaints")}
           </p>
 
         ) : (
@@ -343,36 +345,36 @@ export default function ReviewSubmission({
               >
 
                 <h4 className="mb-3 font-semibold text-slate-900">
-                  Victim {index + 1}
+                  {t("victim", "complaints")} {index + 1}
                 </h4>
 
                 <div className="grid gap-4 md:grid-cols-2">
 
                   <div>
-                    <p className="text-sm text-slate-500">Full Name</p>
+                    <p className="text-sm text-slate-500">{t("fullName", "complaints")}</p>
                     <p className="font-semibold">
-                      {victim.fullName || "Not provided"}
+                      {victim.fullName || t("notProvided", "common")}
                     </p>
                   </div>
 
                   <div>
-                    <p className="text-sm text-slate-500">Age</p>
+                    <p className="text-sm text-slate-500">{t("age", "common")}</p>
                     <p className="font-semibold">
-                      {victim.age || "Not provided"}
+                      {victim.age || t("notProvided", "common")}
                     </p>
                   </div>
 
                   <div>
-                    <p className="text-sm text-slate-500">Gender</p>
+                    <p className="text-sm text-slate-500">{t("gender", "common")}</p>
                     <p className="font-semibold">
-                      {victim.gender || "Not provided"}
+                      {victim.gender || t("notProvided", "common")}
                     </p>
                   </div>
 
                   <div>
-                    <p className="text-sm text-slate-500">Phone</p>
+                    <p className="text-sm text-slate-500">{t("phone", "common")}</p>
                     <p className="font-semibold">
-                      {victim.phone || "Not provided"}
+                      {victim.phone || t("notProvided", "common")}
                     </p>
                   </div>
 
@@ -381,11 +383,11 @@ export default function ReviewSubmission({
                 <div className="mt-4">
 
                   <p className="text-sm text-slate-500">
-                    Address
+                    {t("address", "common")}
                   </p>
 
                   <p className="rounded-lg bg-slate-50 p-2">
-                    {victim.address || "Not provided"}
+                    {victim.address || t("notProvided", "common")}
                   </p>
 
                 </div>
@@ -393,18 +395,18 @@ export default function ReviewSubmission({
                 <div className="mt-4">
 
                   <p className="text-sm text-slate-500">
-                    Injuries
+                    {t("injuries", "complaints")}
                   </p>
 
                   <p className="rounded-lg bg-slate-50 p-2">
-                    {victim.injuries || "None"}
+                    {victim.injuries || t("none", "common")}
                   </p>
 
                 </div>
 
                 {(victim.photoUrl || (victim as any).photo_url || (victim as any).photoURL) ? (
                   <div className="mt-4 flex flex-col items-start gap-3">
-                    <p className="text-sm text-slate-500">Photo</p>
+                    <p className="text-sm text-slate-500">{t("photo", "common")}</p>
                     <img
                       src={victim.photoUrl || (victim as any).photo_url || (victim as any).photoURL}
                       alt={`Victim ${index + 1}`}
@@ -433,13 +435,13 @@ export default function ReviewSubmission({
       <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
 
         <h3 className="mb-4 text-lg font-semibold text-slate-900">
-          Suspect Details
+          {t("suspectDetails", "complaints")}
         </h3>
 
         {suspects.length === 0 ? (
 
           <p className="text-slate-500">
-            No suspect details provided.
+            {t("noSuspectDetails", "complaints")}
           </p>
 
         ) : (
@@ -454,56 +456,56 @@ export default function ReviewSubmission({
               >
 
                 <h4 className="mb-3 font-semibold">
-                  Suspect {index + 1}
+                  {t("suspect", "complaints")} {index + 1}
                 </h4>
 
                 <div className="grid gap-4 md:grid-cols-2">
 
                   <div>
                     <p className="text-sm text-slate-500">
-                      Full Name
+                      {t("fullName", "complaints")}
                     </p>
 
                     <p className="font-semibold">
                       {suspect.unknownIdentity
-                        ? "Unknown"
-                        : suspect.fullName || "Not provided"}
+                        ? t("unknown", "common")
+                        : suspect.fullName || t("notProvided", "common")}
                     </p>
                   </div>
 
                   <div>
                     <p className="text-sm text-slate-500">
-                      Alias
+                      {t("alias", "complaints")}
                     </p>
 
                     <p className="font-semibold">
-                      {suspect.alias || "None"}
+                      {suspect.alias || t("none", "common")}
                     </p>
                   </div>
 
                   <div>
                     <p className="text-sm text-slate-500">
-                      Age
+                      {t("age", "common")}
                     </p>
 
                     <p className="font-semibold">
-                      {suspect.age || "Unknown"}
+                      {suspect.age || t("unknown", "common")}
                     </p>
                   </div>
 
                   <div>
                     <p className="text-sm text-slate-500">
-                      Gender
+                      {t("gender", "common")}
                     </p>
 
                     <p className="font-semibold">
-                      {suspect.gender || "Unknown"}
+                      {suspect.gender || t("unknown", "common")}
                     </p>
                   </div>
 
                   <div>
                     <p className="text-sm text-slate-500">
-                      Face Shape
+                      {t("faceShape", "complaints")}
                     </p>
 
                     <p className="font-semibold">
@@ -513,7 +515,7 @@ export default function ReviewSubmission({
 
                   <div>
                     <p className="text-sm text-slate-500">
-                      Complexion
+                      {t("complexion", "complaints")}
                     </p>
 
                     <p className="font-semibold">
@@ -523,7 +525,7 @@ export default function ReviewSubmission({
 
                   <div>
                     <p className="text-sm text-slate-500">
-                      Eye Color
+                      {t("eyeColor", "complaints")}
                     </p>
 
                     <p className="font-semibold">
@@ -533,7 +535,7 @@ export default function ReviewSubmission({
 
                   <div>
                     <p className="text-sm text-slate-500">
-                      Hair Type
+                      {t("hairType", "complaints")}
                     </p>
 
                     <p className="font-semibold">
@@ -546,18 +548,18 @@ export default function ReviewSubmission({
                 <div className="mt-4">
 
                   <p className="text-sm text-slate-500">
-                    Identification Marks
+                    {t("identificationMarks", "complaints")}
                   </p>
 
                   <p className="rounded-lg bg-slate-50 p-2">
-                    {suspect.identificationMarks || "None"}
+                    {suspect.identificationMarks || t("none", "common")}
                   </p>
 
                 </div>
 
                 {(suspect.photoUrl || (suspect as any).photo_url || (suspect as any).photoURL) ? (
                   <div className="mt-4 flex flex-col items-start gap-3">
-                    <p className="text-sm text-slate-500">Photo</p>
+                    <p className="text-sm text-slate-500">{t("photo", "common")}</p>
                     <img
                       src={suspect.photoUrl || (suspect as any).photo_url || (suspect as any).photoURL}
                       alt={`Suspect ${index + 1}`}
@@ -586,13 +588,13 @@ export default function ReviewSubmission({
       <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
 
         <h3 className="mb-4 text-lg font-semibold">
-          Documents & Evidence
+          {t("documentsEvidence.heading", "complaints")}
         </h3>
 
         {attachments.length === 0 ? (
 
           <p className="text-slate-500">
-            No documents uploaded.
+            {t("noDocumentsUploaded", "complaints")}
           </p>
 
         ) : (
@@ -615,7 +617,7 @@ export default function ReviewSubmission({
                   </p>
 
                   <p className="text-sm text-slate-500">
-                    {file.fileType || "Document"}
+                    {file.fileType || t("document", "common")}
                   </p>
 
                   {isImage && safeUrl ? (
@@ -623,7 +625,7 @@ export default function ReviewSubmission({
                       <img src={safeUrl} alt={file.fileName} className="max-h-40 w-full rounded-xl object-contain" />
                     </a>
                   ) : safeUrl ? (
-                    <a href={safeUrl} target="_blank" rel="noreferrer noopener" className="mt-3 inline-block text-indigo-600 hover:underline">Open file</a>
+                    <a href={safeUrl} target="_blank" rel="noreferrer noopener" className="mt-3 inline-block text-indigo-600 hover:underline">{t("openFile", "complaints")}</a>
                   ) : null}
 
                 </div>
@@ -634,14 +636,12 @@ export default function ReviewSubmission({
         )}
 
         <h3 className="font-semibold text-emerald-800">
-          Ready for Submission
+          {t("readyForSubmission", "complaints")}
         </h3>
 
         <p className="mt-2 text-emerald-700">
-          The complaint, complainant details, victims, suspects,
-          and uploaded evidence have been reviewed. Click
-          <strong> Submit Complaint </strong>
-          to register the complaint in the CrimeGPT system.
+          {t("readyForSubmissionDescription", "complaints")}
+          <strong> {t("submitComplaint", "complaints")} </strong>
         </p>
 
       </div>

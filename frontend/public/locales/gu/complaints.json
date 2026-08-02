@@ -335,5 +335,29 @@
 
   "describeWhatHappened": "શું બન્યું તે વર્ણવો",
 
-  "addInternalNotes": "આંતરિક નોંધો ઉમેરો"
+  "addInternalNotes": "આંતરિક નોંધો ઉમેરો",
+  "finalReview": "અંતિમ સમીક્ષા",
+  "reviewConfirmSubmission": "સમીક્ષા કરો અને સબમિશનની પુષ્ટિ કરો",
+  "reviewSubmissionDescription": "ફરિયાદ નોંધતા પહેલાં દાખલ કરેલી તમામ માહિતી ચકાસો.",
+
+
+  "victimDetails": "પીડિતની વિગતો",
+  "noVictimDetails": "પીડિતની કોઈ વિગતો ઉપલબ્ધ નથી.",
+
+  "suspectDetails": "શંકાસ્પદની વિગતો",
+  "noSuspectDetails": "શંકાસ્પદની કોઈ વિગતો ઉપલબ્ધ નથી.",
+
+  "suspect": "શંકાસ્પદ",
+
+  "faceShape": "ચહેરાનો આકાર",
+  "complexion": "ચામડીનો રંગ",
+  "eyeColor": "આંખનો રંગ",
+  "hairType": "વાળનો પ્રકાર",
+  "identificationMarks": "ઓળખના નિશાન",
+
+  "noDocumentsUploaded": "કોઈ દસ્તાવેજ અપલોડ કરવામાં આવ્યો નથી.",
+
+  "readyForSubmission": "સબમિશન માટે તૈયાર",
+  "readyForSubmissionDescription": "ફરિયાદ, ફરિયાદીની વિગતો, પીડિતો, શંકાસ્પદો અને અપલોડ કરાયેલા પુરાવાની સમીક્ષા કરવામાં આવી છે. ફરિયાદ નોંધાવવા માટે 'ફરિયાદ સબમિટ કરો' પર ક્લિક કરો."
+
 }

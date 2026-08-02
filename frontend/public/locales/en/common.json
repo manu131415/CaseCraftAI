@@ -102,5 +102,6 @@
   "email": "Email",
   "optional": "Optional",
   "friend": "Friend",
-  "uploading": "Uploading..."
+  "uploading": "Uploading...",
+  "open": "Open"
 }

@@ -347,5 +347,30 @@
 
   "describeWhatHappened": "Describe what happened",
 
-  "addInternalNotes": "Add internal notes"
+  "addInternalNotes": "Add internal notes",
+
+  "finalReview": "Final Review",
+  "reviewConfirmSubmission": "Review & Confirm Submission",
+  "reviewSubmissionDescription": "Verify all entered information before registering the complaint.",
+
+
+  "victimDetails": "Victim Details",
+  "noVictimDetails": "No victim details provided.",
+
+  "suspectDetails": "Suspect Details",
+  "noSuspectDetails": "No suspect details provided.",
+
+  "suspect": "Suspect",
+
+
+  "faceShape": "Face Shape",
+  "complexion": "Complexion",
+  "eyeColor": "Eye Color",
+  "hairType": "Hair Type",
+  "identificationMarks": "Identification Marks",
+
+  "noDocumentsUploaded": "No documents uploaded.",
+
+  "readyForSubmission": "Ready for Submission",
+  "readyForSubmissionDescription": "The complaint, complainant details, victims, suspects, and uploaded evidence have been reviewed. Click Submit Complaint to register the complaint in the CrimeGPT system."
 }

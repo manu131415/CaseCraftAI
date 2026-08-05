@@ -407,6 +407,14 @@
   "bald": "गंजा",
 
   "white": "सफेद",
-  "dyed": "रंगे हुए"
+  "dyed": "रंगे हुए",
+
+  "step3": "चरण 3",
+  "victimDetailsDescription": "घटना में शामिल सभी पीड़ितों की जानकारी दर्ज करें।",
+  "addVictim": "पीड़ित जोड़ें",
+  "enterFullName": "पूरा नाम दर्ज करें",
+  "injuryDetails": "चोट का विवरण",
+  "describeInjuries": "लगी हुई चोटों का विवरण लिखें",
+  "victimPhoto": "पीड़ित का फोटो"
 
 }

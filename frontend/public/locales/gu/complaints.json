@@ -405,6 +405,14 @@
   "bald": "ટકલા",
 
   "white": "સફેદ",
-  "dyed": "રંગેલા"
+  "dyed": "રંગેલા",
+
+  "step3": "પગલું 3",
+  "victimDetailsDescription": "ઘટનામાં સામેલ તમામ પીડિતોની વિગતો ઉમેરો.",
+  "addVictim": "પીડિત ઉમેરો",
+  "enterFullName": "પૂર્ણ નામ દાખલ કરો",
+  "injuryDetails": "ઇજાની વિગતો",
+  "describeInjuries": "થાયેલી ઇજાઓનું વર્ણન કરો",
+  "victimPhoto": "પીડિતનો ફોટો"
 
 }

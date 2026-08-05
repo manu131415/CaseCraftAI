@@ -4,6 +4,7 @@ import { ChangeEvent, useRef, useState } from "react";
 import { Camera } from "lucide-react";
 import { VictimEntry } from "../types";
 import { uploadPhotoToCloudinary } from "@/lib/api/complaints";
+import { useLanguage } from "@/app/providers/LanguageProvider";
 
 interface Props {
   victims: VictimEntry[];
@@ -52,7 +53,7 @@ export default function VictimDetails({
       setVictims(updated);
     } catch (err) {
       console.error("Photo upload failed:", err);
-      alert("Failed to upload photo. Please try again.");
+      alert(t("photoUploadFailed", "complaints"));
     } finally {
       setUploadingPhotoIndex(null);
     }
@@ -78,6 +79,7 @@ export default function VictimDetails({
     ]);
   }
 
+  const { t } = useLanguage();
   return (
     <div className="space-y-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
 
@@ -85,15 +87,15 @@ export default function VictimDetails({
 
         <div>
           <p className="text-base font-medium text-blue-600">
-            Step 3
+            {t("step3", "complaints")}
           </p>
 
           <h2 className="mt-1 text-2xl font-semibold">
-            Victim Details
+            {t("victimDetails", "complaints")}
           </h2>
 
           <p className="mt-2 text-slate-500">
-            Add all victims involved in the incident.
+            {t("victimDetailsDescription", "complaints")}
           </p>
         </div>
 
@@ -102,7 +104,7 @@ export default function VictimDetails({
           onClick={addVictim}
           className="rounded-full bg-blue-600 px-5 py-2 text-white font-medium hover:bg-blue-700"
         >
-          + Add Victim
+          + {t("addVictim", "complaints")}
         </button>
 
       </div>
@@ -117,7 +119,7 @@ export default function VictimDetails({
           <div className="flex justify-between items-center">
 
             <h3 className="text-lg font-semibold">
-              Victim {index + 1}
+              {t("victim", "complaints")} {index + 1}
             </h3>
 
             {victims.length > 1 && (
@@ -127,7 +129,7 @@ export default function VictimDetails({
                 onClick={() => removeVictim(index)}
                 className="text-red-600 hover:text-red-800"
               >
-                Remove
+                {t("remove", "common")}
               </button>
 
             )}
@@ -139,7 +141,7 @@ export default function VictimDetails({
             <div>
 
               <label className="font-medium">
-                Full Name *
+                {t("fullName", "complaints")} *
               </label>
 
               <input
@@ -148,7 +150,7 @@ export default function VictimDetails({
                   handleFieldChange(index, "fullName", e.target.value)
                 }
                 className="mt-2 w-full rounded-xl border p-3"
-                placeholder="Enter full name"
+                placeholder={t("enterFullName", "complaints")}
               />
 
             </div>
@@ -156,7 +158,7 @@ export default function VictimDetails({
             <div>
 
               <label className="font-medium">
-                Age
+                {t("age", "common")}
               </label>
 
               <input
@@ -168,7 +170,7 @@ export default function VictimDetails({
                   handleFieldChange(index, "age", e.target.value)
                 }
                 className="mt-2 w-full rounded-xl border p-3"
-                placeholder="Age"
+                placeholder={t("age", "common")}
               />
 
             </div>
@@ -176,7 +178,7 @@ export default function VictimDetails({
             <div>
 
               <label className="font-medium">
-                Gender
+                {t("gender", "common")}
               </label>
 
               <select
@@ -186,12 +188,12 @@ export default function VictimDetails({
                 }
                 className="mt-2 w-full rounded-xl border p-3"
               >
-                <option value="">Select Gender</option>
-                <option>Male</option>
-                <option>Female</option>
-                <option>Transgender</option>
-                <option>Other</option>
-                <option>Unknown</option>
+                <option value="">{t("selectGender", "complaints")}</option>
+                <option>{t("male", "common")}</option>
+                <option>{t("female", "common")}</option>
+                <option>{t("transgender", "common")}</option>
+                <option>{t("other", "common")}</option>
+                <option>{t("unknown", "common")}</option>
               </select>
 
             </div>
@@ -199,7 +201,7 @@ export default function VictimDetails({
             <div>
 
               <label className="font-medium">
-                Phone Number
+                {t("phone", "common")}
               </label>
 
               <input
@@ -208,7 +210,7 @@ export default function VictimDetails({
                   handleFieldChange(index, "phone", e.target.value)
                 }
                 className="mt-2 w-full rounded-xl border p-3"
-                placeholder="Phone Number"
+                placeholder={t("phone", "common")}
               />
 
             </div>
@@ -218,7 +220,7 @@ export default function VictimDetails({
           <div className="mt-5">
 
             <label className="font-medium">
-              Address
+              {t("address", "common")}
             </label>
 
             <textarea
@@ -228,7 +230,7 @@ export default function VictimDetails({
                 handleFieldChange(index, "address", e.target.value)
               }
               className="mt-2 w-full rounded-xl border p-3"
-              placeholder="Residential Address"
+              placeholder={t("residentialAddress", "complaints")}
             />
 
           </div>
@@ -236,7 +238,7 @@ export default function VictimDetails({
           <div className="mt-5">
 
             <label className="font-medium">
-              Injury Details
+              {t("injuryDetails", "complaints")}
             </label>
 
             <textarea
@@ -246,7 +248,7 @@ export default function VictimDetails({
                 handleFieldChange(index, "injuries", e.target.value)
               }
               className="mt-2 w-full rounded-xl border p-3"
-              placeholder="Describe injuries sustained"
+              placeholder={t("describeInjuries", "complaints")}
             />
 
           </div>
@@ -258,11 +260,11 @@ export default function VictimDetails({
               <div>
 
                 <p className="font-semibold">
-                  Victim Photo
+                  {t("victimPhoto", "complaints")}
                 </p>
 
                 <p className="text-sm text-slate-500">
-                  Optional
+                  {t("optional", "common")}
                 </p>
 
               </div>
@@ -276,7 +278,7 @@ export default function VictimDetails({
                 className="flex items-center gap-2 rounded-full border px-4 py-2 hover:bg-slate-50 disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 <Camera size={18} />
-                {uploadingPhotoIndex === index ? "Uploading..." : "Upload Photo"}
+                {uploadingPhotoIndex === index ? t("uploading", "common") : t("uploadPhoto", "complaints")}
               </button>
 
             </div>
@@ -298,7 +300,7 @@ export default function VictimDetails({
 
                 <img
                   src={victim.photoUrl}
-                  alt="Victim"
+                  alt={t("victim", "complaints")}
                   className="h-24 w-24 rounded-xl object-cover"
                 />
 

@@ -419,5 +419,13 @@
   "bald": "Bald",
 
   "white": "White",
-  "dyed": "Dyed"
+  "dyed": "Dyed",
+
+  "step3": "Step 3",
+  "victimDetailsDescription": "Add all victims involved in the incident.",
+  "addVictim": "Add Victim",
+  "enterFullName": "Enter full name",
+  "injuryDetails": "Injury Details",
+  "describeInjuries": "Describe injuries sustained",
+  "victimPhoto": "Victim Photo"
 }

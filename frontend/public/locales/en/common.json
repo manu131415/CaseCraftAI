@@ -103,5 +103,8 @@
   "optional": "Optional",
   "friend": "Friend",
   "uploading": "Uploading...",
-  "open": "Open"
+  "open": "Open",
+
+  "remove": "Remove",
+  "select": "Select"
 }

@@ -372,5 +372,52 @@
   "noDocumentsUploaded": "No documents uploaded.",
 
   "readyForSubmission": "Ready for Submission",
-  "readyForSubmissionDescription": "The complaint, complainant details, victims, suspects, and uploaded evidence have been reviewed. Click Submit Complaint to register the complaint in the CrimeGPT system."
+  "readyForSubmissionDescription": "The complaint, complainant details, victims, suspects, and uploaded evidence have been reviewed. Click Submit Complaint to register the complaint in the CrimeGPT system.",
+
+  "step4": "Step 4",
+  "suspectDetailsDescription": "Record every suspected individual involved in the incident.",
+  "addSuspect": "Add Suspect",
+  "identityUnknown": "Identity Unknown",
+  "aliasNickname": "Alias / Nickname",
+  "fathersName": "Father's Name",
+  "approximateAge": "Approximate Age",
+  "dateOfBirth": "Date of Birth",
+  "permanentAddress": "Permanent Address",
+  "presentAddress": "Present Address",
+  "currentAddress": "Current Address",
+  "identificationMarksPlaceholder": "Scar, tattoo, mole, birthmark, missing finger etc.",
+  "eyeStructure": "Eye Structure",
+  "hairColor": "Hair Color",
+  "suspectPhoto": "Suspect Photo",
+
+  "oval": "Oval",
+  "round": "Round",
+  "square": "Square",
+  "rectangle": "Rectangle",
+  "diamond": "Diamond",
+  "heart": "Heart",
+
+  "fair": "Fair",
+  "wheatish": "Wheatish",
+  "brown": "Brown",
+  "dark": "Dark",
+
+  "black": "Black",
+  "blue": "Blue",
+  "green": "Green",
+  "grey": "Grey",
+
+  "normal": "Normal",
+  "large": "Large",
+  "small": "Small",
+  "almond": "Almond",
+  "deepSet": "Deep Set",
+
+  "straight": "Straight",
+  "curly": "Curly",
+  "wavy": "Wavy",
+  "bald": "Bald",
+
+  "white": "White",
+  "dyed": "Dyed"
 }

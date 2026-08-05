@@ -4,6 +4,7 @@ import { ChangeEvent, useRef, useState } from "react";
 import { Camera } from "lucide-react";
 import { SuspectEntry } from "../types";
 import { uploadPhotoToCloudinary } from "@/lib/api/complaints";
+import { useLanguage } from "@/app/providers/LanguageProvider";
 
 interface Props {
   suspects: SuspectEntry[];
@@ -53,7 +54,7 @@ export default function SuspectDetails({
       setSuspects(updated);
     } catch (err) {
       console.error("Photo upload failed:", err);
-      alert("Failed to upload photo. Please try again.");
+      alert(t("photoUploadFailed", "complaints"));
     } finally {
       setUploadingPhotoIndex(null);
     }
@@ -94,6 +95,7 @@ export default function SuspectDetails({
     ]);
   }
 
+  const { t } = useLanguage();
   return (
     <div className="space-y-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
 
@@ -102,15 +104,15 @@ export default function SuspectDetails({
         <div>
 
           <p className="text-base font-medium text-blue-600">
-            Step 4
+            {t("step4", "complaints")}
           </p>
 
           <h2 className="text-2xl font-semibold mt-1">
-            Suspect Details
+            {t("suspectDetails", "complaints")}
           </h2>
 
           <p className="text-slate-500 mt-2">
-            Record every suspected individual involved in the incident.
+            {t("suspectDetailsDescription", "complaints")}
           </p>
 
         </div>
@@ -120,7 +122,7 @@ export default function SuspectDetails({
           onClick={addSuspect}
           className="rounded-full bg-blue-600 px-5 py-2 text-white hover:bg-blue-700"
         >
-          + Add Suspect
+          + {t("addSuspect", "complaints")}
         </button>
 
       </div>
@@ -135,7 +137,7 @@ export default function SuspectDetails({
           <div className="flex justify-between items-center">
 
             <h3 className="text-lg font-semibold">
-              Suspect {index + 1}
+              {t("suspect", "complaints")} {index + 1}
             </h3>
 
             {suspects.length > 1 && (
@@ -145,7 +147,7 @@ export default function SuspectDetails({
                 onClick={() => removeSuspect(index)}
                 className="text-red-600 hover:text-red-800"
               >
-                Remove
+                {t("remove", "common")}
               </button>
 
             )}
@@ -169,7 +171,7 @@ export default function SuspectDetails({
             />
 
             <label className="font-medium">
-              Identity Unknown
+              {t("identityUnknown", "complaints")}
             </label>
 
           </div>
@@ -181,7 +183,7 @@ export default function SuspectDetails({
             <div>
 
               <label className="font-medium">
-                Full Name
+                {t("fullName", "complaints")}
               </label>
 
               <input
@@ -195,7 +197,7 @@ export default function SuspectDetails({
                   )
                 }
                 className="mt-2 w-full rounded-xl border p-3"
-                placeholder="Full Name"
+                placeholder={t("fullName", "complaints")}
               />
 
             </div>
@@ -203,7 +205,7 @@ export default function SuspectDetails({
             <div>
 
               <label className="font-medium">
-                Alias
+                {t("alias", "complaints")}
               </label>
 
               <input
@@ -217,7 +219,7 @@ export default function SuspectDetails({
                   )
                 }
                 className="mt-2 w-full rounded-xl border p-3"
-                placeholder="Alias / Nickname"
+                placeholder={t("aliasNickname", "complaints")}
               />
 
             </div>
@@ -225,7 +227,7 @@ export default function SuspectDetails({
             <div>
 
               <label className="font-medium">
-                Father's Name
+                {t("fathersName", "complaints")}
               </label>
 
               <input
@@ -239,7 +241,7 @@ export default function SuspectDetails({
                   )
                 }
                 className="mt-2 w-full rounded-xl border p-3"
-                placeholder="Father's Name"
+                placeholder={t("fathersName", "complaints")}
               />
 
             </div>
@@ -247,7 +249,7 @@ export default function SuspectDetails({
             <div>
 
               <label className="font-medium">
-                Approximate Age
+                {t("approximateAge", "complaints")}
               </label>
 
               <input
@@ -263,7 +265,7 @@ export default function SuspectDetails({
                   )
                 }
                 className="mt-2 w-full rounded-xl border p-3"
-                placeholder="Age"
+                placeholder={t("age", "common")}
               />
 
             </div>
@@ -271,7 +273,7 @@ export default function SuspectDetails({
             <div>
 
               <label className="font-medium">
-                Date of Birth
+                {t("dateOfBirth", "complaints")}
               </label>
 
               <input
@@ -293,7 +295,7 @@ export default function SuspectDetails({
             <div>
 
               <label className="font-medium">
-                Gender
+                {t("gender", "common")}
               </label>
 
               <select
@@ -307,12 +309,12 @@ export default function SuspectDetails({
                 }
                 className="mt-2 w-full rounded-xl border p-3"
               >
-                <option value="">Select Gender</option>
-                <option>Male</option>
-                <option>Female</option>
-                <option>Transgender</option>
-                <option>Other</option>
-                <option>Unknown</option>
+                <option value="">{t("selectGender", "complaints")}</option>
+                <option>{t("male", "common")}</option>
+                <option>{t("female", "common")}</option>
+                <option>{t("transgender", "common")}</option>
+                <option>{t("other", "common")}</option>
+                <option>{t("unknown", "common")}</option>
               </select>
 
             </div>
@@ -323,7 +325,7 @@ export default function SuspectDetails({
           <div className="mt-6">
 
             <label className="font-medium">
-              Permanent Address
+              {t("permanentAddress", "complaints")}
             </label>
 
             <textarea
@@ -338,7 +340,7 @@ export default function SuspectDetails({
                 )
               }
               className="mt-2 w-full rounded-xl border p-3"
-              placeholder="Permanent Address"
+              placeholder={t("permanentAddress", "complaints")}
             />
 
           </div>
@@ -348,7 +350,7 @@ export default function SuspectDetails({
           <div className="mt-5">
 
             <label className="font-medium">
-              Present Address
+              {t("presentAddress", "complaints")}
             </label>
 
             <textarea
@@ -363,7 +365,7 @@ export default function SuspectDetails({
                 )
               }
               className="mt-2 w-full rounded-xl border p-3"
-              placeholder="Current Address"
+              placeholder={t("currentAddress", "complaints")}
             />
 
           </div>
@@ -373,7 +375,7 @@ export default function SuspectDetails({
           <div className="mt-5">
 
             <label className="font-medium">
-              Identification Marks
+              {t("identificationMarks", "complaints")}
             </label>
 
             <textarea
@@ -387,7 +389,7 @@ export default function SuspectDetails({
                 )
               }
               className="mt-2 w-full rounded-xl border p-3"
-              placeholder="Scar, tattoo, mole, birthmark, missing finger etc."
+              placeholder={t("identificationMarksPlaceholder", "complaints")}
             />
 
           </div>
@@ -399,7 +401,7 @@ export default function SuspectDetails({
             <div>
 
               <label className="font-medium">
-                Face Shape
+                {t("faceShape", "complaints")}
               </label>
 
               <select
@@ -409,14 +411,14 @@ export default function SuspectDetails({
                 }
                 className="mt-2 w-full rounded-xl border p-3"
               >
-                <option value="">Select</option>
-                <option>Oval</option>
-                <option>Round</option>
-                <option>Square</option>
-                <option>Rectangle</option>
-                <option>Diamond</option>
-                <option>Heart</option>
-                <option>Unknown</option>
+                <option value="">{t("select", "common")}</option>
+                <option>{t("oval","complaints")}</option>
+                <option>{t("round","complaints")}</option>
+                <option>{t("square","complaints")}</option>
+                <option>{t("rectangle","complaints")}</option>
+                <option>{t("diamond","complaints")}</option>
+                <option>{t("heart","complaints")}</option>
+                <option>{t("unknown","common")}</option>
               </select>
 
             </div>
@@ -424,7 +426,7 @@ export default function SuspectDetails({
             <div>
 
               <label className="font-medium">
-                Complexion
+                {t("complexion", "complaints")}
               </label>
 
               <select
@@ -434,12 +436,12 @@ export default function SuspectDetails({
                 }
                 className="mt-2 w-full rounded-xl border p-3"
               >
-                <option value="">Select</option>
-                <option>Fair</option>
-                <option>Wheatish</option>
-                <option>Brown</option>
-                <option>Dark</option>
-                <option>Unknown</option>
+                <option value="">{t("select", "common")}</option>
+                <option>{t("fair","complaints")}</option>
+                <option>{t("wheatish","complaints")}</option>
+                <option>{t("brown","complaints")}</option>
+                <option>{t("dark","complaints")}</option>
+                <option>{t("unknown","common")}</option>
               </select>
 
             </div>
@@ -447,7 +449,7 @@ export default function SuspectDetails({
             <div>
 
               <label className="font-medium">
-                Eye Color
+                {t("eyeColor", "complaints")}
               </label>
 
               <select
@@ -457,13 +459,13 @@ export default function SuspectDetails({
                 }
                 className="mt-2 w-full rounded-xl border p-3"
               >
-                <option value="">Select</option>
-                <option>Black</option>
-                <option>Brown</option>
-                <option>Blue</option>
-                <option>Green</option>
-                <option>Grey</option>
-                <option>Unknown</option>
+                <option value="">{t("select", "common")}</option>
+                <option>{t("black","complaints")}</option>
+                <option>{t("brown","complaints")}</option>
+                <option>{t("blue","complaints")}</option>
+                <option>{t("green","complaints")}</option>
+                <option>{t("grey","complaints")}</option>
+                <option>{t("unknown","common")}</option>
               </select>
 
             </div>
@@ -471,7 +473,7 @@ export default function SuspectDetails({
             <div>
 
               <label className="font-medium">
-                Eye Structure
+                {t("eyeStructure", "complaints")}
               </label>
 
               <select
@@ -481,14 +483,14 @@ export default function SuspectDetails({
                 }
                 className="mt-2 w-full rounded-xl border p-3"
               >
-                <option value="">Select</option>
-                <option>Normal</option>
-                <option>Large</option>
-                <option>Small</option>
-                <option>Round</option>
-                <option>Almond</option>
-                <option>Deep Set</option>
-                <option>Unknown</option>
+                <option value="">{t("select", "common")}</option>
+                <option>{t("normal","complaints")}</option>
+                <option>{t("large","complaints")}</option>
+                <option>{t("small","complaints")}</option>
+                <option>{t("round","complaints")}</option>
+                <option>{t("almond","complaints")}</option>
+                <option>{t("deepSet","complaints")}</option>
+                <option>{t("unknown","common")}</option>
               </select>
 
             </div>
@@ -496,7 +498,7 @@ export default function SuspectDetails({
             <div>
 
               <label className="font-medium">
-                Hair Type
+                {t("hairType", "complaints")}
               </label>
 
               <select
@@ -506,12 +508,12 @@ export default function SuspectDetails({
                 }
                 className="mt-2 w-full rounded-xl border p-3"
               >
-                <option value="">Select</option>
-                <option>Straight</option>
-                <option>Curly</option>
-                <option>Wavy</option>
-                <option>Bald</option>
-                <option>Unknown</option>
+                <option value="">{t("select", "common")}</option>
+                <option>{t("straight","complaints")}</option>
+                <option>{t("curly","complaints")}</option>
+                <option>{t("wavy","complaints")}</option>
+                <option>{t("bald","complaints")}</option>
+                <option>{t("unknown","common")}</option>
               </select>
 
             </div>
@@ -519,7 +521,7 @@ export default function SuspectDetails({
             <div>
 
               <label className="font-medium">
-                Hair Color
+                {t("hairColor", "complaints")}
               </label>
 
               <select
@@ -529,13 +531,13 @@ export default function SuspectDetails({
                 }
                 className="mt-2 w-full rounded-xl border p-3"
               >
-                <option value="">Select</option>
-                <option>Black</option>
-                <option>Brown</option>
-                <option>Grey</option>
-                <option>White</option>
-                <option>Dyed</option>
-                <option>Unknown</option>
+                <option value="">{t("select", "common")}</option>
+                <option>{t("black","complaints")}</option>
+                <option>{t("brown","complaints")}</option>
+                <option>{t("grey","complaints")}</option>
+                <option>{t("white","complaints")}</option>
+                <option>{t("dyed","complaints")}</option>
+                <option>{t("unknown","common")}</option>
               </select>
 
             </div>
@@ -551,11 +553,11 @@ export default function SuspectDetails({
               <div>
 
                 <p className="font-semibold">
-                  Suspect Photo
+                  {t("suspectPhoto", "complaints")}
                 </p>
 
                 <p className="text-sm text-slate-500">
-                  Upload photograph if available
+                  {t("uploadPhotographDescription", "complaints")}
                 </p>
 
               </div>
@@ -567,7 +569,7 @@ export default function SuspectDetails({
                 className="flex items-center gap-2 rounded-full border px-4 py-2 hover:bg-slate-50 disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 <Camera size={18} />
-                {uploadingPhotoIndex === index ? "Uploading..." : "Upload Photo"}
+                {uploadingPhotoIndex === index ? t("uploading","common") : t("uploadPhoto","complaints")}
               </button>
 
             </div>
@@ -589,7 +591,7 @@ export default function SuspectDetails({
 
                 <img
                   src={suspect.photoUrl}
-                  alt="Suspect"
+                  alt={t("suspect", "complaints")}
                   className="h-24 w-24 rounded-xl object-cover"
                 />
 

@@ -358,6 +358,53 @@
   "noDocumentsUploaded": "કોઈ દસ્તાવેજ અપલોડ કરવામાં આવ્યો નથી.",
 
   "readyForSubmission": "સબમિશન માટે તૈયાર",
-  "readyForSubmissionDescription": "ફરિયાદ, ફરિયાદીની વિગતો, પીડિતો, શંકાસ્પદો અને અપલોડ કરાયેલા પુરાવાની સમીક્ષા કરવામાં આવી છે. ફરિયાદ નોંધાવવા માટે 'ફરિયાદ સબમિટ કરો' પર ક્લિક કરો."
+  "readyForSubmissionDescription": "ફરિયાદ, ફરિયાદીની વિગતો, પીડિતો, શંકાસ્પદો અને અપલોડ કરાયેલા પુરાવાની સમીક્ષા કરવામાં આવી છે. ફરિયાદ નોંધાવવા માટે 'ફરિયાદ સબમિટ કરો' પર ક્લિક કરો.",
+
+  "step4": "પગલું 4",
+  "suspectDetailsDescription": "ઘટનામાં સંડોવાયેલા દરેક શંકાસ્પદ વ્યક્તિની વિગતો નોંધો.",
+  "addSuspect": "શંકાસ્પદ ઉમેરો",
+  "identityUnknown": "ઓળખ અજ્ઞાત",
+  "aliasNickname": "ઉપનામ / નિકનેમ",
+  "fathersName": "પિતાનું નામ",
+  "approximateAge": "અંદાજિત ઉંમર",
+  "dateOfBirth": "જન્મ તારીખ",
+  "permanentAddress": "કાયમી સરનામું",
+  "presentAddress": "હાલનું સરનામું",
+  "currentAddress": "હાલનું સરનામું",
+  "identificationMarksPlaceholder": "નિશાન, ટેટૂ, તિલ, જન્મચિહ્ન, ગુમ થયેલી આંગળી વગેરે",
+  "eyeStructure": "આંખોની રચના",
+  "hairColor": "વાળનો રંગ",
+  "suspectPhoto": "શંકાસ્પદનો ફોટો",
+
+  "oval": "અંડાકાર",
+  "round": "ગોળ",
+  "square": "ચોરસ",
+  "rectangle": "લંબચોરસ",
+  "diamond": "હીરાકાર",
+  "heart": "હૃદયાકાર",
+
+  "fair": "ગોરો",
+  "wheatish": "ઘઉંવર્ણ",
+  "brown": "ભૂરો",
+  "dark": "ઘાટો",
+
+  "black": "કાળો",
+  "blue": "વાદળી",
+  "green": "લીલો",
+  "grey": "રાખોડી",
+
+  "normal": "સામાન્ય",
+  "large": "મોટી",
+  "small": "નાની",
+  "almond": "બદામ આકાર",
+  "deepSet": "અંદર બેસેલી",
+
+  "straight": "સીધા",
+  "curly": "ઘૂંઘરાળા",
+  "wavy": "લહેરિયા",
+  "bald": "ટકલા",
+
+  "white": "સફેદ",
+  "dyed": "રંગેલા"
 
 }

@@ -360,6 +360,53 @@
   "noDocumentsUploaded": "कोई दस्तावेज़ अपलोड नहीं किया गया।",
 
   "readyForSubmission": "सबमिशन के लिए तैयार",
-  "readyForSubmissionDescription": "शिकायत, शिकायतकर्ता, पीड़ित, संदिग्ध और अपलोड किए गए साक्ष्यों की समीक्षा की जा चुकी है। शिकायत दर्ज करने के लिए 'शिकायत सबमिट करें' पर क्लिक करें।"
+  "readyForSubmissionDescription": "शिकायत, शिकायतकर्ता, पीड़ित, संदिग्ध और अपलोड किए गए साक्ष्यों की समीक्षा की जा चुकी है। शिकायत दर्ज करने के लिए 'शिकायत सबमिट करें' पर क्लिक करें।",
+
+  "step4": "चरण 4",
+  "suspectDetailsDescription": "घटना में शामिल प्रत्येक संदिग्ध व्यक्ति का विवरण दर्ज करें।",
+  "addSuspect": "संदिग्ध जोड़ें",
+  "identityUnknown": "पहचान अज्ञात",
+  "aliasNickname": "उपनाम / निकनेम",
+  "fathersName": "पिता का नाम",
+  "approximateAge": "अनुमानित आयु",
+  "dateOfBirth": "जन्म तिथि",
+  "permanentAddress": "स्थायी पता",
+  "presentAddress": "वर्तमान पता",
+  "currentAddress": "वर्तमान पता",
+  "identificationMarksPlaceholder": "निशान, टैटू, तिल, जन्मचिह्न, कटी हुई उंगली आदि",
+  "eyeStructure": "आंखों की बनावट",
+  "hairColor": "बालों का रंग",
+  "suspectPhoto": "संदिग्ध का फोटो",
+
+  "oval": "अंडाकार",
+  "round": "गोल",
+  "square": "चौकोर",
+  "rectangle": "आयताकार",
+  "diamond": "हीराकार",
+  "heart": "दिल के आकार का",
+
+  "fair": "गोरा",
+  "wheatish": "गेहुँआ",
+  "brown": "भूरा",
+  "dark": "सांवला",
+
+  "black": "काला",
+  "blue": "नीला",
+  "green": "हरा",
+  "grey": "धूसर",
+
+  "normal": "सामान्य",
+  "large": "बड़ी",
+  "small": "छोटी",
+  "almond": "बादाम आकार",
+  "deepSet": "गहरी बसी हुई",
+
+  "straight": "सीधे",
+  "curly": "घुँघराले",
+  "wavy": "लहरदार",
+  "bald": "गंजा",
+
+  "white": "सफेद",
+  "dyed": "रंगे हुए"
 
 }

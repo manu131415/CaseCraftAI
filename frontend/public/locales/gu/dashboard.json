@@ -52,5 +52,38 @@
   "tryDifferentDescription": "અલગ રીતે વર્ણન કરીને જુઓ.",
   "untitledSection": "શીર્ષક વગરની કલમ",
   "previously": "અગાઉ",
-  "now": "હવે"
+  "now": "હવે",
+
+  "activity": {
+    "title": "પ્રવૃત્તિ",
+    "recentUpdates": "તાજેતરના અપડેટ્સ",
+
+    "caseReviewed": "કેસ 241 ની સમીક્ષા કરવામાં આવી",
+    "caseReviewedDetail": "ઉચ્ચ પ્રાથમિકતાના પુરાવા અપલોડ થયા અને સાક્ષીના નિવેદન સાથે મેળ ખાતા હોવાનું જણાયું.",
+    "tenMinutesAgo": "10 મિનિટ પહેલાં",
+
+    "followUpRequired": "નવા ફોલો-અપની જરૂર",
+    "followUpRequiredDetail": "સાયબર છેતરપિંડીના અહેવાલ માટે ફીલ્ડ અધિકારીને બાકી રહેલું નિરીક્ષણ સોંપવામાં આવ્યું.",
+    "fortyTwoMinutesAgo": "42 મિનિટ પહેલાં",
+
+    "complaintTriaged": "ફરિયાદનું પ્રાથમિક વર્ગીકરણ થયું",
+    "complaintTriagedDetail": "સ્વચાલિત વર્ગીકરણે બે દસ્તાવેજોને મેન્યુઅલ સમીક્ષા માટે ચિહ્નિત કર્યા.",
+    "oneHourAgo": "1 કલાક પહેલાં"
+  },
+
+  "caseDashboard": "કેસ ડેશબોર્ડ",
+  "caseDashboardDescription": "સક્રિય કેસોને ટ્રેક કરો અને કાનૂની કલમો, કેસ ડાયરી અથવા સમયરેખા પર જાઓ.",
+  "viewAllCases": "બધા કેસ જુઓ",
+  "noCasesCreated": "હજુ સુધી કોઈ કેસ બનાવવામાં આવ્યો નથી. આ યાદી જોવા માટે પહેલાં ફરિયાદ નોંધાવો અને કેસ બનાવો.",
+  "noDescriptionProvided": "હજુ સુધી કોઈ વર્ણન ઉપલબ્ધ નથી.",
+
+  "registry": "રજિસ્ટ્રી",
+  "complainttitle": "તાજેતરની ફરિયાદો",
+
+  "fraudulentLoanApplication": "ખોટી લોન અરજી",
+  "missingPropertyReport": "ગુમ થયેલી મિલકતનો અહેવાલ",
+  "cyberHarassmentComplaint": "સાયબર હેરાનગતિની ફરિયાદ",
+
+  "escalated": "ઉચ્ચ સ્તરે મોકલાયું",
+  "resolved": "ઉકેલાઈ ગયું"
 }

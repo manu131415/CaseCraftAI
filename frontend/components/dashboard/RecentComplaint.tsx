@@ -1,18 +1,22 @@
-const complaints = [
-  { id: "CC-1024", title: "Fraudulent loan application", status: "Pending review", risk: "High" },
-  { id: "CC-1018", title: "Missing property report", status: "Escalated", risk: "Medium" },
-  { id: "CC-1007", title: "Cyber harassment complaint", status: "Resolved", risk: "Low" },
-];
+import { useLanguage } from "@/app/providers/LanguageProvider";
 
 export default function RecentComplaint() {
+  const { t } = useLanguage();
+
+  const complaints = [
+    { id: "CC-1024", title: t("fraudulentLoanApplication", "dashboard"), status: t("pendingReview", "dashboard"), risk: t("high", "common") },
+    { id: "CC-1018", title: t("missingPropertyReport", "dashboard"), status: t("escalated", "dashboard"), risk: t("medium", "common") },
+    { id: "CC-1007", title: t("cyberHarassmentComplaint", "dashboard"), status: t("resolved", "dashboard"), risk: t("low", "common") },
+  ];
+
   return (
     <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm font-medium text-slate-500">Registry</p>
-          <h3 className="text-lg font-semibold text-slate-900">Recent complaints</h3>
+          <p className="text-sm font-medium text-slate-500">{t("registry", "dashboard")}</p>
+          <h3 className="text-lg font-semibold text-slate-900">{t("complainttitle", "dashboard")}</h3>
         </div>
-        <button className="text-sm font-medium text-blue-600">View all</button>
+        <button className="text-sm font-medium text-blue-600">{t("viewAll", "common")}</button>
       </div>
 
       <div className="mt-6 space-y-3">

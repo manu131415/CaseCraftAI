@@ -106,5 +106,7 @@
   "open": "Open",
 
   "remove": "Remove",
-  "select": "Select"
+  "select": "Select",
+  "browseFiles": "Browse Files",
+  "viewAll": "View All"
 }

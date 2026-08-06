@@ -64,5 +64,38 @@
   "untitledSection": "Untitled section",
 
   "previously": "Previously",
-  "now": "Now"
+  "now": "Now",
+
+  "activity": {
+    "title": "Activity",
+    "recentUpdates": "Recent updates",
+
+    "caseReviewed": "Case 241 reviewed",
+    "caseReviewedDetail": "High priority evidence uploaded and matched with witness statement.",
+    "tenMinutesAgo": "10 min ago",
+
+    "followUpRequired": "New follow-up required",
+    "followUpRequiredDetail": "Pending inspection assigned to field officer for cyber fraud report.",
+    "fortyTwoMinutesAgo": "42 min ago",
+
+    "complaintTriaged": "Complaint triaged",
+    "complaintTriagedDetail": "Automated classification flagged two documents for manual review.",
+    "oneHourAgo": "1 hr ago"
+  },
+
+  "caseDashboard": "Case Dashboard",
+  "caseDashboardDescription": "Track active cases and jump to legal sections, diary, or timeline.",
+  "viewAllCases": "View All Cases",
+  "noCasesCreated": "No cases created yet. Open a complaint and create a case to populate this view.",
+  "noDescriptionProvided": "No description provided yet.",
+
+  "registry": "Registry",
+  "complainttitle": "Recent Complaints",
+
+  "fraudulentLoanApplication": "Fraudulent loan application",
+  "missingPropertyReport": "Missing property report",
+  "cyberHarassmentComplaint": "Cyber harassment complaint",
+
+  "escalated": "Escalated",
+  "resolved": "Resolved"
 }

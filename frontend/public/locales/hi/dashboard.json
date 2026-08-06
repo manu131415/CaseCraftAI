@@ -52,5 +52,38 @@
   "tryDifferentDescription": "इसे किसी अन्य तरीके से लिखकर देखें।",
   "untitledSection": "शीर्षक रहित धारा",
   "previously": "पहले",
-  "now": "अब"
+  "now": "अब",
+
+  "activity": {
+    "title": "गतिविधि",
+    "recentUpdates": "हाल के अपडेट",
+
+    "caseReviewed": "मामला 241 की समीक्षा की गई",
+    "caseReviewedDetail": "उच्च प्राथमिकता वाले साक्ष्य अपलोड किए गए और गवाह के बयान से मेल खाए।",
+    "tenMinutesAgo": "10 मिनट पहले",
+
+    "followUpRequired": "नए फॉलो-अप की आवश्यकता",
+    "followUpRequiredDetail": "साइबर धोखाधड़ी रिपोर्ट के लिए फील्ड अधिकारी को लंबित निरीक्षण सौंपा गया।",
+    "fortyTwoMinutesAgo": "42 मिनट पहले",
+
+    "complaintTriaged": "शिकायत का प्रारंभिक वर्गीकरण किया गया",
+    "complaintTriagedDetail": "स्वचालित वर्गीकरण ने दो दस्तावेज़ों को मैनुअल समीक्षा के लिए चिह्नित किया।",
+    "oneHourAgo": "1 घंटा पहले"
+  },
+
+  "caseDashboard": "मामला डैशबोर्ड",
+  "caseDashboardDescription": "सक्रिय मामलों को ट्रैक करें और कानूनी धाराओं, केस डायरी या टाइमलाइन पर जाएँ।",
+  "viewAllCases": "सभी मामले देखें",
+  "noCasesCreated": "अभी तक कोई मामला नहीं बनाया गया है। इस सूची को भरने के लिए पहले शिकायत दर्ज करें और मामला बनाएँ।",
+  "noDescriptionProvided": "अभी तक कोई विवरण उपलब्ध नहीं है।",
+
+  "registry": "रजिस्टर",
+  "complainttitle": "हाल की शिकायतें",
+
+  "fraudulentLoanApplication": "फर्जी ऋण आवेदन",
+  "missingPropertyReport": "गुम हुई संपत्ति की रिपोर्ट",
+  "cyberHarassmentComplaint": "साइबर उत्पीड़न शिकायत",
+
+  "escalated": "उच्च स्तर पर भेजा गया",
+  "resolved": "समाधान हो गया"
 }

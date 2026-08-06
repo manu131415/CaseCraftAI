@@ -1,36 +1,39 @@
 import { AlertCircle, CheckCircle2, Clock3 } from "lucide-react";
-
-const activities = [
-  {
-    title: "Case 241 reviewed",
-    detail: "High priority evidence uploaded and matched with witness statement.",
-    time: "10 min ago",
-    icon: CheckCircle2,
-    color: "text-emerald-600",
-  },
-  {
-    title: "New follow-up required",
-    detail: "Pending inspection assigned to field officer for cyber fraud report.",
-    time: "42 min ago",
-    icon: AlertCircle,
-    color: "text-amber-600",
-  },
-  {
-    title: "Complaint triaged",
-    detail: "Automated classification flagged two documents for manual review.",
-    time: "1 hr ago",
-    icon: Clock3,
-    color: "text-blue-600",
-  },
-];
+import { useLanguage } from "@/app/providers/LanguageProvider";
 
 export default function ActivityFeed() {
+  const { t } = useLanguage();
+
+  const activities = [
+    {
+      title: t("activity.caseReviewed", "dashboard"),
+      detail: t("activity.caseReviewedDetail", "dashboard"),
+      time: t("activity.tenMinutesAgo", "dashboard"),
+      icon: CheckCircle2,
+      color: "text-emerald-600",
+    },
+    {
+      title: t("activity.followUpRequired", "dashboard"),
+      detail: t("activity.followUpRequiredDetail", "dashboard"),
+      time: t("activity.fortyTwoMinutesAgo", "dashboard"),
+      icon: AlertCircle,
+      color: "text-amber-600",
+    },
+    {
+      title: t("activity.complaintTriaged", "dashboard"),
+      detail: t("activity.complaintTriagedDetail", "dashboard"),
+      time: t("activity.oneHourAgo", "dashboard"),
+      icon: Clock3,
+      color: "text-blue-600",
+    },
+  ];
+
   return (
     <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm font-medium text-slate-500">Activity</p>
-          <h3 className="text-lg font-semibold text-slate-900">Recent updates</h3>
+          <p className="text-sm font-medium text-slate-500">{t("activity.title", "dashboard")}</p>
+          <h3 className="text-lg font-semibold text-slate-900">{t("activity.recentUpdates", "dashboard")}</h3>
         </div>
       </div>
 

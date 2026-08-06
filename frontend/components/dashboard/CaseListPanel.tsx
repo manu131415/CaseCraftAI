@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
+import { useLanguage } from "@/app/providers/LanguageProvider";
 
 interface CaseSummary {
   case_id: string;
@@ -18,6 +19,7 @@ export default function CaseListPanel() {
   const [cases, setCases] = useState<CaseSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { t } = useLanguage();
 
   useEffect(() => {
     async function loadCases() {
@@ -37,7 +39,7 @@ export default function CaseListPanel() {
   }, []);
 
   if (loading) {
-    return <div className="rounded-[24px] border border-slate-200 bg-white p-6 shadow-sm">Loading cases...</div>;
+    return <div className="rounded-[24px] border border-slate-200 bg-white p-6 shadow-sm">{t("loadingCases", "cases")}</div>;
   }
 
   if (error) {
@@ -48,15 +50,15 @@ export default function CaseListPanel() {
     <div className="rounded-[24px] border border-slate-200 bg-white p-6 shadow-sm">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-semibold text-slate-900">Case dashboard</h2>
-          <p className="mt-1 text-sm text-slate-500">Track active cases and jump to legal sections, diary, or timeline.</p>
+          <h2 className="text-xl font-semibold text-slate-900">{t("caseDashboard", "dashboard")}</h2>
+          <p className="mt-1 text-sm text-slate-500">{t("caseDashboardDescription", "dashboard")}</p>
         </div>
-        <Link href="/cases" className="text-sm font-medium text-indigo-600 hover:underline">View all cases</Link>
+        <Link href="/cases" className="text-sm font-medium text-indigo-600 hover:underline">{t("viewAllCases", "dashboard")}</Link>
       </div>
 
       {cases.length === 0 ? (
         <div className="mt-6 rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-6 text-sm text-slate-600">
-          No cases created yet. Open a complaint and create a case to populate this view.
+          {t("noCasesCreated", "dashboard")}
         </div>
       ) : (
         <div className="mt-6 space-y-4">
@@ -65,19 +67,19 @@ export default function CaseListPanel() {
               <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                 <div>
                   <div className="flex items-center gap-2">
-                    <h3 className="text-lg font-semibold text-slate-900">{caseItem.title || `Case ${caseItem.case_id.slice(0, 8)}`}</h3>
+                    <h3 className="text-lg font-semibold text-slate-900">{caseItem.title || `t("case", "complaints") ${caseItem.case_id.slice(0, 8)}`}</h3>
                     <span className="rounded-full bg-indigo-100 px-2.5 py-1 text-xs font-medium text-indigo-700">{caseItem.status || "Open"}</span>
                   </div>
-                  <p className="mt-1 text-sm text-slate-600">Complaint: {caseItem.complaint_id || "—"}</p>
-                  <p className="mt-2 text-sm text-slate-600">{caseItem.description || "No description provided yet."}</p>
+                  <p className="mt-1 text-sm text-slate-600">{t("complaint", "complaints")}: {caseItem.complaint_id || "—"}</p>
+                  <p className="mt-2 text-sm text-slate-600">{caseItem.description || t("noDescriptionProvided", "dashboard")}</p>
                 </div>
 
                 <div className="flex flex-wrap gap-2">
                   {caseItem.complaint_id ? (
                     <>
-                      <Link href={`/complaints/${caseItem.complaint_id}/legal_sections`} className="rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-100">Legal sections</Link>
-                      <Link href={`/complaints/${caseItem.complaint_id}/case_diary`} className="rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-100">Case diary</Link>
-                      <Link href={`/complaints/${caseItem.complaint_id}/timeline`} className="rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-100">Timeline</Link>
+                      <Link href={`/complaints/${caseItem.complaint_id}/legal_sections`} className="rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-100">{t("legalSections", "cases")}</Link>
+                      <Link href={`/complaints/${caseItem.complaint_id}/case_diary`} className="rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-100">{t("caseDiary", "cases")}</Link>
+                      <Link href={`/complaints/${caseItem.complaint_id}/timeline`} className="rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-100">{t("timeline", "cases")}</Link>
                     </>
                   ) : null}
                 </div>

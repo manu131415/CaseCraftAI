@@ -5,14 +5,17 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import commonEn from '@/public/locales/en/common.json';
 import dashboardEn from '@/public/locales/en/dashboard.json';
 import complaintsEn from '@/public/locales/en/complaints.json';
+import documentsEn from '@/public/locales/en/documents.json';
 
 import commonHi from '@/public/locales/hi/common.json';
 import dashboardHi from '@/public/locales/hi/dashboard.json';
 import complaintsHi from '@/public/locales/hi/complaints.json';
+import documentsHi from '@/public/locales/hi/documents.json';
 
 import commonGu from '@/public/locales/gu/common.json';
 import dashboardGu from '@/public/locales/gu/dashboard.json';
 import complaintsGu from '@/public/locales/gu/complaints.json';
+import documentsGu from '@/public/locales/gu/documents.json';
 
 import casesEn from "@/public/locales/en/cases.json";
 import casesHi from "@/public/locales/hi/cases.json";
@@ -24,7 +27,8 @@ export type Namespace =
   | "common"
   | "dashboard"
   | "complaints"
-  | "cases";
+  | "cases"
+  | "documents";
 
 interface LanguageContextType {
   language: Language;
@@ -40,18 +44,21 @@ const translations: Record<Language, Record<Namespace, Record<string, any>>> = {
     dashboard: dashboardEn,
     complaints: complaintsEn,
     cases: casesEn,
+    documents: documentsEn
   },
   hi: {
     common: commonHi,
     dashboard: dashboardHi,
     complaints: complaintsHi,
     cases: casesHi,
+    documents: documentsHi
   },
   gu: {
     common: commonGu,
     dashboard: dashboardGu,
     complaints: complaintsGu,
     cases: casesGu,
+    documents: documentsGu
   },
 };
 

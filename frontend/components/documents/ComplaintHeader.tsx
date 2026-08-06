@@ -2,6 +2,7 @@
 
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useLanguage } from "@/app/providers/LanguageProvider";
 
 interface Props {
   caseId: string;
@@ -9,6 +10,7 @@ interface Props {
 
 export default function ComplaintHeader({ caseId }: Props) {
   const router = useRouter();
+  const { t } = useLanguage();
 
   return (
     <div className="mb-8 rounded-2xl border border-slate-700 bg-slate-900 p-6">
@@ -17,26 +19,26 @@ export default function ComplaintHeader({ caseId }: Props) {
         className="mb-5 flex items-center gap-2 text-cyan-400 hover:text-cyan-300"
       >
         <ArrowLeft size={18} />
-        Back
+        {t("back", "common")}
       </button>
 
       <h1 className="text-3xl font-bold text-white">
-        Document Generation
+        {t("documentGeneration", "documents")}
       </h1>
 
       <p className="mt-2 text-gray-400">
-        Generate official investigation documents for this case.
+        {t("documentGenerationDescription", "documents")}
       </p>
 
       <div className="mt-6 grid gap-5 md:grid-cols-2">
         <Info
-          title="Case ID"
+          title={t("caseId", "cases")}
           value={caseId}
         />
 
         <Info
-          title="Status"
-          value="Ready for Document Generation"
+          title={t("status", "common")}
+          value={t("readyForDocumentGeneration", "documents")}
         />
       </div>
     </div>

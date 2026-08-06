@@ -1,0 +1,33 @@
+{
+  "documentGeneration": "दस्तावेज़ निर्माण",
+  "documentGenerationDescription": "इस मामले के लिए आधिकारिक जांच दस्तावेज़ तैयार करें।",
+  "readyForDocumentGeneration": "दस्तावेज़ निर्माण के लिए तैयार",
+  "generateDownload": "बनाएँ और डाउनलोड करें",
+
+  "medicalExaminationRequisition": "चिकित्सीय परीक्षण अनुरोध",
+  "medicalExaminationRequisitionDescription": "पीड़ित या आरोपी के चिकित्सीय परीक्षण हेतु अनुरोध पत्र तैयार करें।",
+
+  "policeRemandApplication": "पुलिस रिमांड आवेदन",
+  "policeRemandApplicationDescription": "न्यायालय के समक्ष आरोपी की पुलिस हिरासत रिमांड के लिए आवेदन तैयार करें।",
+
+  "chargesheet": "आरोपपत्र",
+  "chargesheetDescription": "जांच के निष्कर्ष, साक्ष्य, गवाहों और लागू कानूनी धाराओं सहित अंतिम आरोपपत्र तैयार करें।",
+
+  "supplementaryChargesheet": "पूरक आरोपपत्र",
+  "supplementaryChargesheetDescription": "नए प्राप्त साक्ष्यों या जांच निष्कर्षों के आधार पर अतिरिक्त आरोपपत्र तैयार करें।",
+
+  "seizureMemo": "जब्ती पंचनामा",
+  "seizureMemoDescription": "जांच के दौरान जब्त की गई वस्तुओं, संपत्ति और साक्ष्यों का जब्ती पंचनामा तैयार करें।",
+
+  "sceneOfOffencePanchnama": "घटनास्थल पंचनामा",
+  "sceneOfOffencePanchnamaDescription": "घटनास्थल, अवलोकनों और बरामद साक्ष्यों का विस्तृत पंचनामा तैयार करें।",
+
+  "courtCustodyWarrant": "न्यायिक हिरासत वारंट",
+  "courtCustodyWarrantDescription": "आरोपी को न्यायिक हिरासत में भेजने हेतु वारंट और प्रेषण ज्ञापन तैयार करें।",
+
+  "faceIdentificationMemo": "पहचान परेड ज्ञापन",
+  "faceIdentificationMemoDescription": "संदिग्ध के फोटो, शारीरिक विशेषताओं और पहचान चिन्हों सहित पहचान ज्ञापन तैयार करें।",
+
+  "generatedDocuments": "निर्मित दस्तावेज़",
+  "noGeneratedDocuments": "अभी तक कोई दस्तावेज़ तैयार नहीं किया गया है।"
+}

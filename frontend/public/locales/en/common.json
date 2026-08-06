@@ -108,5 +108,6 @@
   "remove": "Remove",
   "select": "Select",
   "browseFiles": "Browse Files",
-  "viewAll": "View All"
+  "viewAll": "View All",
+  "status": "Status"
 }

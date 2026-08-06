@@ -85,5 +85,6 @@
   "remove": "हटाएँ",
   "select": "चुनें",
   "browseFiles": "फ़ाइलें चुनें",
-  "viewAll": "सभी देखें"
+  "viewAll": "सभी देखें",
+  "status": "स्थिति"
 }

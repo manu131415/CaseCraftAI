@@ -1,0 +1,33 @@
+{
+  "documentGeneration": "Document Generation",
+  "documentGenerationDescription": "Generate official investigation documents for this case.",
+  "readyForDocumentGeneration": "Ready for Document Generation",
+  "generateDownload": "Generate & Download",
+
+  "medicalExaminationRequisition": "Medical Examination Requisition",
+  "medicalExaminationRequisitionDescription": "Generate a requisition letter requesting medical examination of the victim or accused.",
+
+  "policeRemandApplication": "Police Remand Application",
+  "policeRemandApplicationDescription": "Prepare an application requesting police custody remand of the accused before the court.",
+
+  "chargesheet": "Chargesheet",
+  "chargesheetDescription": "Generate the final chargesheet containing investigation findings, evidence, witnesses, and applicable legal sections.",
+
+  "supplementaryChargesheet": "Supplementary Chargesheet",
+  "supplementaryChargesheetDescription": "Create an additional chargesheet to submit newly discovered evidence or investigation findings.",
+
+  "seizureMemo": "Seizure Memo",
+  "seizureMemoDescription": "Generate a seizure memo documenting all articles, property, and evidence seized during the investigation.",
+
+  "sceneOfOffencePanchnama": "Scene of Offence Panchnama",
+  "sceneOfOffencePanchnamaDescription": "Prepare a detailed panchnama describing the crime scene, observations, and recovered evidence.",
+
+  "courtCustodyWarrant": "Court Custody Warrant",
+  "courtCustodyWarrantDescription": "Generate the warrant and commitment memo for transferring the accused to judicial custody.",
+
+  "faceIdentificationMemo": "Face Identification Memo",
+  "faceIdentificationMemoDescription": "Prepare a suspect identification memo containing photographs, physical features, and identification marks.",
+
+  "generatedDocuments": "Generated Documents",
+  "noGeneratedDocuments": "No generated documents yet."
+}

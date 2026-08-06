@@ -1,6 +1,7 @@
 "use client";
 
 import { FileDown, FileText } from "lucide-react";
+import { useLanguage } from "@/app/providers/LanguageProvider";
 
 interface DocumentCardProps {
   title: string;
@@ -13,6 +14,7 @@ export default function DocumentCard({
   description,
   onGenerate,
 }: DocumentCardProps) {
+  const { t } = useLanguage();
   return (
     <div className="rounded-2xl border border-gray-700 bg-[#121827] p-6 shadow-md transition hover:border-cyan-500">
       <div className="flex items-center gap-3">
@@ -34,7 +36,7 @@ export default function DocumentCard({
         className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-cyan-600 px-4 py-3 font-medium text-white transition hover:bg-cyan-700"
       >
         <FileDown size={18} />
-        Generate & Download
+        {t("generateDownload", "documents")}
       </button>
     </div>
   );

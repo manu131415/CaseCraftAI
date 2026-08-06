@@ -80,8 +80,8 @@ throw new Error(
         {documentList.map((doc) => (
           <DocumentCard
             key={doc.type}
-            title={doc.title}
-            description={doc.description}
+            title={t(doc.title, "documents")}
+            description={t(doc.description, "documents")}
             onGenerate={() => generateDocument(doc.type)}
           />
         ))}

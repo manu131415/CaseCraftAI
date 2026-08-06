@@ -1,5 +1,5 @@
 "use client";
-
+import { useLanguage } from "@/app/providers/LanguageProvider";
 interface Props {
   documents: any[];
   api: string;
@@ -9,13 +9,14 @@ export default function GeneratedDocuments({
   documents,
   api,
 }: Props) {
+  const { t } = useLanguage();
   return (
     <div className="mb-10 rounded-2xl border border-slate-700 bg-slate-900 p-6">
 
       <div className="mb-5 flex items-center justify-between">
 
         <h2 className="text-xl font-bold text-white">
-          Generated Documents
+          {t("generatedDocuments", "documents")}
         </h2>
 
         <span className="rounded-full bg-cyan-700 px-3 py-1 text-sm text-white">
@@ -26,7 +27,7 @@ export default function GeneratedDocuments({
 
       {documents.length === 0 ? (
         <p className="text-gray-400">
-          No generated documents yet.
+          {t("noGeneratedDocuments", "documents")}
         </p>
       ) : (
         <div className="space-y-4">
@@ -59,7 +60,7 @@ export default function GeneratedDocuments({
                     )
                   }
                 >
-                  Download
+                  {t("download", "common")}
                 </button>
 
               </div>

@@ -1,0 +1,33 @@
+{
+  "documentGeneration": "દસ્તાવેજ નિર્માણ",
+  "documentGenerationDescription": "આ કેસ માટે સત્તાવાર તપાસ સંબંધિત દસ્તાવેજો તૈયાર કરો.",
+  "readyForDocumentGeneration": "દસ્તાવેજ નિર્માણ માટે તૈયાર",
+  "generateDownload": "બનાવો અને ડાઉનલોડ કરો",
+
+  "medicalExaminationRequisition": "તબીબી તપાસ માટેની વિનંતી",
+  "medicalExaminationRequisitionDescription": "પીડિત અથવા આરોપીની તબીબી તપાસ માટે વિનંતી પત્ર તૈયાર કરો.",
+
+  "policeRemandApplication": "પોલીસ રિમાન્ડ અરજી",
+  "policeRemandApplicationDescription": "કોર્ટ સમક્ષ આરોપીના પોલીસ રિમાન્ડ માટે અરજી તૈયાર કરો.",
+
+  "chargesheet": "ચાર્જશીટ",
+  "chargesheetDescription": "તપાસના તારણો, પુરાવા, સાક્ષીઓ અને લાગુ કાનૂની કલમો સાથે અંતિમ ચાર્જશીટ તૈયાર કરો.",
+
+  "supplementaryChargesheet": "પૂરક ચાર્જશીટ",
+  "supplementaryChargesheetDescription": "નવા મળેલા પુરાવા અથવા તપાસના તારણો રજૂ કરવા માટે પૂરક ચાર્જશીટ તૈયાર કરો.",
+
+  "seizureMemo": "જપ્તી પંચનામું",
+  "seizureMemoDescription": "તપાસ દરમિયાન જપ્ત કરાયેલ વસ્તુઓ, મિલકત અને પુરાવાનું જપ્તી પંચનામું તૈયાર કરો.",
+
+  "sceneOfOffencePanchnama": "ઘટનાસ્થળ પંચનામું",
+  "sceneOfOffencePanchnamaDescription": "ઘટનાસ્થળ, નિરીક્ષણો અને મળેલા પુરાવાનું વિગતવાર પંચનામું તૈયાર કરો.",
+
+  "courtCustodyWarrant": "ન્યાયિક કસ્ટડી વોરંટ",
+  "courtCustodyWarrantDescription": "આરોપીને ન્યાયિક કસ્ટડીમાં મોકલવા માટે વોરંટ અને કમિટમેન્ટ મેમો તૈયાર કરો.",
+
+  "faceIdentificationMemo": "ઓળખ પરેડ મેમો",
+  "faceIdentificationMemoDescription": "શંકાસ્પદના ફોટા, શારીરિક લક્ષણો અને ઓળખના નિશાનો સાથે ઓળખ મેમો તૈયાર કરો.",
+
+  "generatedDocuments": "બનાવેલા દસ્તાવેજો",
+  "noGeneratedDocuments": "હજુ સુધી કોઈ દસ્તાવેજ તૈયાર થયો નથી."
+}

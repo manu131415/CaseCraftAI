@@ -1,12 +1,14 @@
 "use client";
 
 import { Sparkles } from "lucide-react";
+import { useLanguage } from "@/app/providers/LanguageProvider";
 
 export default function ExtractButton(){
+    const { t } = useLanguage();
 
 function handleExtract(){
 
-alert("Calling AI Backend...");
+alert(t("callingAiBackend", "complaints"));
 
 }
 
@@ -24,7 +26,7 @@ className="bg-indigo-600 text-white px-6 py-3 rounded-lg flex gap-2"
 
 <Sparkles/>
 
-Extract From Documents
+{t("extractFromDocuments", "complaints")}
 
 </button>
 

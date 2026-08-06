@@ -3,6 +3,7 @@
 import { useState, useCallback } from "react";
 import axios from "axios";
 import { useDropzone } from "react-dropzone";
+import { useLanguage } from "@/app/providers/LanguageProvider";
 
 import {
   UploadCloud,
@@ -113,7 +114,7 @@ export default function FileUploader({
 
   async function extractDocuments() {
   if (files.length === 0) {
-    alert("Please upload at least one document.");
+    alert(t("pleaseUploadDocument", "complaints"));
     return;
   }
 
@@ -235,7 +236,7 @@ export default function FileUploader({
 
     setFiles([]);
 
-    alert("AI Extraction Completed");
+    alert(t("aiExtractionCompleted", "complaints"));
 
     if (onExtractComplete) {
       onExtractComplete();
@@ -243,14 +244,14 @@ export default function FileUploader({
   } catch (error) {
     console.error(error);
 
-    alert("Document extraction failed.");
+    alert(t("documentExtractionFailed", "complaints"));
   } finally {
     setLoading(false);
   }
 }
 
   
-
+  const { t } = useLanguage();
   return (
     <div className="space-y-8">
       {/* Upload Card */}
@@ -269,22 +270,22 @@ export default function FileUploader({
           <UploadCloud size={60} className="text-blue-600" />
 
           <h2 className="text-2xl font-semibold mt-4">
-            Upload Complaint Documents
+            {t("uploadComplaintDocuments", "complaints")}
           </h2>
 
           <p className="text-base text-gray-500 mt-2 text-center">
-            Drag & Drop PDF, Images, Audio, Video or Documents
+            {t("dragDropDocuments", "complaints")}
           </p>
 
           <button
             type="button"
             className="mt-6 bg-blue-600 text-white px-6 py-2 rounded-lg"
           >
-            Browse Files
+            {t("browseFiles", "common")}
           </button>
 
           <p className="text-base text-gray-400 mt-3">
-            Supports PDF • JPG • PNG • MP3 • MP4 • DOCX
+            {t("supportedFormats", "complaints")}
           </p>
         </div>
       </div>
@@ -294,7 +295,7 @@ export default function FileUploader({
         <div className="bg-white rounded-xl border shadow-sm">
           <div className="border-b px-6 py-4">
             <h3 className="font-semibold text-lg">
-              Uploaded Evidence ({files.length})
+              {t("documentsEvidence.uploadedEvidence", "complaints")} ({files.length})
             </h3>
           </div>
 
@@ -337,33 +338,32 @@ export default function FileUploader({
         <div className="flex justify-between items-center">
           <div>
             <h3 className="font-semibold text-lg">
-              AI Document Extraction
+              {t("aiDocumentExtraction", "complaints")}
             </h3>
 
             <p className="text-gray-600 mt-2">
-              Extract complaint details and automatically classify uploaded
-              documents into evidence categories.
+              {t("aiDocumentExtractionDescription", "complaints")}
             </p>
 
             <div className="mt-4 space-y-2">
               <div className="flex gap-2 items-center">
                 <CheckCircle2 className="text-green-600" size={18} />
-                OCR Text Extraction
+                {t("ocrTextExtraction", "complaints")}
               </div>
 
               <div className="flex gap-2 items-center">
                 <CheckCircle2 className="text-green-600" size={18} />
-                Speech-to-Text
+                {t("speechToText", "complaints")}
               </div>
 
               <div className="flex gap-2 items-center">
                 <CheckCircle2 className="text-green-600" size={18} />
-                Entity Recognition
+                {t("entityRecognition", "complaints")}
               </div>
 
               <div className="flex gap-2 items-center">
                 <CheckCircle2 className="text-green-600" size={18} />
-                Evidence Classification
+                {t("evidenceClassification", "complaints")}
               </div>
             </div>
           </div>
@@ -375,7 +375,7 @@ export default function FileUploader({
           >
             <Sparkles size={20} />
 
-            {loading ? "Extracting..." : "Extract From Documents"}
+            {loading ? t("extracting", "complaints") : t("extractFromDocuments", "complaints")}
           </button>
         </div>
       </div>

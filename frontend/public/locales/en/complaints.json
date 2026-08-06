@@ -427,5 +427,25 @@
   "enterFullName": "Enter full name",
   "injuryDetails": "Injury Details",
   "describeInjuries": "Describe injuries sustained",
-  "victimPhoto": "Victim Photo"
+  "victimPhoto": "Victim Photo",
+
+  "callingAiBackend": "Calling AI Backend...",
+  "extractFromDocuments": "Extract From Documents",
+
+  "pleaseUploadDocument": "Please upload at least one document.",
+  "aiExtractionCompleted": "AI Extraction Completed",
+  "documentExtractionFailed": "Document extraction failed.",
+
+  "uploadComplaintDocuments": "Upload Complaint Documents",
+  "dragDropDocuments": "Drag & Drop PDF, Images, Audio, Video or Documents",
+  "supportedFormats": "Supports PDF • JPG • PNG • MP3 • MP4 • DOCX",
+
+  "aiDocumentExtractionDescription": "Extract complaint details and automatically classify uploaded documents into evidence categories.",
+
+  "ocrTextExtraction": "OCR Text Extraction",
+  "speechToText": "Speech-to-Text",
+  "entityRecognition": "Entity Recognition",
+  "evidenceClassification": "Evidence Classification",
+
+  "extracting": "Extracting..."
 }

@@ -413,6 +413,26 @@
   "enterFullName": "પૂર્ણ નામ દાખલ કરો",
   "injuryDetails": "ઇજાની વિગતો",
   "describeInjuries": "થાયેલી ઇજાઓનું વર્ણન કરો",
-  "victimPhoto": "પીડિતનો ફોટો"
+  "victimPhoto": "પીડિતનો ફોટો",
+
+  "callingAiBackend": "AI બેકએન્ડને કૉલ કરવામાં આવી રહ્યું છે...",
+  "extractFromDocuments": "દસ્તાવેજોમાંથી માહિતી કાઢો",
+
+  "pleaseUploadDocument": "કૃપા કરીને ઓછામાં ઓછો એક દસ્તાવેજ અપલોડ કરો.",
+  "aiExtractionCompleted": "AI એક્સ્ટ્રાક્શન પૂર્ણ થયું.",
+  "documentExtractionFailed": "દસ્તાવેજમાંથી માહિતી કાઢવામાં નિષ્ફળતા.",
+
+  "uploadComplaintDocuments": "ફરિયાદ સંબંધિત દસ્તાવેજો અપલોડ કરો",
+  "dragDropDocuments": "PDF, છબીઓ, ઑડિયો, વિડિયો અથવા દસ્તાવેજો અહીં ખેંચો અને મૂકો",
+  "supportedFormats": "સમર્થિત ફોર્મેટ: PDF • JPG • PNG • MP3 • MP4 • DOCX",
+
+  "aiDocumentExtractionDescription": "ફરિયાદની વિગતો કાઢો અને અપલોડ કરેલા દસ્તાવેજોને પુરાવાની શ્રેણીમાં આપમેળે વર્ગીકૃત કરો.",
+
+  "ocrTextExtraction": "OCR ટેક્સ્ટ એક્સ્ટ્રાક્શન",
+  "speechToText": "વાણીથી લખાણ",
+  "entityRecognition": "એન્ટિટી ઓળખ",
+  "evidenceClassification": "પુરાવા વર્ગીકરણ",
+
+  "extracting": "માહિતી કાઢી રહ્યું છે..."
 
 }

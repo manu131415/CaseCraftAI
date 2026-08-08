@@ -27,7 +27,7 @@ const navigationItems = [
   {
     href: "/complaints",
     key: "complaintList",
-    namespace: "common", // <-- change this
+    namespace: "common", 
     icon: FileText,
   },
   {
@@ -39,7 +39,7 @@ const navigationItems = [
   {
     href: "/complaintRegister",
     key: "registerComplaint",
-    namespace: "common", // <-- change this
+    namespace: "common", 
     icon: FileText,
   },
   

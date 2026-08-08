@@ -33,7 +33,7 @@ const navigationItems = [
   },
   {
     href: "/legal/legal-library",
-    key: "Legal Library",
+    key: "legalLibrary",
     namespace: "common",   
     icon: BookOpenIcon,
   },

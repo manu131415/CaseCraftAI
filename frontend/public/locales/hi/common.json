@@ -86,5 +86,11 @@
   "select": "चुनें",
   "browseFiles": "फ़ाइलें चुनें",
   "viewAll": "सभी देखें",
-  "status": "स्थिति"
+  "status": "स्थिति",
+  "download": "डाउनलोड करें",
+  "loggingOut": "लॉग आउट किया जा रहा है…",
+
+  "roleIO": "जांच अधिकारी",
+  "roleSHO": "थाना प्रभारी अधिकारी",
+  "roleLEGAL_ADVISOR": "कानूनी सलाहकार"
 }

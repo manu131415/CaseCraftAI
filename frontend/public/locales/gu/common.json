@@ -86,5 +86,12 @@
   "select": "પસંદ કરો",
   "browseFiles": "ફાઇલો પસંદ કરો",
   "viewAll": "બધું જુઓ",
-  "status": "સ્થિતિ"
+  "status": "સ્થિતિ",
+  "download": "ડાઉનલોડ કરો",
+
+  "loggingOut": "લૉગ આઉટ થઈ રહ્યું છે…",
+
+  "roleIO": "તપાસ અધિકારી",
+  "roleSHO": "સ્ટેશન હાઉસ અધિકારી",
+  "roleLEGAL_ADVISOR": "કાનૂની સલાહકાર"
 }

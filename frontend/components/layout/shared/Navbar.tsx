@@ -5,7 +5,8 @@ import { useLanguage } from "@/app/providers/LanguageProvider";
 import LanguageSwitcher from "../LanguageSwitcher";
 import { Suspense, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ROLES, SessionUser } from "@/lib/auth";
+import { SessionUser } from "@/lib/auth";
+// import { ROLES, SessionUser } from "@/lib/auth";
 
 interface NavbarProps {
   /** Small colored label above the heading, e.g. "Legal Library". Falls back to nav.operationsCenter. */
@@ -16,6 +17,7 @@ interface NavbarProps {
 
 function UserMenu() {
   const router = useRouter();
+  const { t } = useLanguage();
   const [user, setUser] = useState<SessionUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
@@ -72,7 +74,7 @@ function UserMenu() {
     return null;
   }
 
-  const roleLabel = ROLES.find((r) => r.value === user.role)?.blurb ?? user.role;
+  const roleLabel = t(`role${user.role}`, "common");
 
   return (
     <div className="relative" ref={menuRef}>
@@ -103,7 +105,7 @@ function UserMenu() {
             className="flex w-full items-center gap-2 px-4 py-3 text-sm text-red-600 transition hover:bg-red-50 disabled:opacity-50"
           >
             <LogOut className="h-4 w-4" />
-            {loggingOut ? "Logging out…" : "Logout"}
+            {loggingOut ? t("loggingOut", "common") : t("nav.logout")}
           </button>
         </div>
       )}

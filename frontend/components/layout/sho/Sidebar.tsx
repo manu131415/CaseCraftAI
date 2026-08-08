@@ -19,19 +19,19 @@ const navigationItems = [
   // },
   {
     href: "/dashboard/sho",
-    key: "Dashboard",
+    key: "dashboard",
     namespace: "common",
     icon: LayoutDashboard,
   },
   {
     href: "/sho/cases",
-    key: "Case List",
+    key: "caseList",
     namespace: "common",
     icon: ShieldCheck,
   },
   {
     href: "/sho/officers",
-    key: "Officers",
+    key: "officers",
     namespace: "common",
     icon: Users,
   },

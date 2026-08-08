@@ -5,7 +5,7 @@
   "overview": "Overview",
   "dashboard": "Dashboard",
   "aiInsights": "AI Insights",
-  "Legal Library": "Legal Library",
+  "legalLibrary": "Legal Library",
   "secureTitle": "Secure by Design",
   "secureDescription": "All complaint files are protected with layered verification and audit logs.",
 
@@ -109,5 +109,11 @@
   "select": "Select",
   "browseFiles": "Browse Files",
   "viewAll": "View All",
-  "status": "Status"
+  "status": "Status",
+  "download": "Download",
+  "loggingOut": "Logging out…",
+
+  "roleIO": "Investigating Officer",
+  "roleSHO": "Station House Officer",
+  "roleLEGAL_ADVISOR": "Legal Advisor"
 }

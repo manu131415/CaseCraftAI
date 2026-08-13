@@ -218,7 +218,7 @@ export default function CaseList({
                       href={`/complaints/${caseItem.complaint_id}/case_diary`}
                       className="rounded-lg border border-slate-300 px-3 py-2 text-sm hover:bg-slate-100"
                     >
-                      {t("legalSections", "cases")}
+                      {t("Case Diary", "cases")}
                     </Link>
 
                     <Link

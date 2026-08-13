@@ -11,6 +11,7 @@ import {
   Calendar,
   ShieldAlert,
   FolderKanban,
+  FileText,
 } from "lucide-react";
 
 interface ComplaintSummary {
@@ -38,6 +39,9 @@ export default function ComplaintList({
   crimeSubcategory = "",
   status = "",
   caseStatus = "",
+  onSelect,
+  selectedId,
+  compact = false,
 }: {
   initialComplaints?: ComplaintSummary[];
   search?: string;
@@ -45,6 +49,12 @@ export default function ComplaintList({
   crimeSubcategory?: string;
   status?: string;
   caseStatus?: string;
+  /** If provided, rows call this instead of navigating (two-pane mode) */
+  onSelect?: (complaintId: string) => void;
+  /** Currently selected complaint id, used to highlight the active row */
+  selectedId?: string | null;
+  /** Compact card-list view for narrow panes, instead of the full table */
+  compact?: boolean;
 }) {
   const [complaints, setComplaints] = useState<ComplaintSummary[]>(initialComplaints || []);
   const [loading, setLoading] = useState(true);
@@ -53,9 +63,9 @@ export default function ComplaintList({
   const pathname = usePathname();
   const { t } = useLanguage();
   const isCaseCreationAllowed = !!pathname && (pathname.includes("/sho") || pathname.includes("/io") || pathname.includes("/dashboard") || pathname.includes("/complaints"));
-
+  
   useEffect(() => {
-    const { t } = useLanguage();
+    
     async function loadData() {
       try {
         const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
@@ -154,12 +164,105 @@ export default function ComplaintList({
   );
 });
 
+ if (compact) {
+  return (
+    <div className="divide-y divide-slate-200 overflow-y-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+      {filteredComplaints.length === 0 ? (
+        <div className="px-5 py-8 text-center text-sm text-slate-500">
+          {t("noComplaintsMatchFilters", "complaints")}
+        </div>
+      ) : (
+        filteredComplaints.map((complaint) => {
+          const rowStatus = complaint.status || "Pending";
+          const isDraft = complaint.is_draft === true;
+          const isSelected = selectedId === complaint.complaint_id;
+
+          const statusClasses = isDraft
+            ? "bg-orange-100 text-orange-700"
+            : rowStatus.toLowerCase() === "closed"
+            ? "bg-emerald-100 text-emerald-700"
+            : rowStatus.toLowerCase() === "rejected"
+            ? "bg-rose-100 text-rose-700"
+            : "bg-indigo-100 text-indigo-700";
+
+          const handleClick = (e: React.MouseEvent) => {
+            if (onSelect) {
+              e.preventDefault();
+              onSelect(complaint.complaint_id);
+            }
+          };
+
+          const content = (
+            <div
+              className={`flex w-full flex-col gap-1.5 px-5 py-4 text-left transition-colors ${
+                isSelected
+                  ? "border-l-4 border-indigo-600 bg-indigo-50"
+                  : "border-l-4 border-transparent hover:bg-slate-50"
+              }`}
+            >
+              <div className="flex items-center justify-between gap-2">
+                <span className="flex items-center gap-2 text-sm font-semibold text-slate-900">
+                  <FileText className="h-4 w-4 shrink-0 text-slate-400" />
+                  {complaint.complaint_title ||
+                    complaint.crime_category ||
+                    t("complaintList", "common")}
+                </span>
+                <span
+                  className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold ${statusClasses}`}
+                >
+                  {isDraft ? t("draft", "complaints") : t(rowStatus, "complaints")}
+                </span>
+              </div>
+
+              <p className="flex items-center gap-2 text-sm text-slate-700">
+                <User className="h-3.5 w-3.5 shrink-0 text-slate-400" />
+                {complaint.complainant_name || "-"}
+              </p>
+
+              <div className="flex items-center justify-between text-xs text-slate-500">
+                <span className="flex items-center gap-1.5">
+                  <MapPin className="h-3.5 w-3.5 shrink-0 text-slate-400" />
+                  {complaint.location || "-"}
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <Calendar className="h-3.5 w-3.5 shrink-0 text-slate-400" />
+                  {complaint.created_at
+                    ? new Date(complaint.created_at).toLocaleDateString()
+                    : "-"}
+                </span>
+              </div>
+            </div>
+          );
+
+          return onSelect ? (
+            <button
+              key={complaint.complaint_id}
+              onClick={handleClick}
+              className="block w-full"
+            >
+              {content}
+            </button>
+          ) : (
+            <Link
+              key={complaint.complaint_id}
+              href={`/complaints/${complaint.complaint_id}`}
+              className="block w-full"
+            >
+              {content}
+            </Link>
+          );
+        })
+      )}
+    </div>
+  );
+}
+
  return (
   <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
-    <table className="min-w-full divide-y divide-slate-200">
+    <table className="min-w-full">
       <thead className="bg-slate-100">
         <tr className="text-left text-sm font-semibold text-slate-700">
-          <th className="px-6 py-4">{t("complaintNumber", "complaints")}</th>
+          <th className="px-6 py-4">{t("complaintTitle", "complaints") || "Complaint"}</th>
           <th className="px-6 py-4">{t("crimeCategory", "complaints")}</th>
           <th className="px-6 py-4">{t("crimeSubcategory", "complaints")}</th>
           <th className="px-6 py-4">{t("complainant", "complaints")}</th>
@@ -203,7 +306,10 @@ export default function ComplaintList({
     className="hover:bg-slate-50 transition-colors"
   >
     <td className="px-6 py-4 font-semibold text-slate-900">
-      {complaint.complaint_number}
+      <span className="flex items-center gap-2">
+        <FileText className="h-4 w-4 shrink-0 text-slate-400" />
+        {complaint.complaint_title || complaint.crime_category || "-"}
+      </span>
     </td>
 
     <td className="px-6 py-4">

@@ -118,10 +118,10 @@ export default function CasesMasterDetail() {
           <div className="mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
               <h1 className="text-2xl font-bold text-slate-900">
-                {t("cases.title") || "Case Management Hub"}
+                {t("Case Management Hub") || "Case Management Hub"}
               </h1>
               <p className="text-xs text-slate-500">
-                {t("cases.subtitle") || "Select a case from the side pane to inspect full records."}
+                {t("Select a case from the side pane to inspect full records.") || "Select a case from the side pane to inspect full records."}
               </p>
             </div>
 

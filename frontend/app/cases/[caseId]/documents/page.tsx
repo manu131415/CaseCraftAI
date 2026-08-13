@@ -7,6 +7,8 @@ import ComplaintHeader from "@/components/documents/ComplaintHeader";
 import DocumentCard from "@/components/documents/DocumentCard";
 import { documentList } from "@/components/documents/documentList";
 import { useLanguage } from "@/app/providers/LanguageProvider";
+import Sidebar from "@/components/layout/io/Sidebar";
+import Navbar from "@/components/layout/shared/Navbar";
 
 export default function DocumentsPage() {
   const { caseId } = useParams();
@@ -35,13 +37,13 @@ export default function DocumentsPage() {
       if (!res.ok) {
         const err = await res.json();
 
-console.log("Backend Error:", err);
+        console.log("Backend Error:", err);
 
-throw new Error(
-  typeof err.detail === "string"
-    ? err.detail
-    : JSON.stringify(err.detail, null, 2)
-);
+        throw new Error(
+          typeof err.detail === "string"
+            ? err.detail
+            : JSON.stringify(err.detail, null, 2)
+        );
       }
 
       const blob = await res.blob();
@@ -69,29 +71,42 @@ throw new Error(
   };
 
   return (
-    <div className="min-h-screen bg-[#0B1120] p-8">
-      <ComplaintHeader caseId={caseId as string} />
+    <div className="flex flex-col h-screen bg-slate-100 overflow-hidden">
+      <Navbar />
 
-      <h2 className="mb-6 mt-8 text-2xl font-semibold text-white">
-        {t("availableTemplates", "cases")}
-      </h2>
+      <div className="flex flex-1 overflow-hidden">
+        <Sidebar />
 
-      <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-        {documentList.map((doc) => (
-          <DocumentCard
-            key={doc.type}
-            title={t(doc.title, "documents")}
-            description={t(doc.description, "documents")}
-            onGenerate={() => generateDocument(doc.type)}
-          />
-        ))}
+        {/* Main Content Area */}
+        <main className="flex-1 min-w-0 overflow-y-auto p-6 lg:p-8">
+          <div className="max-w-7xl mx-auto space-y-6">
+            
+            <ComplaintHeader caseId={caseId as string} />
+
+            <h2 className="mb-4 text-xl font-bold text-slate-900">
+              {t("availableTemplates", "cases")}
+            </h2>
+
+            <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+              {documentList.map((doc) => (
+                <DocumentCard
+                  key={doc.type}
+                  title={t(doc.title, "documents")}
+                  description={t(doc.description, "documents")}
+                  onGenerate={() => generateDocument(doc.type)}
+                />
+              ))}
+            </div>
+
+            {loadingDoc && (
+              <div className="fixed bottom-6 right-6 rounded-xl bg-indigo-900 px-5 py-3 text-xs font-semibold text-white shadow-lg border border-indigo-700 animate-bounce">
+                {t("generating", "cases")} {loadingDoc.replaceAll("_", " ")}...
+              </div>
+            )}
+
+          </div>
+        </main>
       </div>
-
-      {loadingDoc && (
-        <div className="fixed bottom-6 right-6 rounded-xl bg-cyan-600 px-5 py-3 text-white shadow-xl">
-          {t("generating", "cases")} {loadingDoc.replaceAll("_", " ")}...
-        </div>
-      )}
     </div>
   );
 }

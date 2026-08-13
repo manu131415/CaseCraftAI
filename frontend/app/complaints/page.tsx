@@ -3,7 +3,9 @@
 import { useState } from "react";
 import Navbar from "@/components/layout/shared/Navbar";
 import Sidebar from "@/components/layout/io/Sidebar";
+import { ClipboardList } from "lucide-react";
 import ComplaintList from "@/components/complaint/ComplaintList";
+import ComplaintDetailPanel from "@/components/complaint/ComplaintDetailPanel";
 import { useLanguage } from "@/app/providers/LanguageProvider";
 
 export default function ComplaintsPage() {
@@ -16,6 +18,7 @@ export default function ComplaintsPage() {
 
   const [results, setResults] = useState<any>(null);
   const [loading, setLoading] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const { t } = useLanguage();
 
   const handleSearch = async () => {
@@ -60,18 +63,22 @@ export default function ComplaintsPage() {
       <Navbar />
 
       <div className="flex">
-        <Sidebar />
 
-        <main className="flex-1 p-6 lg:p-8">
+        <div className="w-64 shrink-0">
+    <Sidebar />
+  </div>
+
+        <main className="flex-1 min-w-0 p-6 lg:p-10">
           {/* Header */}
 
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-slate-800">
+            <h1 className="flex items-center gap-3 text-3xl font-bold text-slate-800">
+              <ClipboardList className="h-7 w-7 text-indigo-500" />
               {t("complaintList", "common")}
             </h1>
 
             <p className="mt-2 text-slate-600">
-              {t("subtitle", "complaints")}
+              {t("View all your Complaints ", "complaints")}
             </p>
           </div>
 
@@ -85,7 +92,7 @@ export default function ComplaintsPage() {
 
               <input
                 type="text"
-                placeholder={t("searchPlaceholder", "complaints")}
+                placeholder={t("Search Complaints...", "complaints")}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="rounded-lg border border-slate-300 px-3 py-2 text-sm"
@@ -163,16 +170,28 @@ export default function ComplaintsPage() {
             </div>
           </div>
 
-          {/* Complaint Table */}
+          {/* Two-pane: complaint list (left) + details (right) */}
 
-          <ComplaintList
-            initialComplaints={Array.isArray(results) ? results : undefined}
-            search={search}
-            crimeCategory={crimeCategory}
-            crimeSubcategory={crimeSubcategory}
-            status={status}
-            caseStatus={caseStatus}
-          />
+          <div className="grid gap-6 lg:grid-cols-[minmax(320px,420px)_1fr] lg:items-start">
+            <div className="lg:sticky lg:top-6 lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto">
+              <ComplaintList
+                initialComplaints={Array.isArray(results) ? results : undefined}
+                search={search}
+                crimeCategory={crimeCategory}
+                crimeSubcategory={crimeSubcategory}
+                status={status}
+                caseStatus={caseStatus}
+                compact
+                onSelect={setSelectedId}
+                selectedId={selectedId}
+              />
+            </div>
+
+            <ComplaintDetailPanel
+              complaintId={selectedId}
+              onClose={() => setSelectedId(null)}
+            />
+          </div>
         </main>
       </div>
     </div>

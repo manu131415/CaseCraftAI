@@ -2,15 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 import { AUTH_COOKIE_NAME, isProtectedRoute, isRoleAllowed, Role } from "@/lib/auth";
 
-// Runs on the Edge runtime, so we verify the JWT signature directly with
-// `jose` instead of calling the FastAPI backend on every request.
 const secret = new TextEncoder().encode(process.env.JWT_SECRET_KEY);
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Only guard the app's protected sections; let /login, /unauthorized,
-  // static assets, and API routes pass straight through.
+  // Let public routes pass straight through
   if (!isProtectedRoute(pathname)) {
     return NextResponse.next();
   }
@@ -27,19 +24,19 @@ export async function middleware(request: NextRequest) {
     const { payload } = await jwtVerify(token, secret);
     const role = payload.role as Role;
 
+    // Reject access if role is missing or unauthorized for this specific pathname
     if (!role || !isRoleAllowed(pathname, role)) {
       return NextResponse.redirect(new URL("/unauthorized", request.url));
     }
 
-    // Make the caller's identity available to Server Components/route
-    // handlers downstream without re-decoding the token.
+    // Attach verified user identity headers downstream
     const requestHeaders = new Headers(request.headers);
     requestHeaders.set("x-user-role", role);
     requestHeaders.set("x-user-id", String(payload.sub ?? ""));
 
     return NextResponse.next({ request: { headers: requestHeaders } });
   } catch {
-    // Expired or tampered token.
+    // Handle expired or tampered token
     const loginUrl = new URL("/login", request.url);
     loginUrl.searchParams.set("next", pathname);
     const response = NextResponse.redirect(loginUrl);
@@ -48,12 +45,9 @@ export async function middleware(request: NextRequest) {
   }
 }
 
+// Universal matcher: intercept ALL routes except Next.js internal files and static assets
 export const config = {
   matcher: [
-    "/dashboard/:path*",
-    "/complaint-list/:path*",
-    "/case-list/:path*",
-    "/register-complaint/:path*",
-    "/generate-document/:path*",
+    "/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };

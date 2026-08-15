@@ -83,8 +83,9 @@ export default function CaseDetailPage() {
   useEffect(() => {
     async function loadSessionUser() {
       try {
-        const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:8000';
-        const response = await axios.get(`${API_BASE}/auth/me`, { withCredentials: true });
+        // Same-origin Next.js API route, not the FastAPI backend --
+        // this is what actually reads the session (see /api/me).
+        const response = await axios.get('/api/me');
         setRole(response.data?.role ?? null);
       } catch (err) {
         console.error('Error loading session user:', err);

@@ -40,11 +40,15 @@ export default function Dashboard() {
   ];
 
   return (
-    <div className="flex min-h-screen bg-slate-100">
-      <Sidebar />
+    <div className="flex min-h-screen flex-col bg-slate-100">
+      <Navbar />
+      <div className="flex flex-1 min-w-0">
+      <aside className="sticky top-0 h-screen self-start shrink-0">
+                <Sidebar />
+          </aside>
 
       <main className="flex-1">
-        <Navbar />
+        
 
         <div className="space-y-6 p-6 lg:p-8">
           <section className="rounded-[32px] bg-gradient-to-r from-blue-700 via-indigo-700 to-slate-900 p-8 text-white shadow-xl">
@@ -76,6 +80,7 @@ export default function Dashboard() {
 
         </div>
       </main>
+      </div>
     </div>
   );
 }

@@ -202,14 +202,14 @@ export default function CaseList({
 
 
                     <Link
-                      href={`/complaints/${caseItem.complaint_id}/timeline`}
+                      href={`/sho/cases/${caseItem.case_id || caseItem.complaint_id}/timeline`}
                       className="rounded-lg border border-slate-300 px-3 py-2 text-sm hover:bg-slate-100"
                     >
                       {t("timeline", "cases")}
                     </Link>
 
                     <Link
-                      href={`/cases/${caseItem.case_id}/documents`}
+                      href={`/sho/cases/${caseItem.case_id}/documents`}
                       className="rounded-lg bg-indigo-600 px-3 py-2 text-sm text-white hover:bg-indigo-700"
                     >
                       {t("documents", "cases")}

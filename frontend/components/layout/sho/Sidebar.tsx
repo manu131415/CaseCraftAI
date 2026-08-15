@@ -3,12 +3,15 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
+  FileText,
   LayoutDashboard,
+  Monitor,
   ShieldCheck,
   Users,
 } from "lucide-react";
 import { useLanguage } from "@/app/providers/LanguageProvider";
 import { Suspense } from "react";
+import DocumentCard from "@/components/documents/DocumentCard";
 
 const navigationItems = [
   // {
@@ -28,6 +31,18 @@ const navigationItems = [
     key: "caseList",
     namespace: "common",
     icon: ShieldCheck,
+  },
+  {
+    href: "/sho/case-monitoring",
+    key: "Case Monitoring",
+    namespace: "common",
+    icon: Monitor,
+  },
+  {
+    href: "/sho/document-approvals",
+    key: "Document Approvals",
+    namespace: "common",
+    icon: FileText,
   },
   {
     href: "/sho/officers",

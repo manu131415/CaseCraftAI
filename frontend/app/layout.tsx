@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { LanguageProvider } from "./providers/LanguageProvider";
-import './legal_section.css';
 
 export const metadata: Metadata = {
   title: "CaseCraftAI",

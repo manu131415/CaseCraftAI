@@ -21,26 +21,46 @@ export interface SessionUser {
  * The first matching prefix wins — order matters, most specific first.
  */
 export const ROLE_ACCESS: { prefix: string; roles: Role[] | "ALL" }[] = [
-  // Specific role subfolders MUST come before the generic "/dashboard"
-  // entry below — isRoleAllowed() matches the first prefix hit, and
-  // "/dashboard/legal".startsWith("/dashboard") is also true.
+  // 1. Specific sub-dashboard routes
   { prefix: "/dashboard/io", roles: ["IO"] },
   { prefix: "/dashboard/sho", roles: ["SHO"] },
   { prefix: "/dashboard/legal", roles: ["LEGAL_ADVISOR"] },
   { prefix: "/dashboard", roles: "ALL" },
-  { prefix: "/complaint-list", roles: "ALL" },
-  { prefix: "/case-list", roles: "ALL" },
-  { prefix: "/register-complaint", roles: ["IO", "SHO"] },
-  { prefix: "/generate-document", roles: ["LEGAL_ADVISOR", "SHO"] },
+
+  // 2. Specific feature pages
+  { prefix: "/complaintregister", roles: ["IO"] },
+  { prefix: "/complaints", roles: ["IO"] },
+  { prefix: "/io/legal-library", roles: ["IO"] },
+  { prefix: "/cases", roles: ["IO"] },
+
+  { prefix: "/sho/cases", roles: ["SHO"] },
+  { prefix: "/sho/officers", roles: ["SHO"] },
+
+  { prefix: "/legal/cases", roles: ["LEGAL_ADVISOR"] },
+  { prefix: "/legal/legal-library", roles: ["LEGAL_ADVISOR"] },
+
+  // 3. General role root paths
+  { prefix: "/sho", roles: ["SHO"] },
+  { prefix: "/io", roles: ["IO"] },
+  { prefix: "/legal", roles: ["LEGAL_ADVISOR"] },
 ];
 
 export function isRoleAllowed(pathname: string, role: Role): boolean {
-  const match = ROLE_ACCESS.find((r) => pathname.startsWith(r.prefix));
-  if (!match) return true; // unlisted routes aren't role-gated
+  const normalizedPath = pathname.toLowerCase();
+  
+  const match = ROLE_ACCESS.find((r) =>
+    normalizedPath.startsWith(r.prefix.toLowerCase())
+  );
+  
+  if (!match) return false; // Default-deny unlisted routes that reach role checks
   if (match.roles === "ALL") return true;
   return match.roles.includes(role);
 }
 
 export function isProtectedRoute(pathname: string): boolean {
-  return ROLE_ACCESS.some((r) => pathname.startsWith(r.prefix));
+  const normalizedPath = pathname.toLowerCase();
+  
+  return ROLE_ACCESS.some((r) =>
+    normalizedPath.startsWith(r.prefix.toLowerCase())
+  );
 }

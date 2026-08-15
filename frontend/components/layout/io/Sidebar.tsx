@@ -6,7 +6,7 @@ import {
   FileText,
   LayoutDashboard,
   ShieldCheck,
-  Sparkles,
+  WeightTilde,
 } from "lucide-react";
 import { useLanguage } from "@/app/providers/LanguageProvider";
 import { Suspense } from "react";
@@ -19,7 +19,7 @@ const navigationItems = [
   //   icon: LayoutDashboard,
   // },
   {
-    href: "/dashboard",
+    href: "/dashboard/io",
     key: "dashboard",
     namespace: "common",
     icon: LayoutDashboard,
@@ -42,7 +42,12 @@ const navigationItems = [
     namespace: "common", 
     icon: FileText,
   },
-  
+  {
+    href: "/io/legal-library",
+    key: "legalLibrary",
+    namespace: "common",
+    icon: WeightTilde,
+  },
   
 ] as const;
 
@@ -76,7 +81,7 @@ function SidebarContent() {
 
           const isActive =
             pathname === item.href ||
-            (item.href !== "/dashboard" && pathname.startsWith(item.href));
+            (item.href !== "/dashboard/io" && pathname.startsWith(item.href));
 
           return (
             <Link

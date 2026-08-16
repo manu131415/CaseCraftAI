@@ -84,8 +84,9 @@ export default function CasesPage() {
     void fetchCases();
   }, []);
 
-  const filteredCases = useMemo(() => {
-    return cases.filter((c) => {
+  // Filter & Sort Cases (Newest First)
+  const sortedCases = useMemo(() => {
+    const filtered = cases.filter((c) => {
       const q = search.toLowerCase().trim();
       const caseNum = (c.case_number || c.case_id || c.id || "").toLowerCase();
       const compNum = (c.complaint_number || c.complaint_id || "").toLowerCase();
@@ -97,22 +98,28 @@ export default function CasesPage() {
 
       return matchesSearch && matchesStatus && matchesPriority;
     });
+
+    return filtered.sort((a, b) => {
+      const timeA = new Date(a.created_at || 0).getTime();
+      const timeB = new Date(b.created_at || 0).getTime();
+      return timeB - timeA;
+    });
   }, [cases, search, status, priority]);
 
-  // Keep selected case in sync with filtered results
+  // Keep selected case in sync with sorted results
   useEffect(() => {
-    if (filteredCases.length > 0) {
+    if (sortedCases.length > 0) {
       const currentId = selectedCase?.case_id || selectedCase?.id || selectedCase?.case_number;
-      const exists = filteredCases.some(
+      const exists = sortedCases.some(
         (c) => (c.case_id || c.id || c.case_number) === currentId
       );
       if (!exists) {
-        setSelectedCase(filteredCases[0]);
+        setSelectedCase(sortedCases[0]);
       }
     } else {
       setSelectedCase(null);
     }
-  }, [filteredCases, selectedCase]);
+  }, [sortedCases, selectedCase]);
 
   const getPriorityBadge = (p?: string) => {
     switch (p?.toUpperCase()) {
@@ -159,7 +166,7 @@ export default function CasesPage() {
                 <p className="text-xs text-slate-500 mt-0.5">{t("subtitle", "cases")}</p>
               </div>
               <span className="text-xs bg-blue-50 text-blue-700 px-3 py-1 rounded-full font-bold border border-blue-100">
-                {filteredCases.length} Cases Listed
+                {sortedCases.length} Cases Listed
               </span>
             </div>
 
@@ -234,10 +241,10 @@ export default function CasesPage() {
               <div className="p-3 overflow-y-auto flex-1 space-y-2.5">
                 {loading ? (
                   <div className="py-12 text-center text-xs text-slate-400">Loading cases...</div>
-                ) : filteredCases.length === 0 ? (
+                ) : sortedCases.length === 0 ? (
                   <div className="py-12 text-center text-xs text-slate-400">No matching cases found.</div>
                 ) : (
-                  filteredCases.map((c) => {
+                  sortedCases.map((c) => {
                     const activeId = c.case_id || c.id || c.case_number;
                     const selectedId = selectedCase?.case_id || selectedCase?.id || selectedCase?.case_number;
                     const isSelected = activeId === selectedId;

@@ -3,11 +3,13 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  FileText,
-  LayoutDashboard,
-  Monitor,
-  ShieldCheck,
+  
+  Briefcase,
+  Activity,
+  FileCheck,
   Users,
+  ShieldCheck,
+  KanbanSquare,
 } from "lucide-react";
 import { useLanguage } from "@/app/providers/LanguageProvider";
 import { Suspense } from "react";
@@ -24,25 +26,25 @@ const navigationItems = [
     href: "/dashboard/sho",
     key: "dashboard",
     namespace: "common",
-    icon: LayoutDashboard,
+    icon: KanbanSquare,
   },
   {
     href: "/sho/cases",
     key: "caseList",
     namespace: "common",
-    icon: ShieldCheck,
+    icon: Briefcase,
   },
   {
     href: "/sho/case-monitoring",
-    key: "Case Monitoring",
+    key: "CaseMonitoring",
     namespace: "common",
-    icon: Monitor,
+    icon: Activity,
   },
   {
     href: "/sho/document-approvals",
-    key: "Document Approvals",
+    key: "DocumentApprovals",
     namespace: "common",
-    icon: FileText,
+    icon: FileCheck,
   },
   {
     href: "/sho/officers",

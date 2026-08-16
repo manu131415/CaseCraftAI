@@ -51,7 +51,8 @@ export const crimeTypes = {
     "Identity Theft",
     "Hacking",
     "Ransomware",
-    "QR Code Scam"
+    "QR Code Scam",
+    "Cyber Stalking & Harassment"
   ],
 
   "Organized Crime": [

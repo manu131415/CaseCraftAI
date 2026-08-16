@@ -2,10 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
-import Link from "next/link";
 import {
-  Scale,
-  Eye,
   Inbox,
   Loader2,
   AlertTriangle,
@@ -14,6 +11,12 @@ import {
   CircleAlert,
   CheckCircle2,
   FileText,
+  Calendar,
+  Shield,
+  Tag,
+  Activity,
+  AlignLeft,
+  Lock,
 } from "lucide-react";
 import { useLanguage } from "@/app/providers/LanguageProvider";
 
@@ -46,7 +49,7 @@ function StatusBadge({ status, t }: { status: string; t: TFunc }) {
       ? "bg-indigo-100 text-indigo-700"
       : "bg-slate-100 text-slate-700";
 
-  const Icon = status === "Closed" ? CheckCircle2 : status === "Under Investigation" ? Clock : Clock;
+  const Icon = status === "Closed" ? CheckCircle2 : Clock;
 
   return (
     <span
@@ -116,7 +119,7 @@ export default function CaseList({
     }
 
     loadCases();
-  }, []);
+  }, [initialCases, t]);
 
   useEffect(() => {
     if (initialCases) {
@@ -124,10 +127,11 @@ export default function CaseList({
     }
   }, [initialCases]);
 
+  // Filter and sort cases (Newest First)
   const filteredCases = useMemo(() => {
     const q = search.trim().toLowerCase();
 
-    return cases.filter((caseItem) => {
+    const filtered = cases.filter((caseItem) => {
       const matchesSearch =
         q === "" ||
         caseItem.case_number?.toLowerCase().includes(q) ||
@@ -143,9 +147,14 @@ export default function CaseList({
 
       return matchesSearch && matchesStatus && matchesPriority;
     });
+
+    return filtered.sort((a, b) => {
+      const timeA = new Date(a.created_at || 0).getTime();
+      const timeB = new Date(b.created_at || 0).getTime();
+      return timeB - timeA;
+    });
   }, [cases, search, status, priority]);
 
-  // Keep selection valid as the filtered list changes; default to the first result.
   useEffect(() => {
     if (filteredCases.length === 0) {
       setSelectedId(null);
@@ -180,8 +189,9 @@ export default function CaseList({
     <div className="flex flex-col gap-4 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm lg:h-[calc(100vh-260px)] lg:min-h-[520px] lg:flex-row">
       {/* Left pane: scrollable case list */}
       <div className="flex w-full flex-col border-b border-slate-200 lg:h-full lg:w-[380px] lg:shrink-0 lg:border-b-0 lg:border-r">
-        <div className="shrink-0 border-b border-slate-200 px-5 py-4">
-          <h2 className="text-sm font-semibold text-slate-700">
+        <div className="shrink-0 border-b border-slate-200 px-5 py-4 flex items-center justify-between">
+          <h2 className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+            <FileText className="h-4 w-4 text-indigo-600" />
             {t("title", "cases")}{" "}
             <span className="font-normal text-slate-400">({filteredCases.length})</span>
           </h2>
@@ -206,7 +216,7 @@ export default function CaseList({
                       onClick={() => setSelectedId(caseItem.case_id)}
                       className={`w-full px-5 py-4 text-left transition-colors ${
                         isSelected
-                          ? "border-l-4 border-indigo-600 bg-indigo-50"
+                          ? "border-l-4 border-indigo-600 bg-indigo-50/70"
                           : "border-l-4 border-transparent hover:bg-slate-50"
                       }`}
                     >
@@ -217,7 +227,8 @@ export default function CaseList({
                         <PriorityBadge priority={itemPriority} t={t} />
                       </div>
 
-                      <p className="mt-1.5 truncate text-xs text-slate-500">
+                      <p className="mt-1.5 truncate text-xs text-slate-500 flex items-center gap-1">
+                        <Tag className="h-3 w-3 text-slate-400 shrink-0" />
                         {[
                           caseItem.case_number ? `#${caseItem.case_number}` : null,
                           caseItem.complaint_number,
@@ -227,7 +238,8 @@ export default function CaseList({
                       </p>
 
                       {(caseItem.fir_no || caseItem.police_station || caseItem.district) && (
-                        <p className="mt-0.5 truncate text-xs text-slate-500">
+                        <p className="mt-0.5 truncate text-xs text-slate-500 flex items-center gap-1">
+                          <Shield className="h-3 w-3 text-slate-400 shrink-0" />
                           {[
                             caseItem.fir_no
                               ? `${t("firNumber", "cases")} ${caseItem.fir_no}${
@@ -243,7 +255,8 @@ export default function CaseList({
 
                       <div className="mt-2 flex items-center justify-between gap-2">
                         <StatusBadge status={itemStatus} t={t} />
-                        <span className="text-xs text-slate-400 whitespace-nowrap">
+                        <span className="text-xs text-slate-400 whitespace-nowrap flex items-center gap-1">
+                          <Calendar className="h-3 w-3" />
                           {caseItem.created_at
                             ? new Date(caseItem.created_at).toLocaleDateString()
                             : "-"}
@@ -258,21 +271,27 @@ export default function CaseList({
         </div>
       </div>
 
-      {/* Right pane: selected case detail */}
+      {/* Right pane: View-Only case details */}
       <div className="flex-1 overflow-y-auto">
         {!selectedCase ? (
           <div className="flex h-full flex-col items-center justify-center gap-2 p-10 text-center text-slate-400">
-            <Search className="h-8 w-8" />
+            <Search className="h-8 w-8 text-slate-300" />
             <p className="text-sm">{t("selectCasePrompt", "cases")}</p>
           </div>
         ) : (
-          <div className="p-6 lg:p-8">
-            <div className="flex flex-wrap items-start justify-between gap-4">
+          <div className="p-6 lg:p-8 space-y-6">
+            {/* Header & Badges */}
+            <div className="flex flex-wrap items-start justify-between gap-4 border-b border-slate-100 pb-5">
               <div>
-                <p className="text-sm font-medium text-slate-400">
-                  {selectedCase.case_number || selectedCase.case_id.slice(0, 8)}
-                </p>
-                <h1 className="mt-1 text-2xl font-bold text-slate-800">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-mono font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
+                    {selectedCase.case_number || selectedCase.case_id.slice(0, 8)}
+                  </span>
+                  <span className="inline-flex items-center gap-1 text-[11px] font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
+                    <Lock className="h-3 w-3 text-slate-400" /> View Only
+                  </span>
+                </div>
+                <h1 className="mt-2 text-2xl font-bold text-slate-800">
                   {selectedCase.title || "-"}
                 </h1>
               </div>
@@ -283,31 +302,37 @@ export default function CaseList({
               </div>
             </div>
 
-            <dl className="mt-6 grid grid-cols-1 gap-4 rounded-xl border border-slate-200 bg-slate-50 p-5 sm:grid-cols-2">
-              <div>
-                <dt className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+            {/* Read-Only Structured Details Grid */}
+            <dl className="grid grid-cols-1 gap-4 rounded-xl border border-slate-200 bg-slate-50/70 p-5 sm:grid-cols-2">
+              <div className="bg-white p-3.5 rounded-lg border border-slate-200/80 shadow-xs">
+                <dt className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  <Tag className="h-3.5 w-3.5 text-indigo-500 shrink-0" />
                   {t("complaintNumber", "cases")}
                 </dt>
-                <dd className="mt-1 text-sm text-slate-700">
+                <dd className="mt-1 text-sm font-medium text-slate-800">
                   {selectedCase.complaint_number || "-"}
                 </dd>
               </div>
-              <div>
-                <dt className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+
+              <div className="bg-white p-3.5 rounded-lg border border-slate-200/80 shadow-xs">
+                <dt className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  <Calendar className="h-3.5 w-3.5 text-indigo-500 shrink-0" />
                   {t("createdDate", "cases")}
                 </dt>
-                <dd className="mt-1 text-sm text-slate-700">
+                <dd className="mt-1 text-sm font-medium text-slate-800">
                   {selectedCase.created_at
                     ? new Date(selectedCase.created_at).toLocaleDateString()
                     : "-"}
                 </dd>
               </div>
+
               {(selectedCase.fir_no || selectedCase.police_station || selectedCase.district) && (
-                <div>
-                  <dt className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                <div className="bg-white p-3.5 rounded-lg border border-slate-200/80 shadow-xs">
+                  <dt className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    <Shield className="h-3.5 w-3.5 text-indigo-500 shrink-0" />
                     {t("firDetails", "cases")}
                   </dt>
-                  <dd className="mt-1 text-sm text-slate-700">
+                  <dd className="mt-1 text-sm font-medium text-slate-800">
                     {[
                       selectedCase.fir_no
                         ? `${t("firNumber", "cases")} ${selectedCase.fir_no}${
@@ -322,41 +347,29 @@ export default function CaseList({
                   </dd>
                 </div>
               )}
+
               {selectedCase.current_stage && (
-                <div>
-                  <dt className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                <div className="bg-white p-3.5 rounded-lg border border-slate-200/80 shadow-xs">
+                  <dt className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    <Activity className="h-3.5 w-3.5 text-indigo-500 shrink-0" />
                     {t("currentStage", "cases")}
                   </dt>
-                  <dd className="mt-1 text-sm text-slate-700">{selectedCase.current_stage}</dd>
+                  <dd className="mt-1 text-sm font-medium text-slate-800">{selectedCase.current_stage}</dd>
                 </div>
               )}
+
               {selectedCase.description && (
-                <div className="sm:col-span-2">
-                  <dt className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                <div className="sm:col-span-2 bg-white p-3.5 rounded-lg border border-slate-200/80 shadow-xs">
+                  <dt className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-slate-500 mb-2">
+                    <AlignLeft className="h-3.5 w-3.5 text-indigo-500 shrink-0" />
                     {t("description", "cases")}
                   </dt>
-                  <dd className="mt-1 text-sm text-slate-700">{selectedCase.description}</dd>
+                  <dd className="text-sm text-slate-700 leading-relaxed bg-slate-50 p-3 rounded-md border border-slate-200/60">
+                    {selectedCase.description}
+                  </dd>
                 </div>
               )}
             </dl>
-
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Link
-                href={`/complaints/${selectedCase.complaint_id}/legal_sections`}
-                className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100"
-              >
-                <Scale className="h-4 w-4" />
-                {t("legalSections", "cases")}
-              </Link>
-
-              <Link
-                href={`/cases/${selectedCase.case_id}`}
-                className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-indigo-700"
-              >
-                <Eye className="h-4 w-4" />
-                {t("view", "common")}
-              </Link>
-            </div>
           </div>
         )}
       </div>

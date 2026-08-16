@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import axios from "axios";
+import { FileText, RefreshCw } from "lucide-react";
 
 import ComplaintHeader from "@/components/documents/ComplaintHeader";
 import DocumentCard from "@/components/documents/DocumentCard";
@@ -29,8 +30,8 @@ export default function DocumentsPage() {
   const [loadingDoc, setLoadingDoc] = useState<string | null>(null);
   const [savedDocs, setSavedDocs] = useState<DocumentItem[]>([]);
   const [loadingSaved, setLoadingSaved] = useState(false);
+  const [updatingCase, setUpdatingCase] = useState(false);
 
-  // Fetch documents registered in DB for this case
   const fetchSavedDocs = async () => {
     if (!caseId) return;
     setLoadingSaved(true);
@@ -48,10 +49,27 @@ export default function DocumentsPage() {
     void fetchSavedDocs();
   }, [caseId]);
 
+  /**
+   * PUT /api/cases/{case_id}
+   * Updates fields matching PostgreSQL 'cases' schema
+   */
+  const updateCaseRecord = async (payload: Record<string, any>) => {
+    if (!caseId) return;
+    setUpdatingCase(true);
+    try {
+      await axios.put(`${API}/api/cases/${caseId}`, payload);
+    } catch (err: any) {
+      console.error("Failed to update case record:", err);
+    } finally {
+      setUpdatingCase(false);
+    }
+  };
+
   const generateDocument = async (documentType: string) => {
     try {
       setLoadingDoc(documentType);
 
+      // 1. Generate & download document file
       const res = await fetch(`${API}/api/documents/generate`, {
         method: "POST",
         headers: {
@@ -83,7 +101,36 @@ export default function DocumentsPage() {
       link.remove();
       window.URL.revokeObjectURL(url);
 
-      // Re-fetch document list so new DB entry immediately appears in IO history
+      // 2. Map payload specifically to your PostgreSQL 'cases' columns
+      const now = new Date();
+      const isoDateTime = now.toISOString();
+      const formattedDate = now.toISOString().split("T")[0]; // YYYY-MM-DD for DATE columns
+      const docCode = Date.now().toString().slice(-6);
+      const year = now.getFullYear();
+
+      const caseUpdatePayload: Record<string, any> = {
+        updated_at: isoDateTime,
+      };
+
+      if (documentType === "chargesheet") {
+        caseUpdatePayload.original_chargesheet_no = `CS/${year}/${docCode}`;
+        caseUpdatePayload.original_chargesheet_date = formattedDate;
+        caseUpdatePayload.current_stage = "Original Chargesheet Filed";
+        caseUpdatePayload.status = "Chargesheet Filed";
+      } else if (
+        documentType === "supplementary_chargesheet" ||
+        documentType === "purvani"
+      ) {
+        caseUpdatePayload.supplementary_chargesheet_no = `SCS/${year}/${docCode}`;
+        caseUpdatePayload.current_stage = "Supplementary Chargesheet Filed";
+      } else if (documentType === "fir_draft") {
+        caseUpdatePayload.current_stage = "FIR Drafted";
+      }
+
+      // 3. Update the cases table record in backend DB
+      await updateCaseRecord(caseUpdatePayload);
+
+      // 4. Refresh documents list
       void fetchSavedDocs();
     } catch (err: any) {
       console.error(err);
@@ -119,9 +166,18 @@ export default function DocumentsPage() {
 
             {/* Template Selection */}
             <div>
-              <h2 className="mb-4 text-xl font-bold text-slate-900">
-                {t("availableTemplates", "cases")}
-              </h2>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                  <FileText className="h-5 w-5 text-indigo-600" />
+                  {t("availableTemplates", "cases")}
+                </h2>
+                {updatingCase && (
+                  <span className="text-xs text-indigo-600 flex items-center gap-1.5 animate-pulse font-medium">
+                    <RefreshCw className="h-3.5 w-3.5 animate-spin" />
+                    Syncing DB cases record...
+                  </span>
+                )}
+              </div>
 
               <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
                 {documentList.map((doc) => (
@@ -142,7 +198,10 @@ export default function DocumentsPage() {
               </h2>
 
               {loadingSaved ? (
-                <p className="text-xs text-slate-500">Loading document history...</p>
+                <p className="text-xs text-slate-500 flex items-center gap-2">
+                  <RefreshCw className="h-3.5 w-3.5 animate-spin text-slate-400" />
+                  Loading document history...
+                </p>
               ) : savedDocs.length === 0 ? (
                 <p className="text-xs text-slate-400">No documents generated yet.</p>
               ) : (
@@ -159,8 +218,9 @@ export default function DocumentsPage() {
                     <tbody className="divide-y divide-slate-100">
                       {savedDocs.map((doc) => (
                         <tr key={doc.document_id}>
-                          <td className="py-3 px-3 font-semibold text-slate-900">
-                            📄 {doc.title || doc.document_type}
+                          <td className="py-3 px-3 font-semibold text-slate-900 flex items-center gap-1.5">
+                            <FileText className="h-4 w-4 text-indigo-500 shrink-0" />
+                            {doc.title || doc.document_type}
                           </td>
                           <td className="py-3 px-3 text-slate-500 text-[11px]">
                             {doc.created_at ? new Date(doc.created_at).toLocaleString() : "N/A"}
@@ -182,7 +242,8 @@ export default function DocumentsPage() {
             </div>
 
             {loadingDoc && (
-              <div className="fixed bottom-6 right-6 rounded-xl bg-indigo-900 px-5 py-3 text-xs font-semibold text-white shadow-lg border border-indigo-700 animate-bounce">
+              <div className="fixed bottom-6 right-6 rounded-xl bg-indigo-900 px-5 py-3 text-xs font-semibold text-white shadow-lg border border-indigo-700 animate-bounce flex items-center gap-2">
+                <RefreshCw className="h-4 w-4 animate-spin text-indigo-300" />
                 {t("generating", "cases")} {loadingDoc.replaceAll("_", " ")}...
               </div>
             )}

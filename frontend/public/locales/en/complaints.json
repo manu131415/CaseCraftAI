@@ -119,6 +119,7 @@
   "nationality": "Nationality",
   "relationshipToCase": "Relationship to Case",
   "aadhaarNumber": "Aadhaar Number",
+  "enterComplaintTitle": "Enter complaint title",
   "address": "Address",
   "photo": "Photo",
   "notProvided": "Not provided",

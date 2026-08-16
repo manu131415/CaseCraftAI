@@ -80,6 +80,14 @@ export default function CaseMonitoringPage() {
       try {
         const data = await safeGet(`${API_BASE}/api/cases`);
         const caseList: CaseRecord[] = Array.isArray(data) ? data : data?.cases || [];
+        
+        // Sort initial fetched cases by created_at (newest first)
+        caseList.sort((a, b) => {
+          const timeA = new Date(a.created_at || 0).getTime();
+          const timeB = new Date(b.created_at || 0).getTime();
+          return timeB - timeA;
+        });
+
         setCases(caseList);
         if (caseList.length > 0) setSelectedCase(caseList[0]);
       } catch (err) {
@@ -128,10 +136,11 @@ export default function CaseMonitoringPage() {
         }
       }
 
+      // Sort timeline entries (newest first)
       const sorted = allEntries.sort((a, b) => {
-        const aTime = a.occurred_at || a.created_at || "";
-        const bTime = b.occurred_at || b.created_at || "";
-        return aTime.localeCompare(bTime);
+        const timeA = new Date(a.occurred_at || a.created_at || 0).getTime();
+        const timeB = new Date(b.occurred_at || b.created_at || 0).getTime();
+        return timeB - timeA;
       });
 
       setTimeline(sorted);
@@ -141,16 +150,23 @@ export default function CaseMonitoringPage() {
     void loadCaseTimeline();
   }, [selectedCase]);
 
-  const filteredCases = cases.filter((c) => {
-    const q = searchQuery.toLowerCase().trim();
-    const caseNum = (c.case_number || c.case_id || "").toLowerCase();
-    const compNum = (c.complaint_number || c.complaint_id || "").toLowerCase();
-    const title = (c.title || "").toLowerCase();
-    
-    const matchesQuery = !q || caseNum.includes(q) || compNum.includes(q) || title.includes(q);
-    const matchesPriority = priorityFilter === "ALL" || (c.priority || "").toUpperCase() === priorityFilter.toUpperCase();
-    return matchesQuery && matchesPriority;
-  });
+  // Filter and sort cases (newest first)
+  const filteredCases = cases
+    .filter((c) => {
+      const q = searchQuery.toLowerCase().trim();
+      const caseNum = (c.case_number || c.case_id || "").toLowerCase();
+      const compNum = (c.complaint_number || c.complaint_id || "").toLowerCase();
+      const title = (c.title || "").toLowerCase();
+      
+      const matchesQuery = !q || caseNum.includes(q) || compNum.includes(q) || title.includes(q);
+      const matchesPriority = priorityFilter === "ALL" || (c.priority || "").toUpperCase() === priorityFilter.toUpperCase();
+      return matchesQuery && matchesPriority;
+    })
+    .sort((a, b) => {
+      const timeA = new Date(a.created_at || 0).getTime();
+      const timeB = new Date(b.created_at || 0).getTime();
+      return timeB - timeA;
+    });
 
   const getPriorityBadge = (priority?: string) => {
     switch (priority?.toUpperCase()) {

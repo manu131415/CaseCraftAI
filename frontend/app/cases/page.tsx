@@ -73,7 +73,14 @@ export default function CasesMasterDetail() {
     return matchesSearch && matchesStatus && matchesPriority;
   });
 
-  const selectedCase = cases.find((c) => c.case_id === selectedCaseId) || filteredCases[0];
+  // Sort cases in descending order (Newest First)
+  const sortedCases = [...filteredCases].sort((a, b) => {
+    const timeA = new Date(a.created_at || 0).getTime();
+    const timeB = new Date(b.created_at || 0).getTime();
+    return timeB - timeA;
+  });
+
+  const selectedCase = cases.find((c) => c.case_id === selectedCaseId) || sortedCases[0];
 
   // Utility badge styling helper
   const getBadgeClasses = (type: 'status' | 'priority', value?: string) => {
@@ -164,7 +171,7 @@ export default function CasesMasterDetail() {
             <div className="lg:col-span-4 bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col overflow-hidden">
               <div className="p-3 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
                 <span className="text-xs font-semibold text-slate-600 uppercase tracking-wider">
-                  Active Cases ({filteredCases.length})
+                  Active Cases ({sortedCases.length})
                 </span>
               </div>
 
@@ -172,11 +179,11 @@ export default function CasesMasterDetail() {
                 <div className="p-6 text-center text-xs text-slate-500">{t("loadingCases", "cases") || "Loading cases..."}</div>
               ) : error ? (
                 <div className="p-4 text-xs text-red-600 bg-red-50 m-2 rounded">{error}</div>
-              ) : filteredCases.length === 0 ? (
+              ) : sortedCases.length === 0 ? (
                 <div className="p-6 text-center text-xs text-slate-500">No cases found matching filters.</div>
               ) : (
                 <div className="divide-y divide-slate-100 overflow-y-auto flex-1">
-                  {filteredCases.map((c) => {
+                  {sortedCases.map((c) => {
                     const isSelected = selectedCase?.case_id === c.case_id;
                     return (
                       <button

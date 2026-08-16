@@ -149,11 +149,11 @@ export default function LegalLibraryPage() {
   const showPrompt = trimmedQuery.length < MIN_QUERY_LENGTH;
 
   return (
-    <div className="flex min-h-screen bg-slate-50">
-      <Sidebar />
+    <div className="min-h-screen bg-slate-100 flex flex-col">
+      <Navbar eyebrow={t("legalLibrary", "dashboard")} title={t("searchLegalSections", "dashboard")} />
 
-      <div className="flex min-w-0 flex-1 flex-col">
-        <Navbar eyebrow={t("legalLibrary", "dashboard")} title={t("searchLegalSections", "dashboard")} />
+      <div className="flex flex-1 overflow-hidden">
+        <Sidebar />
 
         <main className="flex-1 space-y-6 px-8 py-6">
           <section className="rounded-2xl bg-gradient-to-r from-indigo-600 via-indigo-600 to-violet-700 p-8 shadow-sm">

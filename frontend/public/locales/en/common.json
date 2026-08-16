@@ -6,6 +6,9 @@
   "dashboard": "Dashboard",
   "aiInsights": "AI Insights",
   "legalLibrary": "Legal Library",
+  "CaseMonitoring": "Case Monitoring",
+  "DocumentApprovals": "Document Approvals",
+  "phone": "Phone",
   "secureTitle": "Secure by Design",
   "secureDescription": "All complaint files are protected with layered verification and audit logs.",
 

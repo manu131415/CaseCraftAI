@@ -35,9 +35,12 @@ export const ROLE_ACCESS: { prefix: string; roles: Role[] | "ALL" }[] = [
 
   { prefix: "/sho/cases", roles: ["SHO"] },
   { prefix: "/sho/officers", roles: ["SHO"] },
+  { prefix: "/sho/case-monitoring", roles: ["SHO"] },
+  { prefix: "/sho/document-approvals", roles: ["SHO"] },
 
   { prefix: "/legal/cases", roles: ["LEGAL_ADVISOR"] },
   { prefix: "/legal/legal-library", roles: ["LEGAL_ADVISOR"] },
+  { prefix: "/legal/review", roles: ["LEGAL_ADVISOR"] },
 
   // 3. General role root paths
   { prefix: "/sho", roles: ["SHO"] },

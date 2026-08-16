@@ -63,9 +63,17 @@ export default function DocumentApprovalsPage() {
       setLoadingCases(true);
       try {
         const res = await axios.get(`${API_BASE}/api/cases`, { validateStatus: (s) => s < 500 });
-        const list = Array.isArray(res.data) ? res.data : res.data?.cases || [];
-        setCases(list);
-        if (list.length > 0) setSelectedCase(list[0]);
+        const list: CaseRecord[] = Array.isArray(res.data) ? res.data : res.data?.cases || [];
+        
+        // Sort cases newest first (created_at descending)
+        const sortedCases = [...list].sort((a, b) => {
+          const timeA = new Date(a.created_at || 0).getTime();
+          const timeB = new Date(b.created_at || 0).getTime();
+          return timeB - timeA;
+        });
+
+        setCases(sortedCases);
+        if (sortedCases.length > 0) setSelectedCase(sortedCases[0]);
       } catch (err) {
         console.error("Failed to load cases", err);
       } finally {
@@ -79,7 +87,16 @@ export default function DocumentApprovalsPage() {
     setLoadingDocs(true);
     try {
       const res = await axios.get(`${API_BASE}/api/documents/case/${encodeURIComponent(caseId)}`);
-      setDocuments(res.data?.documents || []);
+      const docList: DocumentItem[] = res.data?.documents || [];
+      
+      // Sort documents newest first (created_at descending)
+      const sortedDocs = [...docList].sort((a, b) => {
+        const timeA = new Date(a.created_at || 0).getTime();
+        const timeB = new Date(b.created_at || 0).getTime();
+        return timeB - timeA;
+      });
+
+      setDocuments(sortedDocs);
     } catch (err) {
       console.error("Error fetching documents:", err);
       setDocuments([]);

@@ -495,7 +495,7 @@ export default function ComplaintPage() {
                     Submit Draft
                   </Link>
                 ) : caseExists ? (
-                  <Link href={`/cases/${caseId}`} className="inline-flex items-center rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">View case</Link>
+                  <Link href={`/cases`} className="inline-flex items-center rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">View case</Link>
                 ) : (
                   <button
                     type="button"

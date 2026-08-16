@@ -3,11 +3,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  BookOpenIcon,
-  FileText,
-  LayoutDashboard,
+  Library,
+  FolderLock,
+  Eye,
   ShieldCheck,
-  Sparkles,
+  KanbanSquare,
 } from "lucide-react";
 import { useLanguage } from "@/app/providers/LanguageProvider";
 import { Suspense } from "react";
@@ -23,19 +23,25 @@ const navigationItems = [
     href: "/dashboard/legal",
     key: "dashboard",
     namespace: "common",
-    icon: Sparkles,
+    icon: KanbanSquare,
+  },
+  {
+    href: "/legal/review",
+    key: "Legal Review",
+    namespace: "common",
+    icon: Eye,
   },
   {
     href: "/legal/cases",
     key: "caseList",
     namespace: "common",
-    icon: ShieldCheck,
+    icon: FolderLock,
   },
   {
     href: "/legal/legal-library",
     key: "legalLibrary",
     namespace: "common",   
-    icon: BookOpenIcon,
+    icon: Library,
   },
   
 ] as const;

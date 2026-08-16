@@ -11,39 +11,62 @@ interface Props {
 
 export default function ComplaintDetails({ form, setForm }: Props) {
   function handleChange(
-  e: React.ChangeEvent<
-    HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-  >
-) {
-  const { name, value } = e.target;
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) {
+    const { name, value } = e.target;
 
-  if (name === "crimeCategory") {
-    setForm({
-      ...form,
-      crimeCategory: value,
-      crimeSubcategory: "",
-    });
-  } else {
-    setForm({
-      ...form,
-      [name]: value,
-    });
+    if (name === "crimeCategory") {
+      setForm({
+        ...form,
+        crimeCategory: value,
+        crimeSubcategory: "",
+      });
+    } else {
+      setForm({
+        ...form,
+        [name]: value,
+      });
+    }
   }
-}
-  const { t } = useLanguage();
-  return (
-        <div className="space-y-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <div>
-            <p className="text-base font-medium text-blue-600">{t("step1", "complaints")}</p>
-            <h2 className="mt-1 text-2xl font-semibold text-slate-900">{t("complaintInformation", "complaints")}</h2>
-            <p className="mt-2 text-base text-slate-500">
-              {t("complaintInformationDescription", "complaints")}
-            </p>
-          </div>
 
-    <div className="grid gap-6 md:grid-cols-2">
+  const { t } = useLanguage();
+
+  return (
+    <div className="space-y-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div>
+        <p className="text-base font-medium text-blue-600">
+          {t("step1", "complaints")}
+        </p>
+        <h2 className="mt-1 text-2xl font-semibold text-slate-900">
+          {t("complaintInformation", "complaints")}
+        </h2>
+        <p className="mt-2 text-base text-slate-500">
+          {t("complaintInformationDescription", "complaints")}
+        </p>
+      </div>
+
+      {/* Added Complaint Title Field */}
+      <div>
+        <label className="text-base font-medium text-slate-700">
+          {t("complaintTitle", "complaints")}
+        </label>
+        <input
+          type="text"
+          name="complaintTitle"
+          value={form.complaintTitle}
+          onChange={handleChange}
+          className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none ring-0"
+          placeholder={t("enterComplaintTitle", "complaints")}
+        />
+      </div>
+
+      <div className="grid gap-6 md:grid-cols-2">
         <div>
-          <label className="text-base font-medium text-slate-700">{t("category", "complaints")}</label>
+          <label className="text-base font-medium text-slate-700">
+            {t("category", "complaints")}
+          </label>
           <select
             name="crimeCategory"
             value={form.crimeCategory}
@@ -52,15 +75,17 @@ export default function ComplaintDetails({ form, setForm }: Props) {
           >
             <option value="">{t("selectCategory", "complaints")}</option>
 
-              {Object.keys(crimeTypes).map((category) => (
-                <option key={category} value={category}>
-                  {category}
-                </option>
-              ))}
+            {Object.keys(crimeTypes).map((category) => (
+              <option key={category} value={category}>
+                {category}
+              </option>
+            ))}
           </select>
         </div>
         <div>
-          <label className="text-base font-medium text-slate-700">{t("priority", "cases")}</label>
+          <label className="text-base font-medium text-slate-700">
+            {t("priority", "cases")}
+          </label>
           <select
             name="priority"
             value={form.priority}
@@ -75,36 +100,36 @@ export default function ComplaintDetails({ form, setForm }: Props) {
         </div>
       </div>
 
-    <div>
-      <label className="text-base font-medium text-slate-700">
-              {t("crimeSubcategory", "complaints")}
-      </label>
+      <div>
+        <label className="text-base font-medium text-slate-700">
+          {t("crimeSubcategory", "complaints")}
+        </label>
 
-      <select
-        name="crimeSubcategory"
-        value={form.crimeSubcategory}
-        onChange={handleChange}
-        className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3"
-        disabled={!form.crimeCategory}
-      >
-        <option value="">{t("selectComplaintType", "complaints")}</option>
+        <select
+          name="crimeSubcategory"
+          value={form.crimeSubcategory}
+          onChange={handleChange}
+          className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3"
+          disabled={!form.crimeCategory}
+        >
+          <option value="">{t("selectComplaintType", "complaints")}</option>
 
-        {form.crimeCategory &&
-          crimeTypes[
-            form.crimeCategory as keyof typeof crimeTypes
-          ]?.map((type) => (
-            <option key={type} value={type}>
-              {type}
-            </option>
-          ))}
-      </select>
-    </div>
-
-      
+          {form.crimeCategory &&
+            crimeTypes[
+              form.crimeCategory as keyof typeof crimeTypes
+            ]?.map((type) => (
+              <option key={type} value={type}>
+                {type}
+              </option>
+            ))}
+        </select>
+      </div>
 
       <div className="grid gap-6 md:grid-cols-2">
         <div>
-          <label className="text-base font-medium text-slate-700">{t("incidentDate", "complaints")}</label>
+          <label className="text-base font-medium text-slate-700">
+            {t("incidentDate", "complaints")}
+          </label>
           <input
             type="date"
             name="incidentDate"
@@ -114,7 +139,9 @@ export default function ComplaintDetails({ form, setForm }: Props) {
           />
         </div>
         <div>
-          <label className="text-base font-medium text-slate-700">{t("incidentTime", "complaints")}</label>
+          <label className="text-base font-medium text-slate-700">
+            {t("incidentTime", "complaints")}
+          </label>
           <input
             type="time"
             name="incidentTime"
@@ -126,7 +153,9 @@ export default function ComplaintDetails({ form, setForm }: Props) {
       </div>
 
       <div>
-        <label className="text-base font-medium text-slate-700">{t("incidentLocation", "complaints")}</label>
+        <label className="text-base font-medium text-slate-700">
+          {t("incidentLocation", "complaints")}
+        </label>
         <input
           name="location"
           value={form.location}
@@ -137,7 +166,9 @@ export default function ComplaintDetails({ form, setForm }: Props) {
       </div>
 
       <div>
-        <label className="text-base font-medium text-slate-700">{t("incidentDescription", "complaints")}</label>
+        <label className="text-base font-medium text-slate-700">
+          {t("incidentDescription", "complaints")}
+        </label>
         <textarea
           rows={6}
           name="description"
@@ -149,7 +180,9 @@ export default function ComplaintDetails({ form, setForm }: Props) {
       </div>
 
       <div>
-        <label className="text-base font-medium text-slate-700">{t("officerNotes", "complaints")}</label>
+        <label className="text-base font-medium text-slate-700">
+          {t("officerNotes", "complaints")}
+        </label>
         <textarea
           rows={3}
           name="officerNotes"

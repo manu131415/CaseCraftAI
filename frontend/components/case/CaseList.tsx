@@ -105,10 +105,16 @@ export default function CaseList({
     );
   });
 
+  // Sort cases in descending order (Newest First)
+  const sortedCases = [...filteredCases].sort((a, b) => {
+    const timeA = new Date(a.created_at || 0).getTime();
+    const timeB = new Date(b.created_at || 0).getTime();
+    return timeB - timeA;
+  });
+
   return (
     <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
       <table className="min-w-full divide-y divide-slate-200">
-
         <thead className="bg-slate-100">
           <tr className="text-left text-sm font-semibold text-slate-700">
             <th className="px-6 py-4">{t("caseNumber", "cases")}</th>
@@ -122,8 +128,7 @@ export default function CaseList({
         </thead>
 
         <tbody className="divide-y divide-slate-200">
-
-          {filteredCases.length === 0 ? (
+          {sortedCases.length === 0 ? (
             <tr>
               <td
                 colSpan={7}
@@ -133,8 +138,7 @@ export default function CaseList({
               </td>
             </tr>
           ) : (
-            filteredCases.map((caseItem) => {
-
+            sortedCases.map((caseItem) => {
               const status = caseItem.status || t("open", "cases");
 
               const statusClass =
@@ -166,8 +170,7 @@ export default function CaseList({
                   </td>
 
                   <td className="px-6 py-4">
-                    {caseItem.complaint_number ||                      
-                      "-"}
+                    {caseItem.complaint_number || "-"}
                   </td>
 
                   <td className="px-6 py-4">
@@ -199,7 +202,6 @@ export default function CaseList({
                   </td>
 
                   <td className="px-6 py-4 space-x-2">
-
                     <Link
                       href={`/cases/${caseItem.case_id}`}
                       className="rounded-lg bg-blue-600 px-3 py-2 text-sm text-white hover:bg-blue-700"
@@ -234,13 +236,11 @@ export default function CaseList({
                     >
                       {t("documents", "cases")}
                     </Link>
-
                   </td>
                 </tr>
               );
             })
           )}
-
         </tbody>
       </table>
     </div>

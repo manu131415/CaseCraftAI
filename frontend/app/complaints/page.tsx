@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "@/components/layout/shared/Navbar";
 import Sidebar from "@/components/layout/io/Sidebar";
 import { ClipboardList } from "lucide-react";
@@ -21,9 +21,40 @@ export default function ComplaintsPage() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const { t } = useLanguage();
 
+  // Helper function to sort array newest first
+  const sortNewestFirst = (data: any[]) => {
+    if (!Array.isArray(data)) return [];
+    return [...data].sort((a, b) => {
+      const timeA = new Date(a.createdAt || a.incidentDate || 0).getTime();
+      const timeB = new Date(b.createdAt || b.incidentDate || 0).getTime();
+      return timeB - timeA; // Descending order
+    });
+  };
+
+  // Fetch initial complaints sorted newest first on page load
+  const fetchInitialComplaints = async () => {
+    try {
+      const API_BASE =
+        process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
+
+      const response = await fetch(`${API_BASE}/api/complaints`);
+      if (response.ok) {
+        const data = await response.json();
+        const list = data.complaints ?? data;
+        setResults(sortNewestFirst(list));
+      }
+    } catch (err) {
+      console.error("Failed to load initial complaints:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchInitialComplaints();
+  }, []);
+
   const handleSearch = async () => {
     if (!search.trim()) {
-      setResults(null);
+      fetchInitialComplaints();
       return;
     }
 
@@ -31,16 +62,17 @@ export default function ComplaintsPage() {
 
     try {
       const API_BASE =
-        process.env.NEXT_PUBLIC_API_BASE_URL ??
-        "http://localhost:8000";
+        process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
 
       const response = await fetch(
         `${API_BASE}/api/complaints/search?q=${encodeURIComponent(search)}`
       );
 
       const data = await response.json();
+      const list = data.complaints ?? data;
 
-      setResults(data.complaints ?? data);
+      // Sort search results descending
+      setResults(sortNewestFirst(list));
     } catch (err) {
       console.error(err);
       alert(t("searchFailed", "complaints"));
@@ -55,7 +87,7 @@ export default function ComplaintsPage() {
     setCrimeSubcategory("");
     setStatus("");
     setCaseStatus("");
-    setResults(null);
+    fetchInitialComplaints();
   };
 
   return (
@@ -63,17 +95,16 @@ export default function ComplaintsPage() {
       <Navbar />
 
       <div className="flex">
-
         <div className="w-64 shrink-0">
-    <Sidebar />
-  </div>
+          <Sidebar />
+        </div>
 
-        <main className="flex-1 min-w-0 p-6 lg:p-10">
+        {/* Updated main padding to add spacing from Sidebar */}
+        <main className="flex-1 min-w-0 py-6 pr-6 pl-8 lg:py-10 lg:pr-10 lg:pl-10">
           {/* Header */}
-
           <div className="mb-8">
             <h1 className="flex items-center gap-3 text-3xl font-bold text-slate-800">
-              <ClipboardList className="h-7 w-7 text-indigo-500" />
+              <ClipboardList className="h-7 w-7 text-indigo-500 shrink-0" />
               {t("complaintList", "common")}
             </h1>
 
@@ -83,13 +114,9 @@ export default function ComplaintsPage() {
           </div>
 
           {/* Filter Toolbar */}
-
           <div className="mb-6 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
-
               {/* Search */}
-
               <input
                 type="text"
                 placeholder={t("Search Complaints...", "complaints")}
@@ -99,7 +126,6 @@ export default function ComplaintsPage() {
               />
 
               {/* Crime Category */}
-
               <select
                 value={crimeCategory}
                 onChange={(e) => setCrimeCategory(e.target.value)}
@@ -114,7 +140,6 @@ export default function ComplaintsPage() {
               </select>
 
               {/* Crime Subcategory */}
-
               <select
                 value={crimeSubcategory}
                 onChange={(e) => setCrimeSubcategory(e.target.value)}
@@ -124,7 +149,6 @@ export default function ComplaintsPage() {
               </select>
 
               {/* Status */}
-
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
@@ -132,26 +156,21 @@ export default function ComplaintsPage() {
               >
                 <option value="">{t("status", "complaints")}</option>
                 <option>{t("pending", "complaints")}</option>
-                <option>{t("pending", "complaints")}</option>
-                <option>{t("pending", "complaints")}</option>
                 <option>{t("rejected", "complaints")}</option>
               </select>
 
               {/* Case */}
-
               <select
                 value={caseStatus}
                 onChange={(e) => setCaseStatus(e.target.value)}
                 className="rounded-lg border border-slate-300 px-3 py-2 text-sm"
               >
                 <option value="">{t("case", "complaints")}</option>
-                <option>{t("case", "complaints")}</option>
                 <option>{t("created", "complaints")}</option>
               </select>
             </div>
 
             {/* Buttons */}
-
             <div className="mt-5 flex gap-3">
               <button
                 onClick={handleSearch}
@@ -171,7 +190,6 @@ export default function ComplaintsPage() {
           </div>
 
           {/* Two-pane: complaint list (left) + details (right) */}
-
           <div className="grid gap-6 lg:grid-cols-[minmax(320px,420px)_1fr] lg:items-start">
             <div className="lg:sticky lg:top-6 lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto">
               <ComplaintList

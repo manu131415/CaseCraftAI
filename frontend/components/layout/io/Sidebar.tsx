@@ -3,10 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  FileText,
-  LayoutDashboard,
+  PenTool,
+  KanbanSquare,
   ShieldCheck,
-  WeightTilde,
+  Library,
+  Megaphone,
+  FolderLock,
 } from "lucide-react";
 import { useLanguage } from "@/app/providers/LanguageProvider";
 import { Suspense } from "react";
@@ -22,31 +24,31 @@ const navigationItems = [
     href: "/dashboard/io",
     key: "dashboard",
     namespace: "common",
-    icon: LayoutDashboard,
-  },
-  {
-    href: "/complaints",
-    key: "complaintList",
-    namespace: "common", 
-    icon: FileText,
-  },
-  {
-    href: "/cases",
-    key: "caseList",
-    namespace: "common",
-    icon: ShieldCheck,
+    icon: KanbanSquare,
   },
   {
     href: "/complaintRegister",
     key: "registerComplaint",
     namespace: "common", 
-    icon: FileText,
+    icon: PenTool,
+  },
+  {
+    href: "/complaints",
+    key: "complaintList",
+    namespace: "common", 
+    icon: Megaphone,
+  },
+  {
+    href: "/cases",
+    key: "caseList",
+    namespace: "common",
+    icon: FolderLock,
   },
   {
     href: "/io/legal-library",
     key: "legalLibrary",
     namespace: "common",
-    icon: WeightTilde,
+    icon: Library,
   },
   
 ] as const;

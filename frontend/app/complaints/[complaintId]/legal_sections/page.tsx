@@ -46,7 +46,40 @@ interface AnalysisResult {
   judgments: LandmarkJudgment[];
 }
 
+interface FirDraftContent {
+  fir_no?: string;
+  fir_year?: number;
+  fir_date?: string;
+  selected_sections?: any[];
+  selected_judgments?: any[];
+}
+
+interface FirDraftItem {
+  id: string;
+  complaint_id: string;
+  crime_category?: string | null;
+  summary?: string | null;
+  draft_content?: FirDraftContent | string | null;
+  status: 'draft' | 'under_review' | 'approved' | string;
+  officer_notes?: string | null;
+  approved_by?: string | null;
+  approved_at?: string | null;
+  created_at: string;
+  updated_at?: string;
+}
+
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:8000';
+
+// Helper function for safe JSON parsing and property extraction
+function parseDraftContent(content: FirDraftItem['draft_content']): FirDraftContent | null {
+  if (!content) return null;
+  if (typeof content === 'object') return content;
+  try {
+    return JSON.parse(content);
+  } catch {
+    return null;
+  }
+}
 
 function SimilarityBadge({ score }: { score: number }) {
   const { t } = useLanguage();
@@ -72,6 +105,124 @@ function ActBadge({ act }: { act: string }) {
     >
       {act}
     </span>
+  );
+}
+
+function StatusBadge({ status }: { status: string }) {
+  const normalized = status?.toLowerCase().trim();
+  
+  let tone = 'bg-slate-100 text-slate-700 border-slate-200';
+  let label = status;
+
+  if (normalized === 'approved') {
+    tone = 'bg-emerald-50 text-emerald-700 border-emerald-300 font-semibold';
+    label = 'Approved';
+  } else if (normalized === 'under_review') {
+    tone = 'bg-amber-50 text-amber-700 border-amber-300 font-semibold';
+    label = 'Under Review';
+  } else if (normalized === 'draft') {
+    tone = 'bg-blue-50 text-blue-700 border-blue-200 font-medium';
+    label = 'Draft';
+  }
+
+  return (
+    <span className={`inline-block px-2.5 py-0.5 text-[11px] rounded-md border ${tone}`}>
+      {label}
+    </span>
+  );
+}
+
+export function LegalAdvisorStatusPanel({
+  firDrafts,
+  loadingDrafts,
+  onRefresh,
+}: {
+  firDrafts: FirDraftItem[];
+  loadingDrafts: boolean;
+  onRefresh: () => void;
+}) {
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs flex flex-col h-fit">
+      <div className="flex items-center justify-between mb-1">
+        <h3 className="text-sm font-bold text-slate-900">
+          Legal Advisor Review Status
+        </h3>
+        <button
+          onClick={onRefresh}
+          className="text-[11px] text-indigo-600 hover:text-indigo-800 font-semibold cursor-pointer"
+        >
+          Refresh
+        </button>
+      </div>
+      <p className="text-xs text-slate-500 mb-4">
+        Submitted FIR Drafts & Advisor Feedback
+      </p>
+
+      {loadingDrafts ? (
+        <div className="py-6 text-center text-xs text-slate-400">
+          Loading draft history...
+        </div>
+      ) : firDrafts.length === 0 ? (
+        <div className="py-6 border-t border-slate-100 text-center text-xs text-slate-400">
+          No FIR drafts submitted for this complaint yet.
+        </div>
+      ) : (
+        <div className="space-y-4 divide-y divide-slate-100 max-h-[550px] overflow-y-auto pr-1">
+          {firDrafts.map((draft) => {
+            const parsedContent = parseDraftContent(draft.draft_content);
+            const displayFirNo =
+              parsedContent?.fir_no || `Draft #${draft.id.slice(0, 8)}`;
+
+            return (
+              <div key={draft.id} className="pt-4 first:pt-0 space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <span className="text-xs font-bold text-slate-900 font-mono block">
+                      {displayFirNo}
+                    </span>
+                    <span className="text-[10px] text-slate-400">
+                      Created: {new Date(draft.created_at).toLocaleString()}
+                    </span>
+                  </div>
+                  <StatusBadge status={draft.status} />
+                </div>
+
+                {draft.officer_notes ? (
+                  <div className="rounded-xl bg-amber-50/80 border border-amber-200 p-3">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-[11px] font-bold text-amber-900 flex items-center gap-1">
+                        💬 Advisor Notes
+                      </span>
+                      {draft.approved_by && (
+                        <span className="text-[10px] text-amber-700 font-medium">
+                          By: {draft.approved_by}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs text-amber-950 leading-relaxed font-medium">
+                      {draft.officer_notes}
+                    </p>
+                    {draft.approved_at && (
+                      <p className="text-[9px] text-amber-700/80 mt-1.5 text-right">
+                        Reviewed at: {new Date(draft.approved_at).toLocaleString()}
+                      </p>
+                    )}
+                  </div>
+                ) : (
+                  <div className="rounded-lg bg-slate-50 border border-slate-100 p-2 text-center">
+                    <p className="text-[11px] text-slate-400 italic">
+                      {draft.status.toLowerCase() === 'draft'
+                        ? 'Submit draft to request advisor review.'
+                        : 'Awaiting advisor review notes...'}
+                    </p>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -211,6 +362,57 @@ export default function LegalSectionsPage({
   const [savingDraft, setSavingDraft] = useState(false);
   const [downloadError, setDownloadError] = useState<string | null>(null);
 
+  const currentYear = new Date().getFullYear();
+  const [firNo, setFirNo] = useState('');
+  const [firYear, setFirYear] = useState<number>(currentYear);
+  const [firDate, setFirDate] = useState<string>(new Date().toISOString().split('T')[0]);
+
+  const [firDrafts, setFirDrafts] = useState<FirDraftItem[]>([]);
+  const [loadingDrafts, setLoadingDrafts] = useState(false);
+
+  const fetchCaseDetails = useCallback(async () => {
+    try {
+      const res = await fetch(`${API_BASE}/api/cases/by-complaint/${complaintId}`);
+      if (res.ok) {
+        const caseData = await res.json();
+        if (caseData.fir_no) {
+          setFirNo(caseData.fir_no);
+        } else {
+          const cleanId = complaintId.replace(/[^a-zA-Z0-9]/g, '').slice(-3).toUpperCase() || '001';
+          setFirNo(`FIR/${currentYear}/${cleanId}`);
+        }
+        if (caseData.fir_year) setFirYear(caseData.fir_year);
+        if (caseData.fir_date) setFirDate(caseData.fir_date.split('T')[0]);
+      } else {
+        const cleanId = complaintId.replace(/[^a-zA-Z0-9]/g, '').slice(-3).toUpperCase() || '001';
+        setFirNo(`FIR/${currentYear}/${cleanId}`);
+      }
+    } catch (err) {
+      console.warn("Could not fetch case details, setting default FIR No:", err);
+      const cleanId = complaintId.replace(/[^a-zA-Z0-9]/g, '').slice(-3).toUpperCase() || '001';
+      setFirNo(`FIR/${currentYear}/${cleanId}`);
+    }
+  }, [complaintId, currentYear]);
+
+  const fetchFirDraftsHistory = useCallback(async () => {
+    setLoadingDrafts(true);
+    try {
+      let res = await fetch(`${API_BASE}/api/fir-drafts?complaint_id=${complaintId}`);
+      if (!res.ok) {
+        res = await fetch(`${API_BASE}/api/fir-drafts/complaint/${complaintId}`);
+      }
+
+      if (res.ok) {
+        const data = await res.json();
+        setFirDrafts(Array.isArray(data) ? data : data.drafts || []);
+      }
+    } catch (err) {
+      console.error('Failed to fetch FIR drafts history:', err);
+    } finally {
+      setLoadingDrafts(false);
+    }
+  }, [complaintId]);
+
   const runAnalysis = useCallback(
     async (summaryOverride?: string) => {
       setLoading(true);
@@ -254,7 +456,9 @@ export default function LegalSectionsPage({
 
   useEffect(() => {
     runAnalysis();
-  }, [complaintId]);
+    fetchCaseDetails();
+    fetchFirDraftsHistory();
+  }, [complaintId, runAnalysis, fetchCaseDetails, fetchFirDraftsHistory]);
 
   const selectedSections = result?.sections.filter((section) => selectedSectionIds.includes(section.id)) ?? [];
   const selectedJudgments = result?.judgments.filter((judgment) => selectedJudgmentIds.includes(judgment.id)) ?? [];
@@ -269,7 +473,11 @@ export default function LegalSectionsPage({
         complaint_id: complaintId,
         crime_category: result.sections[0]?.category || null,
         summary: caseSummary,
+        status: 'under_review',
         draft_content: {
+          fir_no: firNo,
+          fir_year: Number(firYear),
+          fir_date: firDate,
           selected_sections: selectedSections,
           selected_judgments: selectedJudgments,
         },
@@ -287,7 +495,21 @@ export default function LegalSectionsPage({
       }
 
       const data = await res.json();
-      setDraftId(data.data.id);
+      setDraftId(data.id || data.data?.id);
+
+      await fetch(`${API_BASE}/api/cases/by-complaint/${complaintId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fir_no: firNo,
+          fir_year: Number(firYear),
+          fir_date: firDate,
+          current_stage: 'FIR Draft Submitted',
+          updated_at: new Date().toISOString(),
+        }),
+      }).catch((err) => console.warn('Case update note:', err));
+
+      fetchFirDraftsHistory();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to save FIR draft');
     } finally {
@@ -340,11 +562,10 @@ export default function LegalSectionsPage({
                   </span>
                 </div>
                 <p className="mt-1 text-xs text-slate-500">
-                  Automated section matching and precedent analysis engine.
+                  Automated section matching, landmark precedent analysis, and FIR draft management.
                 </p>
               </div>
 
-              {/* BACK TO CASES BUTTON */}
               <button
                 type="button"
                 onClick={() => router.push("/cases")}
@@ -354,73 +575,139 @@ export default function LegalSectionsPage({
               </button>
             </div>
 
-            {/* Case Summary Box */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs">
-              <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-500">
-                {t("caseSummaryUsed","complaints") || "Case Summary Used For Analysis"}
-              </label>
-              <textarea
-                value={caseSummary}
-                onChange={(e) => setCaseSummary(e.target.value)}
-                rows={3}
-                placeholder={t("caseSummaryPlaceholder","complaints") || "Type or edit case summary..."}
-                className="w-full resize-none rounded-xl border border-slate-200 p-3 text-xs text-slate-800 focus:border-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 bg-slate-50/50"
-              />
-              <div className="mt-3 flex items-center justify-between gap-4">
-                {needsManualSummary && (
-                  <p className="text-xs text-amber-700 font-medium">
-                    {t("noStoredSummary","complaints") || "No stored summary found. Enter one above."}
-                  </p>
+            {/* Layout Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+              {/* Main Controls Column */}
+              <div className="lg:col-span-2 space-y-6">
+                
+                {/* Auto-filled FIR Details Card */}
+                <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700">
+                      FIR Details (Cases Table Sync)
+                    </h3>
+                    <span className="text-[10px] bg-emerald-50 text-emerald-700 font-semibold px-2 py-0.5 rounded border border-emerald-200">
+                      Auto-filled
+                    </span>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                      <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                        FIR Number
+                      </label>
+                      <input
+                        type="text"
+                        value={firNo}
+                        onChange={(e) => setFirNo(e.target.value)}
+                        placeholder="e.g. FIR/2026/0492"
+                        className="w-full rounded-lg border border-slate-200 px-3 py-1.5 text-xs text-slate-800 focus:border-indigo-600 focus:outline-none font-medium"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                        FIR Year
+                      </label>
+                      <input
+                        type="number"
+                        value={firYear}
+                        onChange={(e) => setFirYear(parseInt(e.target.value) || currentYear)}
+                        className="w-full rounded-lg border border-slate-200 px-3 py-1.5 text-xs text-slate-800 focus:border-indigo-600 focus:outline-none font-medium"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                        FIR Date
+                      </label>
+                      <input
+                        type="date"
+                        value={firDate}
+                        onChange={(e) => setFirDate(e.target.value)}
+                        className="w-full rounded-lg border border-slate-200 px-3 py-1.5 text-xs text-slate-800 focus:border-indigo-600 focus:outline-none font-medium"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Case Summary Box */}
+                <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs">
+                  <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-500">
+                    {t("caseSummaryUsed","complaints") || "Case Summary Used For Analysis"}
+                  </label>
+                  <textarea
+                    value={caseSummary}
+                    onChange={(e) => setCaseSummary(e.target.value)}
+                    rows={3}
+                    placeholder={t("caseSummaryPlaceholder","complaints") || "Type or edit case summary..."}
+                    className="w-full resize-none rounded-xl border border-slate-200 p-3 text-xs text-slate-800 focus:border-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 bg-slate-50/50"
+                  />
+                  <div className="mt-3 flex items-center justify-between gap-4">
+                    {needsManualSummary && (
+                      <p className="text-xs text-amber-700 font-medium">
+                        {t("noStoredSummary","complaints") || "No stored summary found. Enter one above."}
+                      </p>
+                    )}
+                    <button
+                      onClick={() => runAnalysis(caseSummary)}
+                      disabled={loading || !caseSummary.trim()}
+                      className="ml-auto rounded-xl bg-indigo-900 px-4 py-2 text-xs font-semibold text-white hover:bg-indigo-950 disabled:opacity-50 transition shadow-xs cursor-pointer"
+                    >
+                      {loading ? (t("analyzing","complaints") || "Analyzing...") : (t("reanalyze","complaints") || "Re-analyze")}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Notifications */}
+                {error && (
+                  <div className="rounded-xl border border-rose-200 bg-rose-50 p-4 text-xs font-medium text-rose-700">
+                    {error}
+                  </div>
                 )}
-                <button
-                  onClick={() => runAnalysis(caseSummary)}
-                  disabled={loading || !caseSummary.trim()}
-                  className="ml-auto rounded-xl bg-indigo-900 px-4 py-2 text-xs font-semibold text-white hover:bg-indigo-950 disabled:opacity-50 transition shadow-xs"
-                >
-                  {loading ? (t("analyzing","complaints") || "Analyzing...") : (t("reanalyze","complaints") || "Re-analyze")}
-                </button>
-              </div>
-            </div>
+                {draftId && (
+                  <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-xs font-medium text-emerald-700">
+                    {t("firDraftSaved","complaints") || "FIR Draft saved & submitted for Legal Advisor review!"}
+                  </div>
+                )}
+                {downloadError && (
+                  <div className="rounded-xl border border-rose-200 bg-rose-50 p-4 text-xs font-medium text-rose-700">
+                    {downloadError}
+                  </div>
+                )}
 
-            {/* Notifications */}
-            {error && (
-              <div className="rounded-xl border border-rose-200 bg-rose-50 p-4 text-xs font-medium text-rose-700">
-                {error}
-              </div>
-            )}
-            {draftId && (
-              <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-xs font-medium text-emerald-700">
-                {t("firDraftSaved","complaints") || "FIR Draft saved successfully!"}
-              </div>
-            )}
-            {downloadError && (
-              <div className="rounded-xl border border-rose-200 bg-rose-50 p-4 text-xs font-medium text-rose-700">
-                {downloadError}
-              </div>
-            )}
+                {/* Action Bar */}
+                <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div>
+                    <p className="text-xs font-bold text-slate-900">{t("selectedItems","complaints") || "Selected Items"}</p>
+                    <p className="text-xs text-slate-500">{selectedCount} item{selectedCount === 1 ? '' : 's'} {t("selected","common") || "selected"}</p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={handleSaveDraft}
+                      disabled={savingDraft || selectedCount === 0 || !result}
+                      className="rounded-xl bg-indigo-900 px-4 py-2 text-xs font-semibold text-white hover:bg-indigo-950 disabled:opacity-50 transition shadow-xs cursor-pointer"
+                    >
+                      {savingDraft ? (t("savingDraft","complaints") || "Saving...") : (t("saveFirDraft","complaints") || "Save & Submit FIR Draft")}
+                    </button>
+                    <button
+                      onClick={handleDownloadDraft}
+                      disabled={!draftId}
+                      className="rounded-xl bg-emerald-600 px-4 py-2 text-xs font-semibold text-white hover:bg-emerald-700 disabled:opacity-50 transition shadow-xs cursor-pointer"
+                    >
+                      {t("downloadDocx","complaints") || "Download DOCX"}
+                    </button>
+                  </div>
+                </div>
 
-            {/* Action Bar */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div>
-                <p className="text-xs font-bold text-slate-900">{t("selectedItems","complaints") || "Selected Items"}</p>
-                <p className="text-xs text-slate-500">{selectedCount} item{selectedCount === 1 ? '' : 's'} {t("selected","common") || "selected"}</p>
               </div>
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={handleSaveDraft}
-                  disabled={savingDraft || selectedCount === 0 || !result}
-                  className="rounded-xl bg-indigo-900 px-4 py-2 text-xs font-semibold text-white hover:bg-indigo-950 disabled:opacity-50 transition shadow-xs"
-                >
-                  {savingDraft ? (t("savingDraft","complaints") || "Saving...") : (t("saveFirDraft","complaints") || "Save FIR Draft")}
-                </button>
-                <button
-                  onClick={handleDownloadDraft}
-                  disabled={!draftId}
-                  className="rounded-xl bg-emerald-600 px-4 py-2 text-xs font-semibold text-white hover:bg-emerald-700 disabled:opacity-50 transition shadow-xs"
-                >
-                  {t("downloadDocx","complaints") || "Download DOCX"}
-                </button>
-              </div>
+
+              {/* Side Panel: Legal Advisor Review Status & History */}
+              <LegalAdvisorStatusPanel
+                firDrafts={firDrafts}
+                loadingDrafts={loadingDrafts}
+                onRefresh={fetchFirDraftsHistory}
+              />
+
             </div>
 
             {/* Sections List */}

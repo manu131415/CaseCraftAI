@@ -55,7 +55,7 @@ export interface FirDraft {
 }
 
 export default function LegalReviewPage() {
-  const BACKEND_URL = process.env.BACKEND_API_URL || "http://localhost:8000";
+  const BACKEND_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
   const { t } = useLanguage();
   const [drafts, setDrafts] = useState<FirDraft[]>([]);
   const [selectedDraft, setSelectedDraft] = useState<FirDraft | null>(null);

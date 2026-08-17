@@ -80,7 +80,6 @@ CaseCraftAI addresses these challenges by providing AI-assisted investigation su
 ### 📂 Case Management
 
 - Create and manage investigation cases
-- Assign officers
 - Track investigation status
 - Update case progress
 
@@ -91,9 +90,13 @@ CaseCraftAI addresses these challenges by providing AI-assisted investigation su
 Generate legal documents including:
 
 - FIR
-- Chargesheet
-- Investigation Reports
-- Notices
+- Purvani Chargesheet
+- Medical Treatment Letter
+- Remand Request Letter (Police Custody)
+- Seizure Receipt
+- Court Custody Letter
+- Accused Panchanama
+- Accused Face Identification Form
 
 ---
 

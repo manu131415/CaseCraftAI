@@ -70,6 +70,7 @@ class ContextBuilder:
             "case": cls._to_dict(data["case"]),
             "complaint": cls._to_dict(data["complaint"]),
             "officer": cls._to_dict(data["officer"]),
+            
 
             # Victims
             "victims": [

@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import Navbar from "@/components/layout/shared/Navbar";
 import Sidebar from "@/components/layout/legal/Sidebar";
 import { useLanguage } from "@/app/providers/LanguageProvider";
+import { Scale } from "lucide-react";
 
 export interface CrossReference {
   act: string;
@@ -26,12 +27,16 @@ export interface SelectedSection {
 
 export interface SelectedJudgment {
   id?: string;
-  title?: string;
-  citation?: string;
-  relevance?: string;
-  summary?: string;
+  case_title?: string;
+  case_date?: string;
   court?: string;
-  year?: string | number;
+  crime_type?: string;
+  bail_outcome?: string;
+  reason?: string;
+  summary?: string;
+  judgment_reason?: string;
+  similarity?: number;
+  ipc_sections?: string;
 }
 
 export interface DraftContent {
@@ -210,13 +215,22 @@ export default function LegalReviewPage() {
         <main className="flex-1 p-6 lg:p-8 flex flex-col h-[calc(100vh-64px)] overflow-hidden">
           {/* Header */}
           <div className="mb-6 flex-shrink-0">
-            <h1 className="text-3xl font-bold text-slate-800">
-              {t("legalReview", "cases")}
-            </h1>
-            <p className="mt-1 text-slate-600">
-              {t("legalReviewSubtitle", "cases")}
-            </p>
-          </div>
+  <div className="flex items-center gap-3">
+    {/* Symbol / Icon container */}
+    <div className="p-2.5 bg-indigo-50 border border-indigo-100 rounded-xl text-indigo-600">
+      <Scale className="w-6 h-6" />
+    </div>
+
+    <div>
+      <h1 className="text-3xl font-bold text-slate-800">
+        {t("legalReview", "cases")}
+      </h1>
+      <p className="mt-1 text-slate-600">
+        {t("legalReviewSubtitle", "cases")}
+      </p>
+    </div>
+  </div>
+</div>
 
           {/* Two-Pane Layout */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1 min-h-0">
@@ -450,26 +464,52 @@ export default function LegalReviewPage() {
                   </div>
 
                   {/* Selected Landmark Judgments */}
-                  <div>
-                    <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
-                      Landmark Judgments ({selectedJudgments.length})
-                    </h3>
-                    {selectedJudgments.length === 0 ? (
-                      <div className="p-4 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-500 italic text-center">
-                        No landmark judgments attached.
-                      </div>
-                    ) : (
-                      <div className="space-y-3">
-                        {selectedJudgments.map((j, idx) => (
-                          <div key={idx} className="p-3 border border-slate-200 rounded-lg bg-white space-y-1 text-xs">
-                            <div className="font-semibold text-slate-800">{j.title || "Untitled Case"}</div>
-                            {j.citation && <div className="text-indigo-600 font-mono text-[11px]">{j.citation}</div>}
-                            {j.relevance && <p className="text-slate-600">{j.relevance}</p>}
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
+                  {/* Selected Landmark Judgments */}
+<div>
+  <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+    Landmark Judgments ({selectedJudgments.length})
+  </h3>
+  {selectedJudgments.length === 0 ? (
+    <div className="p-4 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-500 italic text-center">
+      No landmark judgments attached.
+    </div>
+  ) : (
+    <div className="space-y-3">
+      {selectedJudgments.map((j, idx) => (
+        <div key={j.id || idx} className="p-3 border border-slate-200 rounded-lg bg-white space-y-1.5 text-xs">
+          <div className="flex items-center justify-between">
+            <span className="font-semibold text-slate-800 text-sm">
+              {j.case_title || "Untitled Case"}
+            </span>
+            {j.case_date && (
+              <span className="text-[11px] text-slate-500 font-mono">
+                {j.case_date}
+              </span>
+            )}
+          </div>
+          
+          {j.court && (
+            <div className="text-indigo-600 font-medium text-[11px]">
+              {j.court}
+            </div>
+          )}
+
+          {j.reason && (
+            <p className="text-slate-600 bg-amber-50/60 p-2 rounded border border-amber-200/60 mt-1">
+              <strong>Relevance:</strong> {j.reason}
+            </p>
+          )}
+
+          {j.judgment_reason && (
+            <p className="text-slate-500 italic mt-1">
+              {j.judgment_reason}
+            </p>
+          )}
+        </div>
+      ))}
+    </div>
+  )}
+</div>
 
                   {/* Legal Officer Notes Form */}
                   <div>

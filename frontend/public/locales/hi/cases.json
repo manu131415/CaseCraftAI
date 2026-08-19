@@ -16,6 +16,8 @@
     "trial": "मुकदमा",
     "closed": "बंद",
     "open": "खुला",
+     "legalReview": "कानूनी समीक्षा",
+  "legalReviewSubtitle": "केस कानूनी समीक्षा के अधीन है।",
 
     "loadingCaseDetails": "केस विवरण लोड हो रहे हैं...",
     "failedToLoad": "केस विवरण लोड नहीं हो सके।",

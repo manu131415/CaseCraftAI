@@ -16,6 +16,8 @@
   "trial": "ટ્રાયલ",
   "closed": "બંધ",
   "open": "ખુલ્લો",
+   "legalReview": "કાનૂની સમીક્ષા",
+  "legalReviewSubtitle": "કેસ કાનૂની સમીક્ષા હેઠળ છે.",
 
   "loadingCaseDetails": "કેસ વિગતો લોડ થઈ રહી છે...",
   "failedToLoad": "કેસ વિગતો લોડ કરવામાં નિષ્ફળ.",
